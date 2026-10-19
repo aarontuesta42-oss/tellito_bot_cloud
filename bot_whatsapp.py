@@ -47,8 +47,22 @@ if not os.path.exists('logs'): os.makedirs('logs')
 
 def guardar_cliente(numero, nombres, perfil, carrera):
     try:
-        data = {"whatsapp": numero, "nombres": nombres, "perfil": perfil, "carrera": carrera}
-        supabase.table('clientes').upsert(data, on_conflict='whatsapp').execute()
+        # Primero intentamos actualizar si el número ya existe
+        response = supabase.table('clientes').update({
+            "nombres": nombres, 
+            "perfil": perfil, 
+            "carrera": carrera
+        }).eq('whatsapp', numero).execute()
+        
+        # Si no se actualizó nada (porque es nuevo), insertamos
+        if not response.data:
+            supabase.table('clientes').insert({
+                "whatsapp": numero, 
+                "nombres": nombres, 
+                "perfil": perfil, 
+                "carrera": carrera
+            }).execute()
+            
         print(f"✅ Cliente guardado en Supabase: {nombres}")
     except Exception as e:
         print(f"❌ Error guardando en BD: {e}")
@@ -273,11 +287,6 @@ async def recibir_mensaje(request: Request):
                     user_states[numero] = "menu_principal"
                     guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
                     respuesta = get_menu_principal(user_data[numero]['perfil'], user_data[numero]['nombres'].split()[0], is_new=True)
-                
-                user_data[numero]['carrera'] = carrera_elegida
-                user_states[numero] = "menu_principal"
-                guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
-                respuesta = get_menu_principal(user_data[numero]['perfil'], user_data[numero]['nombres'].split()[0], is_new=True)
 
             # --- VOLVER ATRÁS (0) ---
             elif texto_lower in ["0", "volver", "atrás", "atras"]:
