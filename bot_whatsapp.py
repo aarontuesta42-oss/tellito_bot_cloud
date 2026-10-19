@@ -135,13 +135,16 @@ def redactar_con_ia(prompt_usuario, contexto_json):
 
     prompt_sistema = (
         f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
-        f"Responde de forma amigable, clara y CONCISA. Usa emojis. "
+        f"Tu única tarea es redactar la información del trámite de forma amigable, clara y CONCISA. Usa emojis. "
         f"Aquí tienes la información oficial:\n\n{contexto_str}{info_extra}\n\n"
         f"REGLA DE ORO: SIEMPRE debes recordar al usuario:\n"
         f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
         f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
-        f"REGLAS DE FORMATO: Usa SOLO un asterisco para negritas (ej: *texto*). NO uses doble asterisco (**). "
-        f"NO agregues opciones de menú ni textos como 'Escribe menú' al final. Solo da la información."
+        f"REGLAS DE FORMATO ESTRICTAS (ESTÁS EN WHATSAPP):\n"
+        f"- Usa SOLO un asterisco a cada lado para negrita: *texto*\n"
+        f"- Usa guion bajo a cada lado para cursiva: _texto_\n"
+        f"- NO uses almohadillas (#) ni doble asterisco (**).\n"
+        f"- ¡PROHIBIDO! NO agregues menús de opciones (1, 2, 3...). NO agregues textos como 'Escribe menú' o 'Escribe 0'. Solo entrega el texto informativo."
     )
     
     payload = {
@@ -169,7 +172,7 @@ def get_menu_principal(perfil, primer_nombre, is_new=False):
     elif perfil == "Egresado":
         menu += "1️⃣  🎓 Titulación (TAP o Examen)\n2️⃣  📜 Constancia de Egresado\n3️⃣  📑 Certificación Modular\n4️⃣  🏫 Nuestro Instituto\n5️⃣  📍 Contacto y Ubicación\n6️⃣  🔍 Explorar otros perfiles\n7️⃣  💬 *Chatea con Tellito (IA)*\n\n"
         
-    menu += "🔹 _Escribe el número de tu opción o hazme una pregunta directa._"
+    menu += "🔹 _Escribe el número de tu opción._"
     return menu
 
 @app.get("/webhook")
@@ -369,21 +372,26 @@ async def recibir_mensaje(request: Request):
                 if res_json: respuesta = redactar_con_ia(texto, res_json)
                 else: enviar_fallback_ciclico(numero); enviar_texto_final = False
 
-            # --- ENVÍO FINAL Y LIMPIEZA DE FOOTERS ---
+            # --- ENVÍO FINAL ---
             if enviar_texto_final:
                 if not respuesta: 
                     enviar_fallback_ciclico(numero)
                 else:
-                    # Limpiamos cualquier intento de la IA por escribir menús
-                    respuesta = respuesta.replace("Escribe menú", "").replace("Escribe *menú*", "").replace("Escribe el número", "").replace("Escribe *0*", "")
+                    # Obtenemos el estado ACTUAL (después de procesar el mensaje)
+                    estado_actual = user_states.get(numero, "menu_principal")
 
-                    # Añadimos el pie de página correcto según el estado
-                    if estado in ["menu_tramites", "menu_certificados", "menu_matricula_est", "menu_carreras", "menu_explorar"]:
-                        respuesta += "\n\n🔹 _Escribe el número de tu opción._\n🔹 _Escribe *0* para volver atrás._"
-                    elif estado in ["ver_certificado", "ver_tramite", "ver_matricula", "ver_carrera", "explorar_prospecto", "explorar_estudiante", "explorar_egresado"]:
+                    # Agregamos el pie de página manualmente. Sin .replace() que rompan palabras.
+                    if estado_actual in ["menu_tramites", "menu_certificados", "menu_matricula_est", "menu_carreras", "menu_explorar"]:
+                        respuesta += "\n\n🔹 _Escribe el número de tu opción._\n🔹 _Escribe *menú* para ir al menú principal._"
+                    
+                    elif estado_actual in ["ver_certificado", "ver_tramite", "ver_matricula", "ver_carrera", "explorar_prospecto", "explorar_estudiante", "explorar_egresado"]:
                         respuesta += "\n\n🔹 _Escribe *0* para volver atrás._\n🔹 _Escribe *menú* para ir al menú principal._"
-                    elif estado == "modo_ia":
-                        respuesta += "\n\n🔹 _Escribe *0* o *menú* para salir del modo IA._"
+                    
+                    elif estado_actual == "modo_ia":
+                        respuesta += "\n\n🔹 _Escribe tu pregunta o escribe *0* para salir._"
+                    
+                    elif estado_actual == "menu_principal":
+                        respuesta += "\n\n🔹 _Escribe el número de tu opción._"
 
                     enviar_mensaje_meta(numero, respuesta)
 
