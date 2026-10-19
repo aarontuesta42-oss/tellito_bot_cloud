@@ -135,12 +135,13 @@ def redactar_con_ia(prompt_usuario, contexto_json):
 
     prompt_sistema = (
         f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
-        f"Responde de forma amigable, persuasiva y clara. Usa emojis. "
+        f"Responde de forma amigable, clara y CONCISA. Usa emojis. "
         f"Aquí tienes la información oficial:\n\n{contexto_str}{info_extra}\n\n"
         f"REGLA DE ORO: SIEMPRE debes recordar al usuario:\n"
         f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
         f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
-        f"Redacta un mensaje estructurado, bonito y directo."
+        f"REGLAS DE FORMATO: Usa SOLO un asterisco para negritas (ej: *texto*). NO uses doble asterisco (**). "
+        f"NO agregues opciones de menú ni textos como 'Escribe menú' al final. Solo da la información."
     )
     
     payload = {
@@ -373,16 +374,16 @@ async def recibir_mensaje(request: Request):
                 if not respuesta: 
                     enviar_fallback_ciclico(numero)
                 else:
-                    # Limpiamos footers viejos para no duplicar
-                    respuesta = respuesta.replace("\n\n🔹 _Escribe *menú*", "").replace("\n\n🔹 _Escribe *0*", "").replace("\n\n🔹 _Escribe el número de tu opción._", "")
+                    # Limpiamos cualquier intento de la IA por escribir menús
+                    respuesta = respuesta.replace("Escribe menú", "").replace("Escribe *menú*", "").replace("Escribe el número", "").replace("Escribe *0*", "")
 
+                    # Añadimos el pie de página correcto según el estado
                     if estado in ["menu_tramites", "menu_certificados", "menu_matricula_est", "menu_carreras", "menu_explorar"]:
-                        respuesta += "\n\n🔹 _Escribe el número de tu opción._"
+                        respuesta += "\n\n🔹 _Escribe el número de tu opción._\n🔹 _Escribe *0* para volver atrás._"
                     elif estado in ["ver_certificado", "ver_tramite", "ver_matricula", "ver_carrera", "explorar_prospecto", "explorar_estudiante", "explorar_egresado"]:
                         respuesta += "\n\n🔹 _Escribe *0* para volver atrás._\n🔹 _Escribe *menú* para ir al menú principal._"
                     elif estado == "modo_ia":
                         respuesta += "\n\n🔹 _Escribe *0* o *menú* para salir del modo IA._"
-                    # Menu principal ya tiene su propio footer en la función get_menu_principal
 
                     enviar_mensaje_meta(numero, respuesta)
 
