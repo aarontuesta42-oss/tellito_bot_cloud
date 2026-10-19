@@ -154,7 +154,8 @@ def redactar_con_ia(prompt_usuario, contexto_json):
         f"- Usa SOLO un asterisco a cada lado para negrita: *texto*\n"
         f"- Usa guion bajo a cada lado para cursiva: _texto_\n"
         f"- NO uses almohadillas (#) ni doble asterisco (**).\n"
-        f"- ¡PROHIBIDO! NO agregues menús de opciones (1, 2, 3...). NO agregues textos como 'Escribe menú' o 'Escribe 0'. Solo entrega el texto informativo."
+        f"- ¡PROHIBIDO! NO agregues menús de opciones (1, 2, 3...). NO agregues textos como 'Escribe menú' o 'Escribe 0'. "
+        f"- ¡PROHIBIDO! NO hagas preguntas de seguimiento al final como '¿Cuál te gustaría conocer mejor?'. Solo entrega la información y termina el mensaje."
     )
     
     payload = {
