@@ -29,7 +29,7 @@ with open('base_conocimiento.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 faqs = data['faqs']
 conceptos_pago = data['conceptos_pago']
-carreras_info = data.get('info_carreras', {}) # Carga las carreras desde el JSON
+carreras_info = data.get('info_carreras', {})
 
 user_states = {}
 user_data = {}
@@ -41,7 +41,7 @@ POSTERS_FALLBACK = [
     {"url": "https://i.ibb.co/LXJDyTQd/3.png", "texto": "🛡️ ¡No salgas a la superficie a hacer filas! Aquí estoy seguro, 24/7. Escribe *menú* para que te ayude con cualquier trámite. 🤖✨"}
 ]
 
-# --- CARTERA DE CLIENTES ---
+# --- BASE DE DATOS ---
 if not os.path.exists('logs'): os.makedirs('logs')
 
 def guardar_cliente(numero, nombres, perfil, carrera):
@@ -49,27 +49,25 @@ def guardar_cliente(numero, nombres, perfil, carrera):
         response = supabase.table('clientes').update({
             "nombres": nombres, "perfil": perfil, "carrera": carrera
         }).eq('whatsapp', numero).execute()
-        
         if not response.data:
             supabase.table('clientes').insert({
                 "whatsapp": numero, "nombres": nombres, "perfil": perfil, "carrera": carrera
             }).execute()
-        print(f"✅ Cliente guardado en Supabase: {nombres}")
+        print(f"✅ Cliente guardado: {nombres}")
     except Exception as e:
-        print(f"❌ Error guardando en BD: {e}")
+        print(f"❌ Error BD: {e}")
 
 def cargar_cliente(numero):
     try:
         response = supabase.table('clientes').select('*').eq('whatsapp', numero).execute()
         if response.data:
-            print(f"✅ Cliente encontrado en Supabase: {response.data[0]['nombres']}")
             return {
                 "nombres": response.data[0]['nombres'],
                 "perfil": response.data[0]['perfil'],
                 "carrera": response.data[0]['carrera']
             }
     except Exception as e:
-        print(f"❌ Error cargando de BD: {e}")
+        print(f"❌ Error BD: {e}")
     return None
 
 # --- ENVÍO DE MENSAJES ---
@@ -94,68 +92,32 @@ def enviar_fallback_ciclico(numero):
     user_data[numero]['poster_indice'] = (indice_actual + 1) % len(POSTERS_FALLBACK)
     enviar_imagen_meta(numero, poster_elegido["url"], poster_elegido["texto"])
 
-# --- BÚSQUEDA ---
+# --- BÚSQUEDA DE FAQ ---
 def get_faq_by_id(faq_id):
     for f in faqs:
         if f.get('id') == faq_id:
             return f
     return None
 
-# --- IA DEEPSEEK (Solo redacta, no busca) ---
-def redactar_con_ia(prompt_usuario, contexto_json):
+# --- IA DEEPSEEK (SOLO REDACTA) ---
+def redactar_con_ia(prompt_usuario, faq_dict):
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
     
-    precio = None
-    if isinstance(contexto_json, dict):
-        cat = contexto_json.get('categoria', '').lower()
-        subcat = contexto_json.get('subcategoria', '').lower()
-        text_to_match = cat + " " + subcat
-        
-        for pago in conceptos_pago:
-            if any(palabra in pago['concepto'].lower() for palabra in ["ratificación", "certificado", "constancia", "duplicado", "convalidación", "subsanación", "cambio de turno", "traslado", "reincorporación", "licencia", "reserva"]):
-                if "ratificación" in text_to_match and "ratificación" in pago['concepto'].lower(): precio = pago['monto']
-                elif "reserva" in text_to_match and "reserva" in pago['concepto'].lower() and "reincorporación" not in pago['concepto'].lower(): precio = pago['monto']
-                elif "licencia" in text_to_match and "licencia" in pago['concepto'].lower() and "reincorporación" not in pago['concepto'].lower(): precio = pago['monto']
-                elif "certificado" in text_to_match and "certificado de estudios" in pago['concepto'].lower(): precio = pago['monto']
-                elif "constancia" in text_to_match and "constancia de egresado" in pago['concepto'].lower(): precio = pago['monto']
-                elif "duplicado" in text_to_match and "duplicado" in pago['concepto'].lower() and "recibo" not in pago['concepto'].lower(): precio = pago['monto']
-                elif "convalidación" in text_to_match and "convalidación" in pago['concepto'].lower(): precio = pago['monto']
-                elif "subsanación" in text_to_match and "subsanación" in pago['concepto'].lower(): precio = pago['monto']
-                elif "cambio de turno" in text_to_match and "cambio de turno" in pago['concepto'].lower(): precio = pago['monto']
-                elif "traslado interno" in text_to_match and "traslado interno" in pago['concepto'].lower(): precio = pago['monto']
-                elif "traslado externo" in text_to_match and "traslado externo" in pago['concepto'].lower(): precio = pago['monto']
-        
-        if not precio:
-            if "ratificación" in text_to_match: precio = 180.00
-            elif "reserva" in text_to_match: precio = 30.00
-            elif "licencia" in text_to_match: precio = 30.00
-            elif "certificado" in text_to_match: precio = 129.00
-            elif "constancia" in text_to_match: precio = 80.00
-            elif "duplicado" in text_to_match: precio = 245.00
-            elif "convalidación" in text_to_match: precio = 61.00
-            elif "subsanación" in text_to_match: precio = 40.00
-            elif "cambio de turno" in text_to_match: precio = 123.00
-            elif "traslado interno" in text_to_match: precio = 250.00
-            elif "traslado externo" in text_to_match: precio = 300.00
-
-    info_extra = f"\n\nEl COSTO EXACTO es: S/ {precio:.2f}." if precio else "\n\nNo hay costo registrado para este trámite."
-    contexto_str = json.dumps(contexto_json, indent=2, ensure_ascii=False) if isinstance(contexto_json, dict) else str(contexto_json)
+    contexto_str = json.dumps(faq_dict, indent=2, ensure_ascii=False)
 
     prompt_sistema = (
         f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
         f"Tu única tarea es redactar la información del trámite de forma amigable, clara y CONCISA. Usa emojis. "
-        f"Aquí tienes la información oficial:\n\n{contexto_str}{info_extra}\n\n"
+        f"Aquí tienes la información oficial:\n\n{contexto_str}\n\n"
         f"REGLA DE ORO: SIEMPRE debes recordar al usuario:\n"
         f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
         f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
-        f"REGLA DE PRECIOS: Si el usuario pregunta por el costo del examen de admisión, el monto total es S/ 180.00 (S/ 170.00 de inscripción + S/ 10.00 de prospecto).\n"
         f"REGLAS DE FORMATO ESTRICTAS (ESTÁS EN WHATSAPP):\n"
         f"- Usa SOLO un asterisco a cada lado para negrita: *texto*\n"
         f"- Usa guion bajo a cada lado para cursiva: _texto_\n"
         f"- NO uses almohadillas (#) ni doble asterisco (**).\n"
-        f"- ¡PROHIBIDO! NO agregues menús de opciones (1, 2, 3...). NO agregues textos como 'Escribe menú' o 'Escribe 0'. "
-        f"- ¡PROHIBIDO! NO hagas preguntas de seguimiento al final como '¿Cuál te gustaría conocer mejor?'. Solo entrega la información y termina el mensaje."
+        f"- ¡PROHIBIDO! NO agregues menús de opciones (1, 2, 3...). NO hagas preguntas de seguimiento. Solo entrega la información."
     )
     
     payload = {
@@ -171,27 +133,48 @@ def redactar_con_ia(prompt_usuario, contexto_json):
         print(f"Error IA: {e}")
         return "Tuve un pequeño problema pensando la respuesta, pero aquí tienes la info oficial."
 
-# --- MENÚ MAESTRO ---
+# --- TEXTOS DE MENÚS ---
 def get_menu_principal(primer_nombre, is_new=False):
-    if is_new: 
-        menu = f"¡Todo listo, *{primer_nombre}*! 🚀 Ya estás registrado en el sistema. Aquí tienes nuestro índice de consultas:\n\n"
-    else: 
-        menu = f"¡Hola de nuevo, *{primer_nombre}*! 👋 ¿En qué te puedo ayudar hoy? Aquí tienes el índice:\n\n"
-    
-    menu += "🎓 *INFORMACIÓN DE PROSPECTO*\n"
-    menu += "1️⃣ Modalidades de Admisión\n2️⃣ Costos de Postular\n3️⃣ Requisitos de Matrícula\n4️⃣ Traslado Externo\n\n"
-    
-    menu += "📚 *INFORMACIÓN DE ESTUDIANTE*\n"
-    menu += "5️⃣ Trámites Académicos (Turno, Subsanación)\n6️⃣ Certificados y Constancias\n7️⃣ Ratificación, Reserva o Licencia\n\n"
-    
-    menu += "🎉 *INFORMACIÓN DE EGRESADO*\n"
-    menu += "8️⃣ Titulación (TAP o Examen)\n9️⃣ Constancia de Egresado\n🔟 Certificación Modular\n\n"
-    
-    menu += "🏫 *GENERAL*\n"
-    menu += "1️⃣1️⃣ Nuestras Carreras\n1️⃣2️⃣ Contacto y Ubicación\n\n"
-    
-    menu += "0️⃣ Reiniciar registro"
-    return menu
+    saludo = "¡Todo listo! 🚀 Ya estás registrado." if is_new else f"¡Hola de nuevo, *{primer_nombre}*! 👋"
+    return f"{saludo}\nAquí tienes nuestro índice de consultas:\n\n" \
+           "🎓 *INFORMACIÓN DE PROSPECTO*\n" \
+           "1️⃣ Modalidades de Admisión\n2️⃣ Costos de Postular\n3️⃣ Requisitos de Matrícula\n4️⃣ Traslado Externo\n\n" \
+           "📚 *INFORMACIÓN DE ESTUDIANTE*\n" \
+           "5️⃣ Trámites Académicos\n6️⃣ Certificados y Constancias\n7️⃣ Ratificación, Reserva o Licencia\n\n" \
+           "🎉 *INFORMACIÓN DE EGRESADO*\n" \
+           "8️⃣ Titulación (TAP o Examen)\n9️⃣ Constancia de Egresado\n🔟 Certificación Modular\n\n" \
+           "🏫 *GENERAL*\n" \
+           "1️⃣1️⃣ Nuestras Carreras\n1️⃣2️⃣ Contacto y Ubicación\n\n" \
+           "0️⃣ Reiniciar registro\n\n" \
+           "🔹 _Escribe el número de tu opción._"
+
+SUBMENUS = {
+    "submenu_1": "🎓 *MODALIDADES DE ADMISIÓN*\n\n1️⃣ Ingreso Ordinario\n2️⃣ Ingreso por Exoneración\n3️⃣ Ingreso Extraordinario\n\n0️⃣ Volver al menú principal",
+    "submenu_2": "💰 *COSTOS DE POSTULAR*\n\n1️⃣ Costo de Inscripción y Prospecto\n2️⃣ Costo de Matrícula\n\n0️⃣ Volver al menú principal",
+    "submenu_3": "📄 *REQUISITOS DE MATRÍCULA*\n\n1️⃣ Documentos para Matrícula\n\n0️⃣ Volver al menú principal",
+    "submenu_4": "🔄 *TRASLADO EXTERNO*\n\n1️⃣ Requisitos para Traslado Externo\n\n0️⃣ Volver al menú principal",
+    "submenu_5": "📄 *TRÁMITES ACADÉMICOS*\n\n1️⃣ Cambio de Turno\n2️⃣ Subsanación de Cursos\n3️⃣ Convalidación de Cursos\n\n0️⃣ Volver al menú principal",
+    "submenu_6": "📑 *CERTIFICADOS Y CONSTANCIAS*\n\n1️⃣ Certificado de Estudios\n2️⃣ Constancia de Egresado\n3️⃣ Duplicado de Título\n\n0️⃣ Volver al menú principal",
+    "submenu_7": "🎓 *MATRÍCULA*\n\n1️⃣ Ratificación de Matrícula\n2️⃣ Reserva de Matrícula\n3️⃣ Licencia de Estudios\n\n0️⃣ Volver al menú principal",
+    "submenu_8": "🎉 *TITULACIÓN*\n\n1️⃣ Trabajo de Aplicación Profesional (TAP)\n2️⃣ Examen de Suficiencia Profesional\n3️⃣ Requisitos para Titularse\n\n0️⃣ Volver al menú principal",
+    "submenu_9": "📜 *CONSTANCIA DE EGRESADO*\n\n1️⃣ ¿Qué es y cómo obtenerla?\n\n0️⃣ Volver al menú principal",
+    "submenu_10": "🔟 *CERTIFICACIÓN MODULAR*\n\n1️⃣ ¿Qué es y cómo obtenerla?\n\n0️⃣ Volver al menú principal",
+    "menu_carreras": "🏫 *NUESTRAS CARRERAS*\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n0️⃣ Volver al menú principal",
+}
+
+# MAPEO: (Submenú, Opción elegida) -> ID del JSON
+MAPEO_FAQS = {
+    "submenu_1": {"1": "FAQ-015", "2": "FAQ-016", "3": "FAQ-023"},
+    "submenu_2": {"1": "FAQ-017", "2": "FAQ-036"}, # Costo examen, Costo matrícula
+    "submenu_3": {"1": "FAQ-029"},
+    "submenu_4": {"1": "FAQ-074"},
+    "submenu_5": {"1": "FAQ-117", "2": "FAQ-118", "3": "FAQ-062"},
+    "submenu_6": {"1": "FAQ-080", "2": "FAQ-086", "3": "FAQ-105"},
+    "submenu_7": {"1": "FAQ-037", "2": "FAQ-042", "3": "FAQ-050"},
+    "submenu_8": {"1": "FAQ-093", "2": "FAQ-094", "3": "FAQ-096"},
+    "submenu_9": {"1": "FAQ-086"},
+    "submenu_10": {"1": "FAQ-110"},
+}
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
@@ -221,94 +204,94 @@ async def recibir_mensaje(request: Request):
             respuesta = ""
             enviar_texto_final = True
 
-            # 🚨 CANCELAR O REINICIAR
-            if texto_lower in ["cancelar", "reiniciar", "salir", "menu", "menú"]:
-                if estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"]:
-                    user_states[numero] = "esperando_nombre"
-                    user_data[numero] = {}
-                    enviar_mensaje_meta(numero, "🔄 Entendido. He reiniciado el registro. ¡Hola de nuevo! 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊")
-                    return Response(content="OK", status_code=200)
-                    
             # --- REGISTRO ---
             if estado == "inicio":
-                cliente_existente = cargar_cliente(numero)
-                if cliente_existente:
-                    user_data[numero] = cliente_existente
+                cliente = cargar_cliente(numero)
+                if cliente:
+                    user_data[numero] = cliente
                     user_states[numero] = "menu_principal"
-                    respuesta = get_menu_principal(cliente_existente['nombres'].split()[0], is_new=False)
+                    respuesta = get_menu_principal(cliente['nombres'].split()[0], is_new=False)
                 else:
                     user_states[numero] = "esperando_nombre"
                     user_data[numero] = {}
-                    respuesta = "¡Hola! 👋 Qué gusto tenerte por aquí. Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*, tu asistente virtual. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊"
+                    respuesta = "¡Hola! 👋 Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊"
 
             elif estado == "esperando_nombre":
                 user_data[numero]['nombres'] = texto.title()
                 user_states[numero] = "esperando_perfil"
-                respuesta = f"¡Un gusto, *{texto.split()[0]}*! 🤝\n\nCuéntame, ¿cuál es tu situación actual? (Responde con el número):\n\n1️⃣ 🎓 Soy *Prospecto* (quiero postular)\n2️⃣ 📚 Soy *Estudiante* actual\n3️⃣ 🎉 Soy *Egresado*"
+                respuesta = f"¡Un gusto, *{texto.split()[0]}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto*\n2️⃣ 📚 Soy *Estudiante*\n3️⃣ 🎉 Soy *Egresado*"
 
             elif estado == "esperando_perfil":
-                if texto_lower in ["1", "prospecto"]: perfil = "Prospecto"
-                elif texto_lower in ["2", "estudiante"]: perfil = "Estudiante"
-                elif texto_lower in ["3", "egresado"]: perfil = "Egresado"
-                else: 
-                    enviar_mensaje_meta(numero, "⚠️ Elige 1, 2 o 3 (o escribe 'cancelar' para reiniciar).")
-                    return Response(content="OK", status_code=200)
-                
-                user_data[numero]['perfil'] = perfil
-                user_states[numero] = "esperando_carrera"
-                pregunta = "¡Excelente! 🚀 Ahora dime, ¿cuál es la *carrera de tu interés*? (Responde con el número):" if perfil == "Prospecto" else "¡Excelente! 🎓 Ahora dime, ¿*a qué carrera perteneces*? (Responde con el número):"
-                respuesta = f"{pregunta}\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas de Información\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa"
+                perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
+                if texto_lower in perfiles:
+                    user_data[numero]['perfil'] = perfiles[texto_lower]
+                    user_states[numero] = "esperando_carrera"
+                    respuesta = "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Sistemas\n4️⃣ ⚡ Electricidad\n5️⃣ 🚗 Mec. Automotriz\n6️⃣ ⚙️ Mec. Producción\n7️⃣ 📋 Asistencia Adm."
+                else:
+                    respuesta = "⚠️ Elige 1, 2 o 3."
 
             elif estado == "esperando_carrera":
-                carreras = {"1": "Administración de Empresas", "2": "Contabilidad", "3": "Desarrollo de Sistemas", "4": "Electricidad Industrial", "5": "Mecánica Automotriz", "6": "Mecánica de Producción", "7": "Asistencia Administrativa"}
-                if texto_lower in carreras: carrera_elegida = carreras[texto_lower]
-                else: 
-                    enviar_mensaje_meta(numero, "⚠️ Elige un número del 1 al 7 (o escribe 'cancelar' para reiniciar).")
-                    return Response(content="OK", status_code=200)
-                
-                user_data[numero]['carrera'] = carrera_elegida
-                user_states[numero] = "menu_principal"
-                guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
-                respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0], is_new=True)
+                carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
+                if texto_lower in carreras:
+                    user_data[numero]['carrera'] = carreras[texto_lower]
+                    user_states[numero] = "menu_principal"
+                    guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
+                    respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0], is_new=True)
+                else:
+                    respuesta = "⚠️ Elige un número del 1 al 7."
 
-            # --- MENÚ PRINCIPAL (ÍNDICE ÚNICO) ---
+            # --- MENÚ PRINCIPAL ---
             elif estado == "menu_principal":
                 if texto_lower == "0":
                     user_states[numero] = "esperando_nombre"
                     user_data[numero] = {}
                     respuesta = "Entendido. He reiniciado el registro. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
-                
-                # Prospecto
-                elif texto_lower == "1": respuesta = redactar_con_ia("Explícame las modalidades de admisión", get_faq_by_id("FAQ-014"))
-                elif texto_lower == "2": respuesta = redactar_con_ia("Explícame los costos de postular", get_faq_by_id("FAQ-017"))
-                elif texto_lower == "3": respuesta = redactar_con_ia("Explícame los requisitos de matrícula", get_faq_by_id("FAQ-029"))
-                elif texto_lower == "4": respuesta = redactar_con_ia("Explícame el traslado externo", get_faq_by_id("FAQ-074"))
-                
-                # Estudiante
-                elif texto_lower == "5": respuesta = redactar_con_ia("Explícame los trámites académicos (cambio de turno, subsanación, convalidación)", get_faq_by_id("FAQ-117"))
-                elif texto_lower == "6": respuesta = redactar_con_ia("Explícame los certificados y constancias", get_faq_by_id("FAQ-080"))
-                elif texto_lower == "7": respuesta = redactar_con_ia("Explícame ratificación, reserva o licencia", get_faq_by_id("FAQ-037"))
-                
-                # Egresado
-                elif texto_lower == "8": respuesta = redactar_con_ia("Explícame las modalidades de titulación", get_faq_by_id("FAQ-092"))
-                elif texto_lower == "9": respuesta = redactar_con_ia("Explícame la constancia de egresado", get_faq_by_id("FAQ-086"))
-                elif texto_lower == "10": respuesta = redactar_con_ia("Explícame la certificación modular", get_faq_by_id("FAQ-110"))
-                
-                # General
-                elif texto_lower == "11": user_states[numero] = "menu_carreras"; respuesta = "🏫 *CARRERAS*\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas de Información\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa"
-                elif texto_lower == "12": respuesta = "🏢 *Atención Personalizada*\n\n📍 Visítanos en: Mz. \"A\", Lote 1, 3er Sector, Grupo 2, Villa El Salvador.\n🕒 Horario: L-V de 8:00 a 13:00 y 14:30 a 21:00.\n\n¡Estamos para ayudarte! 😊"
+                elif texto_lower in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]:
+                    user_states[numero] = f"submenu_{texto_lower}"
+                    respuesta = SUBMENUS[f"submenu_{texto_lower}"]
+                elif texto_lower == "11":
+                    user_states[numero] = "menu_carreras"
+                    respuesta = SUBMENUS["menu_carreras"]
+                elif texto_lower == "12":
+                    user_states[numero] = "menu_principal" # Se queda aquí
+                    respuesta = "🏢 *Atención Personalizada*\n\n📍 Visítanos en: Mz. \"A\", Lote 1, 3er Sector, Grupo 2, Villa El Salvador.\n🕒 Horario: L-V de 8:00 a 13:00 y 14:30 a 21:00.\n\n¡Estamos para ayudarte! 😊\n\n🔹 _Escribe *menú* para volver al índice._"
                 else:
-                    respuesta = "⚠️ Opción no válida. Por favor, elige un número del menú principal."
+                    respuesta = "⚠️ Opción no válida. Elige un número del 1 al 12."
 
-            # --- MENÚ DE CARRERAS ---
-            elif estado == "menu_carreras":
-                if texto_lower in carreras_info:
+            # --- SUBMENÚS ---
+            elif estado in SUBMENUS:
+                if texto_lower == "0" or texto_lower == "menú" or texto_lower == "menu":
+                    user_states[numero] = "menu_principal"
+                    respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0])
+                elif estado == "menu_carreras" and texto_lower in carreras_info:
                     info = carreras_info[texto_lower]
                     enviar_imagen_meta(numero, info['url'], info['titulo'])
                     enviar_mensaje_meta(numero, info['texto'])
-                    respuesta = "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice principal."
+                    respuesta = "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice."
+                elif estado in MAPEO_FAQS and texto_lower in MAPEO_FAQS[estado]:
+                    faq_id = MAPEO_FAQS[estado][texto_lower]
+                    faq_data = get_faq_by_id(faq_id)
+                    if faq_data:
+                        user_states[numero] = "viendo_info"
+                        user_data[numero]['estado_anterior'] = estado # Guarda de dónde vino
+                        respuesta = redactar_con_ia(faq_data['preguntas'][0], faq_data)
+                        respuesta += "\n\n🔹 _Escribe *0* para volver atrás._\n🔹 _Escribe *menú* para ir al inicio._"
+                    else:
+                        respuesta = "⚠️ Información no encontrada. Escribe *0* para volver."
                 else:
-                    enviar_fallback_ciclico(numero); enviar_texto_final = False
+                    respuesta = "⚠️ Opción no válida. Escribe *0* para volver."
+
+            # --- INFORMACIÓN (IA) ---
+            elif estado == "viendo_info":
+                if texto_lower == "0":
+                    estado_anterior = user_data[numero].get('estado_anterior', 'menu_principal')
+                    user_states[numero] = estado_anterior
+                    respuesta = SUBMENUS[estado_anterior]
+                elif texto_lower in ["menú", "menu"]:
+                    user_states[numero] = "menu_principal"
+                    respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0])
+                else:
+                    respuesta = "🔹 _Escribe *0* para volver atrás o *menú* para ir al inicio._"
 
             else:
                 enviar_fallback_ciclico(numero); enviar_texto_final = False
@@ -318,13 +301,6 @@ async def recibir_mensaje(request: Request):
                 if not respuesta: 
                     enviar_fallback_ciclico(numero)
                 else:
-                    estado_actual = user_states.get(numero, "menu_principal")
-                    
-                    if estado_actual == "menu_principal":
-                        respuesta += "\n\n🔹 _Escribe el número de tu opción._"
-                    elif estado_actual == "menu_carreras":
-                        respuesta += "\n\n🔹 _Escribe *menú* para volver al índice principal._"
-                    
                     enviar_mensaje_meta(numero, respuesta)
 
     except Exception as e:
