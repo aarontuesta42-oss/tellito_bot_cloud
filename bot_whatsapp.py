@@ -109,12 +109,16 @@ def enviar_fallback_ciclico(numero):
 
 # --- BÚSQUEDA SEGURA ---
 def buscar_faq(termino, categoria=None):
+    termino_lower = termino.lower()
     for f in faqs:
-        if termino.lower() in f['subcategoria'].lower():
+        if termino_lower in f['subcategoria'].lower():
             if categoria:
                 if categoria.lower() in f['categoria'].lower(): return f
             else: return f
-        if termino.lower() in f['categoria'].lower(): return f
+        if termino_lower in f['categoria'].lower(): return f
+        # ¡NUEVO! Buscar dentro del array de preguntas
+        if any(termino_lower in p.lower() for p in f.get('preguntas', [])):
+            return f
     return None
 
 def redactar_con_ia(prompt_usuario, contexto_json):
@@ -372,7 +376,12 @@ async def recibir_mensaje(request: Request):
                     respuesta = get_menu_principal(user_data[numero]['perfil'], user_data[numero]['nombres'].split()[0], is_new=False)
                 else:
                     contexto = buscar_faq(texto)
-                    if not contexto: contexto = "El usuario pregunta algo que no está en el JSON. Si no lo sabes, derívalo a Secretaría Académica."
+                    # Si no encuentra una respuesta exacta, le pasamos TODA la lista de precios y FAQs a la IA para que ella busque
+                    if not contexto:
+                        contexto = {
+                            "info_faqs": faqs,
+                            "info_precios": conceptos_pago
+                        }
                     respuesta = redactar_con_ia(texto, contexto)
 
             # --- SUBMENÚS (Redactados por la IA) ---
