@@ -30,6 +30,7 @@ with open('base_conocimiento.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 faqs = data['faqs']
 conceptos_pago = data['conceptos_pago']
+carreras_info = data['info_carreras']
 
 user_states = {}
 user_data = {}
@@ -390,18 +391,16 @@ async def recibir_mensaje(request: Request):
 
             # --- MENÚ DE CARRERAS ---
             elif estado == "menu_carreras":
-                # ... (Mantén aquí tu diccionario carreras_info con los textos largos, no lo borres) ...
-                # Si lo borraste, avísame y te lo vuelvo a pasar.
-                carreras_info = {
-                    "1": {"url": "https://i.ibb.co/fz7kxPqn/administraci-n.jpg", "titulo": "Administración de Empresas 📈", "texto": "..."}, # Pega tus textos aquí
-                }
-                # (Por temas de espacio en este chat, asegúrate de pegar tu diccionario completo carreras_info)
-                pass # <--- BORRA ESTA LÍNEA 'pass' Y PEGA TU DICCIONARIO COMPLETO
-
-            else:
-                res_json = buscar_faq(texto)
-                if res_json: respuesta = redactar_con_ia(texto, res_json)
-                else: enviar_fallback_ciclico(numero); enviar_texto_final = False
+                if texto_lower in carreras_info:
+                    info = carreras_info[texto_lower]
+                    # 1. Enviamos la imagen con un título corto
+                    enviar_imagen_meta(numero, info['url'], info['titulo'])
+                    # 2. Enviamos el texto largo como un mensaje aparte
+                    enviar_mensaje_meta(numero, info['texto'])
+                    # 3. Mensaje final de opciones
+                    respuesta = "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver."
+                else:
+                    enviar_fallback_ciclico(numero); enviar_texto_final = False
 
             # --- ENVÍO FINAL ---
             if enviar_texto_final:
