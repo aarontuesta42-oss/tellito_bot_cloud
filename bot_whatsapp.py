@@ -228,7 +228,7 @@ async def recibir_mensaje(request: Request):
                 user_data[numero]['perfil'] = perfil
                 user_states[numero] = "esperando_carrera"
                 pregunta = "¡Excelente! 🚀 Ahora dime, ¿cuál es la *carrera de tu interés*? (Responde con el número):" if perfil == "Prospecto" else "¡Excelente! 🎓 Ahora dime, ¿*a qué carrera perteneces*? (Responde con el número):"
-                respuesta = f"{pregunta}\n\n1️⃣ 💼 Administración\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Sistemas\n4️⃣ ⚡ Electricidad\n5️⃣ 🚗 Mecánica Auto\n6️⃣ ⚙️ Mecánica Prod\n7️⃣ 📋 Asistencia"
+                respuesta = f"{pregunta}\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas de Información\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa"
 
             elif estado == "esperando_carrera":
                 carreras = {"1": "Administración de Empresas", "2": "Contabilidad", "3": "Desarrollo de Sistemas", "4": "Electricidad Industrial", "5": "Mecánica Automotriz", "6": "Mecánica de Producción", "7": "Asistencia Administrativa"}
@@ -284,7 +284,7 @@ async def recibir_mensaje(request: Request):
                     if texto_lower == "1": user_states[numero] = "ver_tramite"; respuesta = redactar_con_ia("Explícame las modalidades de admisión", buscar_faq("Modalidades"))
                     elif texto_lower == "2": user_states[numero] = "ver_tramite"; respuesta = redactar_con_ia("Explícame los costos de postular", buscar_faq("Costo"))
                     elif texto_lower == "3": user_states[numero] = "ver_tramite"; respuesta = redactar_con_ia("Explícame los requisitos de matrícula", buscar_faq("Documentos"))
-                    elif texto_lower == "4": user_states[numero] = "menu_carreras"; respuesta = "🏫 *CARRERAS*\n\n1️⃣ 💼 Administración\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Sistemas\n4️⃣ ⚡ Electricidad\n5️⃣ 🚗 Mecánica Auto\n6️⃣ ⚙️ Mecánica Prod\n7️⃣ 📋 Asistencia"
+                    elif texto_lower == "4": user_states[numero] = "menu_carreras"; respuesta = "🏫 *CARRERAS*\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas de Información\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa"
                     elif texto_lower == "5": user_states[numero] = "ver_tramite"; respuesta = redactar_con_ia("Explícame el traslado externo", buscar_faq("Traslado externo"))
                     elif texto_lower == "6": respuesta = "🏢 *Atención Personalizada*\n\n📍 Visítanos en: Mz. \"A\", Lote 1, 3er Sector, Grupo 2, Villa El Salvador.\n🕒 Horario: L-V de 8:00 a 13:00 y 14:30 a 21:00.\n\n¡Estamos para ayudarte! 😊"
                     else:
