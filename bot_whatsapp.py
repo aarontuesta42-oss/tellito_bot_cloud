@@ -26,6 +26,10 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"status": "Tellito Bot está despierto y funcionando!"}
+
 # 2. Cargar JSON
 with open('base_conocimiento.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
@@ -113,14 +117,13 @@ def buscar_faq(termino, categoria=None):
         if termino.lower() in f['categoria'].lower(): return f
     return None
 
-# --- 🤖 EL PODER DE LA IA (DEEPSEEK) CON PRECIOS EXACTOS ---
 def redactar_con_ia(prompt_usuario, contexto_json):
     """Usa DeepSeek para redactar respuestas amigables, inyectando el precio exacto."""
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
     
-    # Buscamos el precio exacto en el TUPA
     precio = None
+    # Validar que contexto_json sea un diccionario para evitar el error 'cat'
     if isinstance(contexto_json, dict):
         cat = contexto_json.get('categoria', '').lower()
         subcat = contexto_json.get('subcategoria', '').lower()
@@ -139,23 +142,23 @@ def redactar_con_ia(prompt_usuario, contexto_json):
                 elif "cambio de turno" in text_to_match and "cambio de turno" in pago['concepto'].lower(): precio = pago['monto']
                 elif "traslado interno" in text_to_match and "traslado interno" in pago['concepto'].lower(): precio = pago['monto']
                 elif "traslado externo" in text_to_match and "traslado externo" in pago['concepto'].lower(): precio = pago['monto']
-
-    # Fallback de emergencia (solo por si acaso)
-    if not precio:
-        if "ratificación" in cat + subcat: precio = 180.00
-        elif "reserva" in cat + subcat: precio = 30.00
-        elif "licencia" in cat + subcat: precio = 30.00
-        elif "certificado" in cat + subcat: precio = 129.00
-        elif "constancia" in cat + subcat: precio = 80.00
-        elif "duplicado" in cat + subcat: precio = 245.00
-        elif "convalidación" in cat + subcat: precio = 61.00
-        elif "subsanación" in cat + subcat: precio = 40.00
-        elif "cambio de turno" in cat + subcat: precio = 123.00
-        elif "traslado interno" in cat + subcat: precio = 250.00
-        elif "traslado externo" in cat + subcat: precio = 300.00
+        
+        # Si es un diccionario pero no encontramos precio en la iteración, usamos el fallback
+        if not precio:
+            if "ratificación" in text_to_match: precio = 180.00
+            elif "reserva" in text_to_match: precio = 30.00
+            elif "licencia" in text_to_match: precio = 30.00
+            elif "certificado" in text_to_match: precio = 129.00
+            elif "constancia" in text_to_match: precio = 80.00
+            elif "duplicado" in text_to_match: precio = 245.00
+            elif "convalidación" in text_to_match: precio = 61.00
+            elif "subsanación" in text_to_match: precio = 40.00
+            elif "cambio de turno" in text_to_match: precio = 123.00
+            elif "traslado interno" in text_to_match: precio = 250.00
+            elif "traslado externo" in text_to_match: precio = 300.00
 
     info_extra = f"\n\nEl COSTO EXACTO es: S/ {precio:.2f}." if precio else "\n\nNo hay costo registrado para este trámite."
-    contexto_str = json.dumps(contexto_json, indent=2, ensure_ascii=False)
+    contexto_str = json.dumps(contexto_json, indent=2, ensure_ascii=False) if isinstance(contexto_json, dict) else str(contexto_json)
 
     prompt_sistema = (
         f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
