@@ -6,15 +6,23 @@ import random
 from datetime import datetime
 from difflib import SequenceMatcher
 from fastapi import FastAPI, Request, Response
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from dotenv import load_dotenv
+from supabase import create_client
+import io
 
-# 1. Cargar variables
+# 1. Cargar variables de entorno (PRIMERO se carga el .env)
 load_dotenv()
+
 META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
 META_PHONE_NUMBER_ID = os.getenv("META_PHONE_NUMBER_ID")
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") # NUEVO
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI()
 
@@ -38,23 +46,25 @@ POSTERS_FALLBACK = [
 if not os.path.exists('logs'): os.makedirs('logs')
 
 def guardar_cliente(numero, nombres, perfil, carrera):
-    archivo = 'logs/cartera_clientes.csv'
-    archivo_existe = os.path.isfile(archivo)
-    with open(archivo, mode='a', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        if not archivo_existe: writer.writerow(['Fecha', 'Hora', 'WhatsApp', 'Nombres y Apellidos', 'Perfil', 'Carrera'])
-        ahora = datetime.now()
-        writer.writerow([ahora.strftime('%Y-%m-%d'), ahora.strftime('%H:%M:%S'), numero, nombres, perfil, carrera])
+    try:
+        data = {"whatsapp": numero, "nombres": nombres, "perfil": perfil, "carrera": carrera}
+        supabase.table('clientes').upsert(data, on_conflict='whatsapp').execute()
+        print(f"✅ Cliente guardado en Supabase: {nombres}")
+    except Exception as e:
+        print(f"❌ Error guardando en BD: {e}")
 
 def cargar_cliente(numero):
-    archivo = 'logs/cartera_clientes.csv'
-    if not os.path.isfile(archivo): return None
-    with open(archivo, mode='r', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        next(reader, None)
-        for row in reader:
-            if len(row) >= 6 and row[2] == numero:
-                return {"nombres": row[3], "perfil": row[4], "carrera": row[5]}
+    try:
+        response = supabase.table('clientes').select('*').eq('whatsapp', numero).execute()
+        if response.data:
+            print(f"✅ Cliente encontrado en Supabase: {response.data[0]['nombres']}")
+            return {
+                "nombres": response.data[0]['nombres'],
+                "perfil": response.data[0]['perfil'],
+                "carrera": response.data[0]['carrera']
+            }
+    except Exception as e:
+        print(f"❌ Error cargando de BD: {e}")
     return None
 
 # --- ENVÍO DE MENSAJES E IMÁGENES ---
