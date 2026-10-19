@@ -1,0 +1,724 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "fecha_actualizacion": "2026-10-18",
+    "institucion": "IESTP Julio César Tello",
+    "fuentes": [
+      "TUPA 2025",
+      "Manual de Procesos Académicos VES-2022",
+      "Validación en campo y redes oficiales"
+    ],
+    "moneda": "PEN",
+    "uit_vigente": 4600
+  },
+  "faqs": [
+    {
+      "id": "FAQ-001",
+      "categoria": "Información institucional",
+      "subcategoria": "Nombre",
+      "preguntas": ["¿Cómo se llama el instituto?", "¿Cuál es el nombre del instituto?", "¿Nombre oficial del IESTP?", "¿Denominación oficial?"],
+      "respuesta": "¡Hola, qué gusto saludarte! 👋 Nuestro nombre oficial completo es *Instituto de Educación Superior Tecnológico Público \"Julio César Tello\"*. Esas siglas (IESTP) son la base de nuestra identidad. 🎓✨ Pero entre nosotros, puedes llamarnos simplemente *J.C. Tello*, ¡nuestra segunda casa! 🏫💙 Aquí formamos a los profesionales técnicos que mueven el país. ¿Te gustaría saber qué carreras tenemos para ti? 🚀",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-002",
+      "categoria": "Información institucional",
+      "subcategoria": "Ubicación",
+      "preguntas": ["¿Dónde queda?", "¿Dónde está ubicado?", "¿Cuál es la dirección?", "¿Cómo llego al instituto?"],
+      "respuesta": "¡Estamos en el corazón de Villa El Salvador! 📍 Nos encuentras en la Mz. \"A\", Lote 1, 3er Sector, Grupo 2, Villa El Salvador, Lima. \n\nComo referencia, estamos cerca a las Avenidas Bolívar y Central. ¡Te esperamos con las puertas abiertas! 🏫✨",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": "Referencia: Avenidas Bolívar y Central.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-003",
+      "categoria": "Información institucional",
+      "subcategoria": "Teléfonos",
+      "preguntas": ["¿Cuál es el teléfono?", "¿Cómo los contacto por teléfono?", "¿Número de teléfono del instituto?"],
+      "respuesta": "¡Comunícate con nosotros! 📞 Nuestros teléfonos oficiales son:\n- 287 3676\n- 287 9783\n- 287 8585\n\n¡Estaremos encantados de atenderte! 😊",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-004",
+      "categoria": "Información institucional",
+      "subcategoria": "Horarios",
+      "preguntas": ["¿Cuál es el horario de atención?", "¿A qué hora atienden?", "¿Horario de oficina?"],
+      "respuesta": "¡Te atendemos de lunes a viernes! 🗓️ Nuestro horario es de 8:00 a 13:00 y de 14:30 a 21:00. ¡Ven cuando gustes! 🕒",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-005",
+      "categoria": "Información institucional",
+      "subcategoria": "Turnos",
+      "preguntas": ["¿Qué turnos hay?", "¿Hay turno nocturno?", "¿Turnos disponibles?"],
+      "respuesta": "¡Tenemos el turno perfecto para ti! 🌅 Contamos con turno *Diurno* (mañana/tarde) y *Nocturno* (noche). Así que puedes estudiar sin descuidar tus otras responsabilidades. ¡Tú decides! 🌙",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-006",
+      "categoria": "Información institucional",
+      "subcategoria": "Web",
+      "preguntas": ["¿Tienen página web?", "¿Cuál es la web?", "¿Dirección web del instituto?"],
+      "respuesta": "¡Claro que sí! 🌐 Visítanos en: http://www.iestpjctello.edu.pe \n\nAhí encontrarás noticias, comunicados y toda la info oficial. ¡Échale un vistazo! 💻✨",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-007",
+      "categoria": "Información institucional",
+      "subcategoria": "Visión",
+      "preguntas": ["¿Cuál es la visión?", "¿Visión del instituto?", "¿Qué busca el instituto a futuro?"],
+      "respuesta": "¡Nuestra visión es gigante! 🚀 Para el año 2026, queremos ser un centro de excelencia que impulse el desarrollo local, regional y nacional a través de la formación profesional tecnológica. 🎓 ¡Líderes en investigación, innovación y transferencia tecnológica en Lima Sur! 🌟",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-008",
+      "categoria": "Información institucional",
+      "subcategoria": "Misión",
+      "preguntas": ["¿Cuál es la misión?", "¿Misión del instituto?", "¿Qué hace el instituto?"],
+      "respuesta": "Nuestra misión es formarte como un profesional técnico de primer nivel. 🎯 Impulsamos la investigación, ofrecemos servicios de calidad avalados por SINEACE e ISO 9001, y nos enfocamos en darte una visión empresarial y emprendedora. ¡Estamos aquí para que triunfes en el mercado laboral! 💼✨",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-009",
+      "categoria": "Información institucional",
+      "subcategoria": "Valores",
+      "preguntas": ["¿Cuáles son los valores?", "¿Valores institucionales?", "¿Qué valores promueve el instituto?"],
+      "respuesta": "¡Nos mueven los buenos valores! 💙 Nuestros 7 pilares son: \n1) Honradez 🤝\n2) Puntualidad ⏱️\n3) Respeto 🙌\n4) Responsabilidad 💪\n5) Solidaridad ❤️\n6) Identidad 🇵🇪\n7) Tolerancia 🕊️\n\n¡Buscamos formar no solo grandes profesionales, sino grandes personas! 🌟",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-010",
+      "categoria": "Información institucional",
+      "subcategoria": "Programas",
+      "preguntas": ["¿Qué carreras ofrece?", "¿Qué programas de estudio hay?", "¿Qué puedo estudiar?", "¿Cuáles son los programas de estudios?"],
+      "respuesta": "📌 *NUESTRAS CARRERAS PROFESIONALES*\n\n🎓 Administración de Empresas\n🎓 Contabilidad\n🎓 Computación e Informática\n🎓 Electrotecnia Industrial\n🎓 Mecánica Automotriz\n🎓 Mecánica de Producción\n🎓 Asistencia Administrativa\n\n💡 *Cuéntame, ¿qué carrera te llama más la atención?* Si quieres saber algo específico de alguna, solo escríbela.",
+      "requisitos": [], "costo": null, "oficina": null, "observaciones": "Son 7 programas de estudios.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-011", "categoria": "Información institucional", "subcategoria": "Documento de creación", "preguntas": ["¿Cuándo fue creado el instituto?", "¿Con qué resolución se creó?", "¿Cuál es el documento de creación?"], "respuesta": "¡Somos una institución con historia! 🏛️ Fue creado mediante RM N° 310-80-ED, el 28 de marzo de 1980. Y revalidado con RD 379-2006-ED en el 2006. ¡Décadas formando profesionales! 🎓", "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-012", "categoria": "Información institucional", "subcategoria": "Revalidación", "preguntas": ["¿Cuál es el documento de revalidación?", "¿Cuándo se revalidó el instituto?"], "respuesta": "Nuestro documento de revalidación es la RD 379-2006-ED, de fecha 22/05/2006. ¡Seguimos vigentes y mejorando para ti! 📜✨", "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-013", "categoria": "Información institucional", "subcategoria": "Ubicación geográfica", "preguntas": ["¿En qué región está?", "¿En qué provincia está?", "¿En qué distrito está?"], "respuesta": "¡Estamos en la capital! 🇵🇪 Región: Lima. Provincia: Lima Metropolitana. Distrito: Villa El Salvador. ¡Ven a visitarnos! 📍", "requisitos": [], "costo": null, "oficina": null, "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-014", "categoria": "Admisión", "subcategoria": "Modalidades", "preguntas": ["¿Cómo puedo ingresar?", "¿Qué modalidades de admisión hay?", "¿Cuáles son las formas de ingreso?", "¿Cómo entro al instituto?"], "respuesta": "¡Tienes 3 formas de ingresar a nuestra gran familia! 🎓\n\n1️⃣ *Ingreso Ordinario:* Mediante un examen de admisión.\n2️⃣ *Ingreso por Exoneración:* Para casos especiales (SPAYOV, primeros puestos, deportistas, discapacitados, servicio militar, etc.).\n3️⃣ *Ingreso Extraordinario:* Autorizado por el MINEDU.\n\n¿Cuál te gustaría conocer mejor? 👀", "requisitos": [], "costo": null, "oficina": "Secretaría Académica / Comisión de Admisión", "observaciones": "Se realiza una vez al año.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-015", "categoria": "Admisión", "subcategoria": "Ingreso Ordinario", "preguntas": ["¿Quiénes pueden dar el examen?", "¿Quiénes pueden postular por ordinario?", "¿Quiénes pueden dar el examen de admisión?", "¿Quién puede ingresar por examen?"], "respuesta": "¡Si estás terminando el colegio, esta es tu oportunidad! 🎓 Pueden postular por Ingreso Ordinario:\n\n✔️ Egresados de Educación Básica Regular (Secundaria).\n✔️ Egresados de Centros de Educación Básica Alternativa (CEBA).\n\nSi vienes del extranjero, tu certificado debe estar validado por la DRELM. ¡Prepárate y da tu mejor esfuerzo! 💪", "requisitos": ["Certificado de estudios de secundaria", "Validación DRELM si es extranjero"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-016", "categoria": "Admisión", "subcategoria": "Exoneración - General", "preguntas": ["¿Quiénes están exonerados?", "¿Quiénes no dan examen?", "¿Quiénes se exoneran del examen de admisión?", "¿Qué casos de exoneración hay?"], "respuesta": "¡Si cumples con algún requisito, puedes ingresar sin dar el examen! 🎉 Según la Ley N° 30512, aplican estos casos:\n\n1️⃣ SPAYOV: Los 3 primeros puestos por turno en los simulacros.\n2️⃣ Primeros Puestos: Los 2 primeros de EBR en los últimos 2 años.\n3️⃣ Título Profesional: Titulados de institutos o universidades.\n4️⃣ Deportistas Calificados: Reconocidos por el IPD.\n5️⃣ Discapacitados: Leyes N° 27050 y N° 29973.\n6️⃣ Servicio Militar: Quienes estén cumpliéndolo.\n7️⃣ Ley N° 29643: FFAA y PNP.\n\n¿Cumples con alguno? Te ayudamos con el trámite. 😉", "requisitos": ["Documentación según la modalidad de exoneración"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-017", "categoria": "Admisión", "subcategoria": "Exoneración - SPAYOV", "preguntas": ["¿Qué es SPAYOV?", "¿Cómo me exoneran por SPAYOV?", "¿Cuántos puestos SPAYOV se exoneran?"], "respuesta": "¡SPAYOV es tu pase directo! 🚀 Si quedaste en los *3 primeros puestos* por turno y programa de estudios en los simulacros del SPAYOV, ¡estás exonerado del examen de admisión! \n\nPrepárate en los simulacros y asegura tu vacante. 🎯", "requisitos": ["Haber ocupado los 3 primeros puestos en los simulacros SPAYOV"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-018", "categoria": "Admisión", "subcategoria": "Exoneración - Primeros Puestos", "preguntas": ["¿Exoneran a los primeros puestos?", "¿Cómo me exoneran por ser primer puesto?", "¿Cuántos primeros puestos exoneran?"], "respuesta": "¡Tu esfuerzo tiene recompensa! 🏆 Si fuiste de los *2 primeros puestos* en rendimiento académico en tu colegio (público o privado) durante los últimos 2 años, ¡estás exonerado! \n\nSolo necesitas presentar tu constancia. 📜✨", "requisitos": ["Constancia de haber ocupado 1° o 2° puesto en los 2 últimos años"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-019", "categoria": "Admisión", "subcategoria": "Exoneración - Título Profesional", "preguntas": ["¿Si ya tengo título profesional puedo ingresar sin examen?", "¿Exoneran a titulados?", "¿Puedo ingresar con título universitario?"], "respuesta": "¡Claro que sí! 🎓 Si ya cuentas con un título profesional (de instituto o universidad, nacional o extranjero) con un mínimo de 3 años de estudios, puedes ingresar a estudiar otra carrera sin dar examen. \n\n*(Si es extranjero, debe estar homologado/validado)*. 🌍", "requisitos": ["Título profesional", "Estudios mínimos de 3 años"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-020", "categoria": "Admisión", "subcategoria": "Exoneración - Deportistas", "preguntas": ["¿Los deportistas están exonerados?", "¿Cómo ingreso si soy deportista calificado?", "¿Qué necesito si soy deportista?"], "respuesta": "¡El talento deportivo también es bienvenido! 🏅 Si has demostrado excelencia en alguna disciplina deportiva (nivel departamental, regional, nacional o internacional) y estás reconocido por el *Instituto Peruano del Deporte (IPD)*, ¡estás exonerado del examen! ⚽🥇", "requisitos": ["Reconocimiento del IPD"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-021", "categoria": "Admisión", "subcategoria": "Exoneración - Discapacidad", "preguntas": ["¿Las personas con discapacidad están exoneradas?", "¿Qué leyes amparan la exoneración por discapacidad?", "¿Exoneran a discapacitados?"], "respuesta": "¡La inclusión es parte de nuestra identidad! 💙 Las personas con discapacidad amparadas por las Leyes N° 27050 y N° 29973 están exoneradas del examen. \n\nTambién aplica para el personal de las FFAA y PNP (Ley N° 29643). ¡Tú puedes lograrlo! 💪", "requisitos": ["Documentación que acredite la condición"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-022", "categoria": "Admisión", "subcategoria": "Exoneración - Servicio Militar", "preguntas": ["¿Si estoy en servicio militar me exoneran?", "¿Exoneran a los que hacen servicio militar?", "¿Puedo postular estando en el ejército?"], "respuesta": "¡Gracias por servir al país! 🇵🇪 Si te encuentras cumpliendo servicio militar, estás exonerado del examen de admisión (Art. 14° Ley N° 30512). Solo tienes que presentar el documento que lo acredite. 🎖️", "requisitos": ["Documento que acredite servicio militar"], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-023", "categoria": "Admisión", "subcategoria": "Ingreso Extraordinario", "preguntas": ["¿Qué es el ingreso extraordinario?", "¿Cómo ingreso por la modalidad extraordinaria?", "¿Quién autoriza el ingreso extraordinario?"], "respuesta": "Es una modalidad especial que se da bajo autorización directa del Ministerio de Educación (MINEDU). 🏛️ Si el MINEDU lo aprueba, el instituto abre estas vacantes. ¡Atento a los comunicados oficiales! 📢", "requisitos": [], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-024", "categoria": "Admisión", "subcategoria": "Frecuencia", "preguntas": ["¿Cuándo es el examen?", "¿Cuántas veces al año hay examen?", "¿Cuándo es la admisión?"], "respuesta": "¡Atento al cronograma! 🗓️ El proceso de Admisión se realiza **una vez al año**, según lo que disponga la Comisión de Admisión. \n\nNo te pierdas las fechas, ¡síguenos en nuestras redes para estar al día! 📱✨", "requisitos": [], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-025", "categoria": "Admisión", "subcategoria": "Responsable del proceso", "preguntas": ["¿Quién organiza la admisión?", "¿Quién está a cargo del proceso de admisión?", "¿Quién es el responsable de admisión?"], "respuesta": "El gran cerebro detrás del proceso de Admisión es la **Comisión de Admisión** de nuestro instituto. 🧠 Ellos se encargan de todo: cronograma, examen y resultados. Si tienes dudas, acércate a ellos. 🏢", "requisitos": [], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-026", "categoria": "Admisión", "subcategoria": "Producto", "preguntas": ["¿Qué resultado da la admisión?", "¿Qué entrega la Comisión de Admisión?", "¿Cuál es el producto del proceso de admisión?"], "respuesta": "¡El resultado final es la tan esperada **Lista de Ingresantes**! 🎉 Este listado se publica por turno y se envía a Secretaría Académica y a la Jefatura de Unidad Académica. ¡Cruza los dedos y prepárate para matricularte! 🤞🤩", "requisitos": [], "costo": null, "oficina": "Comisión de Admisión", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-027", "categoria": "Matrícula de ingresantes", "subcategoria": "Pasos", "preguntas": ["¿Cómo me matriculo?", "¿Cómo es el proceso de matrícula?", "¿Qué pasos debo seguir para matricularme?", "¿Cómo me matriculo si ya ingresé?", "¿Cuáles son los pasos de la matrícula de ingresantes?"],
+      "respuesta": "¡Felicidades por ingresar! 🥳 Sigue estos pasos obligatorios para matricularte:\n\n1️⃣ Realiza el pago en el *Banco de la Nación* a la Cta. Cte. N° 00000-289078.\n2️⃣ Lleva tu voucher ORIGINAL y una COPIA física a la sección de Cobranza (Caja) del instituto para hacer el canje.\n3️⃣ Recibe tu recibo de caja.\n4️⃣ Presenta tu solicitud (FUT) por Mesa de Partes con tu recibo, certificado de estudios original y DNI (ambas caras).\n\n⚠️ *Ojo:* El canje en físico es obligatorio. No hay links ni subidas virtuales.",
+      "requisitos": [], "costo": "S/ 180.00", "oficina": "Caja / Secretaría Académica", "observaciones": "Llevar voucher original y copia para el canje.", "fuente": "Prospecto 2025"
+    },
+    {
+      "id": "FAQ-028", "categoria": "Matrícula de ingresantes", "subcategoria": "Plazo", "preguntas": ["¿Cuánto tiempo tengo para matricularme?", "¿Cuál es el plazo de matrícula?", "¿Hasta cuándo me puedo matricular?", "¿Qué pasa si no me matriculo a tiempo?"],
+      "respuesta": "¡Ojo con la fecha! ⏰ La matrícula debe hacerse en el término inmediato al proceso de admisión. Si necesitas reservar matrícula, se otorga por única vez y hasta por 2 semestres consecutivos, solicitándolo en máximo 15 días hábiles desde el inicio del semestre. Si no lo haces, pierdes el derecho de ingreso. ¡No te duermas! 😴🚫",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Si no te matriculas a tiempo, pierdes el derecho de ingreso.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-029", "categoria": "Matrícula de ingresantes", "subcategoria": "Documentos", "preguntas": ["¿Qué documentos presento para matricularme?", "¿Qué documentos necesito para la matrícula?", "¿Qué debo adjuntar en la matrícula?", "¿Requisitos de matrícula de ingresantes?"],
+      "respuesta": "📄 *Documentos para tu matrícula:*\n\n✔️ Recibo de caja / voucher de matrícula (¡obligatorio!).\n✔️ Certificado de estudios de 1ro a 5to de secundaria (o declaración jurada y entregarlo en 6 meses).\n✔️ DNI (obligatorio).\n✔️ Partida de nacimiento original.\n✔️ 02 fotos tamaño carné (fondo blanco y formal).\n\n*Si ingresaste por exoneración:* Además, los documentos que acrediten tu condición y una Declaración Jurada. 📋",
+      "requisitos": ["Recibo de caja / voucher", "Certificado de estudios", "DNI", "Partida de nacimiento original", "02 fotos carné"], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Los exonerados presentan documentos adicionales.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-030", "categoria": "Matrícula de ingresantes", "subcategoria": "Reserva de matrícula", "preguntas": ["¿Puedo reservar la matrícula al ingresar?", "¿Se puede reservar la matrícula de ingresante?", "¿Por cuánto tiempo puedo reservar mi matrícula al ingresar?"],
+      "respuesta": "¡Sí! Pero solo por única vez y hasta por 2 semestres consecutivos. Debes solicitarlo en un plazo máximo de 15 días hábiles desde el inicio del primer semestre. Pasado ese tiempo, pierdes el derecho de ingreso. ⏳",
+      "requisitos": ["Solicitud dentro de 15 días hábiles"], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Solo se otorga por única vez.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-031", "categoria": "Matrícula de ingresantes", "subcategoria": "Adquisición de condición de estudiante", "preguntas": ["¿Cuándo se es estudiante del instituto?", "¿Cuándo adquiero la condición de estudiante?", "¿Cómo me convierto en estudiante del IESTP?"],
+      "respuesta": "¡Te vuelves oficialmente estudiante cuando culminas tu proceso de matrícula! 🎓 Es el paso final después de cumplir todos los requisitos de admisión. ¡Bienvenido a la familia! 🏫✨",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-032", "categoria": "Matrícula de ingresantes", "subcategoria": "Autorización", "preguntas": ["¿Quién autoriza la matrícula?", "¿Cómo se aprueba la matrícula?", "¿La matrícula se aprueba con resolución?"],
+      "respuesta": "La matrícula de los ingresantes es autorizada oficialmente mediante una **Resolución Directoral**, en la carrera y turno que postulaste. 📜 ¡Ya tienes tu vacante asegurada!",
+      "requisitos": [], "costo": null, "oficina": "Dirección General", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-033","categoria": "Matrícula de ingresantes", "subcategoria": "Banco y cuenta",
+      "preguntas": ["¿Dónde pago la matrícula?", "¿En qué banco deposito?", "¿Cuál es la cuenta para pagar matrícula?", "¿Cómo pago el derecho de matrícula?"],
+      "respuesta": "¡Ve al Banco de la Nación! 🏦 Paga en ventanilla o agente a la Cuenta Corriente *N° 00000-289078*. \n\nDespués, no olvides llevar tu voucher ORIGINAL y una COPIA a la Caja del instituto para canjearlo por tu recibo. 💻✅", "requisitos": [], "costo": null, "oficina": "Banco de la Nación / Caja del instituto", "observaciones": null, "fuente": "Prospecto 2025"
+    },
+    {"id": "FAQ-034", "categoria": "Matrícula de ingresantes", "subcategoria": "Canje de voucher", "preguntas": [ "¿Cómo hago el canje del voucher?", "¿Dónde canjeo el voucher?", "¿Qué es el canje de recibo?"],
+      "respuesta": "El canje del voucher se realiza de forma *PRESENCIAL* en la Sección de Cobranza (Caja) del instituto. 🏢\n\nDebes presentar:\n✔️ Tu voucher original del Banco de la Nación.\n✔️ Una copia del mismo.\n✔️ Copia de tu DNI.\n\nEllos te entregarán tu recibo de caja oficial. ¡Es obligatorio para completar tu matrícula! 📄",
+      "requisitos": ["Voucher original", "Copia del voucher", "Copia de DNI"], "costo": null, "oficina": "Caja / Tesorería del instituto","observaciones": "El canje es presencial, no virtual.", "fuente": "Prospecto 2025"
+    },
+    {
+      "id": "FAQ-035", "categoria": "Matrícula de ingresantes", "subcategoria": "Responsable del proceso", "preguntas": ["¿Quién está a cargo de la matrícula?", "¿Quién es el responsable de la matrícula de ingresantes?", "¿Quién organiza la matrícula?"],
+      "respuesta": "La **Secretaría Académica** es la encargada de todo el proceso de matrícula. Si tienes algún problema, acércate a su oficina. 🏢✨",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-036", "categoria": "Matrícula de ingresantes", "subcategoria": "Producto", "preguntas": ["¿Qué resultado da la matrícula?", "¿Qué se obtiene después de matricularse?", "¿Cuál es el producto del proceso de matrícula?", "¿Qué es la nómina oficial de estudiantes?"],
+      "respuesta": "¡El resultado final es la **Nómina Oficial de Estudiantes**! 🎉 Tu nombre queda registrado en el sistema REGISTRA. Dirección General, Jefatura de Unidad Académica y Administración reciben esta nómina. ¡Ya eres oficialmente parte del J.C. Tello! 🏫💙",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-037", "categoria": "Ratificación de matrícula", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es ratificación de matrícula?", "¿En qué consiste ratificar la matrícula?", "¿Qué significa ratificar matrícula?"],
+      "respuesta": "¡Es el paso para seguir avanzando! 🚀 La ratificación es el proceso que haces al finalizar un periodo lectivo para confirmar que seguirás estudiando el siguiente semestre. ¡No te quedes atrás! 🎓",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-038", "categoria": "Ratificación de matrícula", "subcategoria": "¿Quiénes ratifican?", "preguntas": ["¿Quiénes deben ratificar matrícula?", "¿Qué semestres ratifican?", "¿A partir de qué semestre se ratifica?"],
+      "respuesta": "Deben ratificar todos los estudiantes del *II, III, IV, V y VI semestre* que hayan culminado el periodo anterior y quieran continuar. 🗓️ ¡Recuerda estar atento al cronograma!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Confirmar semestres con Secretaría Académica.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-039", "categoria": "Ratificación de matrícula", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para ratificar?", "¿Requisitos de ratificación de matrícula?", "¿Qué documentos presento para ratificar?"],
+      "respuesta": "Para ratificar tu matrícula necesitas:\n✔️ Boleta de notas.\n✔️ Recibo de pago por ratificación de matrícula (S/ 180.00). *Si eres 1° o 2° puesto, presentas tu R.D., o si tienes prórroga/exoneración, su documento respectivo*. 💰📄",
+      "requisitos": ["Boleta de notas", "Recibo de pago por ratificación (o R.D.)"], "costo": "S/ 180.00", "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-040", "categoria": "Ratificación de matrícula", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la ratificación?", "¿Quién es el responsable de ratificar matrícula?"],
+      "respuesta": "La **Secretaría Académica** está a cargo de gestionar tu ratificación. Si tienes dudas, no dudes en consultarles. 🏢👩‍💻",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-041", "categoria": "Ratificación de matrícula", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la ratificación?", "¿Qué se obtiene al ratificar matrícula?", "¿Cuál es el producto de la ratificación?"],
+      "respuesta": "El resultado es la **Nómina Oficial de Estudiantes que ratificaron**, registrada en el sistema REGISTRA. Dirección y Jefaturas la reciben. ¡Es tu pase para el siguiente semestre! 📋✨",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-042", "categoria": "Reserva de matrícula", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es reserva de matrícula?", "¿En qué consiste reservar la matrícula?", "¿Puedo dejar de estudiar un tiempo sin perder mi vacante?"],
+      "respuesta": "¡Claro que puedes hacer una pausa! 🛑 La reserva es el acto voluntario para aplazar tu matrícula por un tiempo determinado, según lo autorice la Dirección General. 📝",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": "El plazo máximo puede variar.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-043", "categoria": "Reserva de matrícula", "subcategoria": "Duración", "preguntas": ["¿Por cuánto tiempo puedo reservar matrícula?", "¿Cuántos semestres puedo reservar?", "¿Cuál es el tiempo máximo de reserva?"],
+      "respuesta": "Puedes reservar tu matrícula por un tiempo máximo de *cuatro (4) semestres* o periodos lectivos. ⏳ ¡Tómate tu tiempo!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Confirmar plazo exacto con Secretaría.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-044", "categoria": "Reserva de matrícula", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para reservar matrícula?", "¿Requisitos de reserva de matrícula?", "¿Qué documentos presento para reservar?"],
+      "respuesta": "Para reservar matrícula, necesitas:\n✔️ Solicitud (FUT).\n✔️ Ficha de matrícula anterior.\n✔️ Constancia de ingreso (si eres ingresante).\n✔️ DNI.\n✔️ Recibo de pago. 📄💰",
+      "requisitos": ["Solicitud (FUT)", "Ficha de matrícula anterior", "DNI", "Recibo de pago"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-045", "categoria": "Reserva de matrícula", "subcategoria": "Plazo", "preguntas": ["¿Cuándo debo solicitar la reserva?", "¿Cuál es el plazo para reservar matrícula?", "¿Antes de qué fecha pido la reserva?"],
+      "respuesta": "Debes presentar tu solicitud **antes de que inicie el plazo de matrícula**, según el cronograma del IESTP. Si no lo haces, tendrás que pedir una reactualización antes de que venza tu autorización. 🗓️",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-046", "categoria": "Reserva de matrícula", "subcategoria": "Reactualización", "preguntas": ["¿Qué pasa si se me vence la reserva?", "¿Puedo extender la reserva de matrícula?", "¿Qué es la reactualización de reserva?"],
+      "respuesta": "Si tu reserva está por vencer, puedes pedir una **reactualización** antes de la fecha límite. Los requisitos específicos te los darán en Secretaría Académica. ¡No dejes que se te pase la fecha! ⏳",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-047", "categoria": "Reserva de matrícula", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la reserva?", "¿Qué me entregan si reservo matrícula?", "¿Cuál es el producto de la reserva?"],
+      "respuesta": "Te entregarán una **Resolución Directoral** que autoriza oficialmente tu reserva de matrícula. 📜 ¡Ese es tu respaldo!",
+      "requisitos": [], "costo": null, "oficina": "Dirección General", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-048", "categoria": "Reserva de matrícula", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la reserva de matrícula?", "¿Quién es el responsable de la reserva?"],
+      "respuesta": "El proceso está a cargo de la **Secretaría Académica**. 👩‍💻",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-049", "categoria": "Reserva de matrícula", "subcategoria": "Relación con licencia", "preguntas": ["¿La reserva se relaciona con licencia de estudios?", "¿Cuánto dura una licencia de estudios?", "¿La licencia puede ser mayor a la reserva?"],
+      "respuesta": "Sí, están relacionadas. La *Licencia de Estudios* no puede ser mayor a 4 periodos lectivos. Ambos trámites requieren autorización de la Dirección General. 🎓",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-050", "categoria": "Licencia de estudios", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es licencia de estudios?", "¿En qué consiste la licencia de estudios?", "¿Puedo pedir licencia de estudios?", "¿Cómo dejo de estudiar un tiempo estando matriculado?"],
+      "respuesta": "La Licencia de Estudios es el permiso que te da el instituto para dejar de estudiar por un tiempo (por razones personales, laborales, etc.) luego de haberte matriculado. 🛑 ¡Es tu decisión!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-051", "categoria": "Licencia de estudios", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para la licencia de estudios?", "¿Requisitos de licencia de estudios?", "¿Qué documentos presento para pedir licencia?"],
+      "respuesta": "Para pedir licencia necesitas:\n✔️ Solicitud de Licencia (FUT).\n✔️ Ficha de matrícula anterior.\n✔️ DNI virtual.\n✔️ Declaración jurada (si el trámite es virtual).\n✔️ Recibo de pago. 📄",
+      "requisitos": ["Solicitud (FUT)", "Ficha de matrícula", "DNI", "Recibo de pago"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-052", "categoria": "Licencia de estudios", "subcategoria": "Plazo", "preguntas": ["¿Cuándo puedo solicitar la licencia de estudios?", "¿Hasta qué semana puedo pedir licencia?", "¿Cuál es el plazo para solicitar licencia?"],
+      "respuesta": "Puedes solicitarla **desde la semana 2 hasta la semana 15** del semestre en curso. 🗓️ ¡Ojo con la fecha!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-053", "categoria": "Licencia de estudios", "subcategoria": "Duración", "preguntas": ["¿Por cuánto tiempo puedo pedir licencia?", "¿Cuál es el tiempo máximo de licencia de estudios?", "¿Cuántos semestres dura la licencia?"],
+      "respuesta": "La licencia se autoriza por un tiempo máximo de **cuatro (4) semestres o periodos lectivos**. ⏳",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-054", "categoria": "Licencia de estudios", "subcategoria": "Reincorporación anticipada", "preguntas": ["¿Puedo reincorporarme antes de lo solicitado?", "¿Puedo volver antes de que termine mi licencia?", "¿Puedo retomar mis estudios antes del plazo de licencia?"],
+      "respuesta": "¡Sí! Puedes reincorporarte antes si cumples con los requisitos. Al terminar tu licencia, debes solicitar tu reincorporación para volver a matricularte. 🚀",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-055", "categoria": "Licencia de estudios", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la licencia de estudios?", "¿Qué me entregan si pido licencia?", "¿Cuál es el producto de la licencia?"],
+      "respuesta": "Te entregarán una **Resolución Directoral** que autoriza tu Licencia de Estudios (máximo 4 semestres). 📜",
+      "requisitos": [], "costo": null, "oficina": "Dirección General", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-056", "categoria": "Licencia de estudios", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la licencia de estudios?", "¿Quién es el responsable de otorgar la licencia?"],
+      "respuesta": "La **Secretaría Académica** está a cargo. 🏢",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-057", "categoria": "Reincorporación", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es la reincorporación?", "¿En qué consiste reincorporarse?", "¿Cómo vuelvo al instituto después de una reserva o licencia?"],
+      "respuesta": "Es el proceso para que vuelvas a la institución después de haber pedido reserva de matrícula o licencia de estudios. ¡Tu casa te espera de vuelta! 🏫💙",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-058", "categoria": "Reincorporación", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para reincorporarme?", "¿Requisitos de reincorporación?", "¿Qué documentos presento para reincorporarme?"],
+      "respuesta": "Para reincorporarte necesitas:\n✔️ Resolución Directoral de reserva o licencia.\n✔️ Recibo de pago por reincorporación.\n✔️ Fotocopia de DNI.\n✔️ Récord de notas. 📄💰",
+      "requisitos": ["Resolución Directoral", "Recibo de pago", "Fotocopia DNI", "Récord de notas"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-059", "categoria": "Reincorporación", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la reincorporación?", "¿Qué me entregan al reincorporarme?", "¿Cuál es el producto de la reincorporación?"],
+      "respuesta": "El producto es tu registro en la nómina oficial del periodo lectivo correspondiente. ¡Vuelves a estar en las listas! 📋✨",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-060", "categoria": "Reincorporación", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la reincorporación?", "¿Quién es el responsable de la reincorporación?"],
+      "respuesta": "La **Secretaría Académica**. 👩‍💻",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-061", "categoria": "Reincorporación", "subcategoria": "Paso a paso", "preguntas": ["¿Cómo me reincorporo paso a paso?", "¿Cuál es el procedimiento de reincorporación?", "¿Qué pasos sigo para reincorporarme?"],
+      "respuesta": "El procedimiento es:\n1️⃣ Pago por reincorporación.\n2️⃣ Presentar la solicitud con requisitos.\n3️⃣ Verificación en REGISTRA.\n4️⃣ Emisión de la Resolución de reingreso. 📝✅",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-062", "categoria": "Convalidación", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es convalidación?", "¿En qué consiste la convalidación?", "¿Qué significa convalidar cursos?", "¿Cómo convalido cursos?", "¿Puedo convalidar cursos de otra institución?"],
+      "respuesta": "¡Es el reconocimiento de lo que ya sabes! 🎓 La convalidación reconoce las capacidades que adquiriste en una o varias Unidades Didácticas, ya sea en otra institución o en el ámbito laboral (debidamente certificado). ¡No empiezas de cero! 🚀",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-063", "categoria": "Convalidación", "subcategoria": "Tipos", "preguntas": ["¿Qué tipos de convalidación hay?", "¿Cuáles son los tipos de convalidación?", "¿Cómo se clasifican las convalidaciones?"],
+      "respuesta": "Tenemos varios tipos:\n1️⃣ *Entre Planes de Estudio:* Si iniciaste con un plan que ya no está vigente.\n2️⃣ *Cambio de Programa:* Si te trasladas de carrera o institución.\n3️⃣ *Con Educación Secundaria:* Si hiciste convenio con el IEST. 📚",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-064", "categoria": "Convalidación", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para convalidar?", "¿Requisitos de convalidación?", "¿Qué documentos presento para convalidar?", "¿Cómo solicito la convalidación?"],
+      "respuesta": "Para convalidar necesitas:\n✔️ Solicitud (FUT).\n✔️ Certificados de estudios (PDF si es virtual).\n✔️ Sílabos de los cursos a convalidar (PDF si es virtual).\n✔️ DNI.\n✔️ Recibo de pago (según TUPA). 📄",
+      "requisitos": ["Solicitud (FUT)", "Certificados de estudios", "Sílabos", "DNI", "Recibo de pago"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-065", "categoria": "Convalidación", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento de convalidación?", "¿Qué pasos sigue la convalidación?", "¿Qué proceso comprende la convalidación?"],
+      "respuesta": "El procedimiento es:\n1️⃣ Pago por convalidación.\n2️⃣ Presentación de la solicitud y requisitos.\n3️⃣ Verificación.\n4️⃣ Evaluación de contenidos.\n5️⃣ Informe de aceptación o denegación. 📝⚖️",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-066", "categoria": "Convalidación", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la convalidación?", "¿Quién evalúa la convalidación?", "¿Quién es el responsable de convalidar?"],
+      "respuesta": "La **Secretaría Académica**, con apoyo de los Coordinadores de los Programas de Estudio y la Jefatura de Unidad Académica. 👩‍🏫",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-067", "categoria": "Convalidación", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la convalidación?", "¿Qué se obtiene al convalidar?", "¿Cuál es el producto de la convalidación?"],
+      "respuesta": "El registro de tus calificaciones en el sistema REGISTRA. 📋 ¡Tus cursos quedan oficialmente convalidados!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-068",
+      "categoria": "Traslado interno",
+      "subcategoria": "¿Qué es?",
+      "preguntas": [
+        "¿Qué es el traslado interno?",
+        "¿Puedo cambiarme de carrera?",
+        "¿Puedo cambiarme de programa de estudios?",
+        "¿Cómo me cambio de carrera dentro del instituto?"
+      ],
+      "respuesta": "¡Es tu oportunidad de cambiar de rumbo! 🔄 El *Traslado Interno* te permite continuar tus estudios en otro programa del mismo instituto. \n\n💰 *Costo:* S/ 250.00\n🎯 *Importante:* Solo aplica si hay vacante en la carrera que deseas.",
+      "requisitos": [
+        "Solicitud (FUT) de traslado a otro Programa de Estudios",
+        "Certificados de estudios del semestre (mínimo I semestre)",
+        "Constancia de vacante (II a VI semestre)",
+        "Recibo de pago (según TUPA)"
+      ],
+      "costo": "S/ 250.00",
+      "oficina": "Secretaría Académica / Mesa de Partes",
+      "observaciones": "Sujeto a disponibilidad de vacantes.",
+      "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-069", "categoria": "Traslado interno", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para el traslado interno?", "¿Requisitos de traslado interno?", "¿Qué documentos presento para cambiarme de carrera?"],
+      "respuesta": "Para cambiarte de carrera necesitas:\n✔️ Solicitud (FUT) de traslado.\n✔️ Certificados de estudios del semestre (mínimo I semestre).\n✔️ Constancia de vacante.\n✔️ Recibo de pago (según TUPA). 📄",
+      "requisitos": ["Solicitud (FUT)", "Certificados de estudios", "Constancia de vacante", "Recibo de pago"], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Debe existir vacante.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-070", "categoria": "Traslado interno", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento de traslado interno?", "¿Qué pasos sigue el traslado interno?", "¿Qué proceso comprende el traslado interno?"],
+      "respuesta": "El procedimiento es:\n1️⃣ Pago por traslado interno.\n2️⃣ Presentación de la solicitud y requisitos.\n3️⃣ Evaluación del expediente.\n4️⃣ Informe de procedencia.\n5️⃣ Emisión de Resolución. 📝",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-071", "categoria": "Traslado interno", "subcategoria": "Condición mínima", "preguntas": ["¿Cuántos semestres debo tener para trasladarme?", "¿Necesito haber culminado algún semestre para cambiarme de carrera?", "¿Puedo trasladarme en el primer semestre?"],
+      "respuesta": "Debes haber culminado como mínimo el **I semestre** de tu carrera actual. Para el I semestre, aplica el Reglamento de Admisión. 📚",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-072", "categoria": "Traslado interno", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo del traslado interno?", "¿Quién evalúa el traslado interno?", "¿Quién es el responsable de aprobar el traslado interno?"],
+      "respuesta": "La **Secretaría Académica**, con apoyo de los Coordinadores y la Jefatura de Unidad Académica. 🏢",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-073", "categoria": "Traslado interno", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene el traslado interno?", "¿Qué se obtiene al trasladarse internamente?", "¿Cuál es el producto del traslado interno?"],
+      "respuesta": "La inclusión en la nómina oficial del programa de estudios solicitado. ¡Bienvenido a tu nueva carrera! 🎉",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-074",
+      "categoria": "Traslado externo",
+      "subcategoria": "¿Qué es?",
+      "preguntas": [
+        "¿Qué es el traslado externo?",
+        "¿Puedo venir de otro instituto?",
+        "¿Puedo trasladarme desde una universidad?",
+        "¿Puedo cambiarme de instituto al IESTP?",
+        "¿Cómo me traslado de otra institución al IESTP?"
+      ],
+      "respuesta": "Si vienes de otro instituto, escuela o universidad, puedes pedir tu *Traslado Externo* para continuar tus estudios aquí. 🏫 \n\n💰 *Costo:* S/ 300.00\n🎯 *Importante:* Solo aplica si hay vacante en la carrera que deseas.",
+      "requisitos": [
+        "Solicitud (FUT) de traslado externo",
+        "Certificados de estudios de los semestres académicos estudiados",
+        "Constancia de vacante (II a VI semestre)",
+        "Recibo de pago (según TUPA)"
+      ],
+      "costo": "S/ 300.00",
+      "oficina": "Secretaría Académica / Mesa de Partes",
+      "observaciones": "Sujeto a disponibilidad de vacantes.",
+      "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-075", "categoria": "Traslado externo", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para el traslado externo?", "¿Requisitos de traslado externo?", "¿Qué documentos presento para venir de otro instituto?"],
+      "respuesta": "Para trasladarte necesitas:\n✔️ Solicitud (FUT) de traslado externo.\n✔️ Certificados de estudios de los semestres estudiados.\n✔️ Constancia de vacante.\n✔️ Recibo de pago (según TUPA). 📄",
+      "requisitos": ["Solicitud (FUT)", "Certificados de estudios", "Constancia de vacante", "Recibo de pago"], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Debe existir vacante.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-076", "categoria": "Traslado externo", "subcategoria": "Plazo", "preguntas": ["¿Cuándo solicito el traslado externo?", "¿Cuál es el plazo para trasladarme de otra institución?", "¿Antes de qué fecha pido el traslado externo?"],
+      "respuesta": "Debes solicitarlo **antes del inicio de matrícula**, según el cronograma institucional. ¡No te duermas! 🗓️",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-077", "categoria": "Traslado externo", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento de traslado externo?", "¿Qué pasos sigue el traslado externo?", "¿Qué proceso comprende el traslado externo?"],
+      "respuesta": "El procedimiento es:\n1️⃣ Pago por traslado.\n2️⃣ Presentación de solicitud y requisitos.\n3️⃣ Evaluación del expediente.\n4️⃣ Informe de procedencia.\n5️⃣ Resolución de traslado. 📝",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-078", "categoria": "Traslado externo", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo del traslado externo?", "¿Quién evalúa el traslado externo?"],
+      "respuesta": "La **Secretaría Académica**, con apoyo de los Coordinadores y la Jefatura. 🏢",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-079", "categoria": "Traslado externo", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene el traslado externo?", "¿Qué se obtiene al trasladarse de otra institución?", "¿Cuál es el producto del traslado externo?"],
+      "respuesta": "Tu inclusión en la nómina oficial del programa solicitado. ¡Ya eres parte del J.C. Tello! 🎉",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-080", "categoria": "Certificado de estudios", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es el certificado de estudios?", "¿Para qué sirve el certificado de estudios?", "¿Qué acredita el certificado de estudios?"],
+      "respuesta": "El Certificado de Estudios es el documento oficial que acredita las calificaciones de las Unidades Didácticas (UD) que has cursado hasta la fecha. 📄 ¡Es tu respaldo académico!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-081", "categoria": "Certificado de estudios", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para el certificado de estudios?", "¿Requisitos para el certificado de estudios?", "¿Qué documentos presento para pedir el certificado?"],
+      "respuesta": "Para pedirlo necesitas:\n✔️ Solicitud (FUT) vía mesa de partes virtual.\n✔️ Récord de notas de logros de aprendizaje.\n✔️ Recibo de pago (según TUPA).\n✔️ Foto tamaño pasaporte (fondo blanco, ropa formal). 📸",
+      "requisitos": ["Solicitud (FUT)", "Récord de notas", "Recibo de pago", "Foto pasaporte"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-082", "categoria": "Certificado de estudios", "subcategoria": "Formato", "preguntas": ["¿En qué formato se emite el certificado?", "¿El certificado sigue algún formato oficial?", "¿Qué normativa rige el formato del certificado?"],
+      "respuesta": "Se emite según las disposiciones legales del MINEDU (RVM-277-MINEDU). 📜 ¡Totalmente oficial y válido!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-083", "categoria": "Certificado de estudios", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento del certificado?", "¿Qué pasos sigue la emisión del certificado?", "¿Qué proceso comprende el certificado de estudios?"],
+      "respuesta": "1️⃣ Pago por emisión de certificado.\n2️⃣ Presentación de solicitud y requisitos.\n3️⃣ Evaluación del expediente.\n4️⃣ Emisión del certificado firmado y sellado por Dirección. 📝✅",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-084", "categoria": "Certificado de estudios", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo del certificado de estudios?", "¿Quién firma el certificado de estudios?", "¿Quién es el responsable de emitir el certificado?"],
+      "respuesta": "La **Secretaría Académica** lo gestiona, y es firmado por el Secretario Académico y la Dirección General. 🖋️",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-085", "categoria": "Certificado de estudios", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene el certificado de estudios?", "¿Qué me entregan al pedir el certificado?", "¿Cuál es el producto del certificado?"],
+      "respuesta": "Te entregan el Certificado de Estudios firmado y sellado. 📜 ¡Listo para presentar donde lo necesites!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-086", "categoria": "Constancia de egresado", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es la constancia de egresado?", "¿Para qué sirve la constancia de egresado?", "¿Qué acredita la constancia de egresado?"],
+      "respuesta": "La Constancia de Egresado acredita que culminaste satisfactoriamente todas las UD, módulos transversales y tus prácticas pre profesionales. 🎓 ¡Es un paso clave para titularte!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-087", "categoria": "Constancia de egresado", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para la constancia de egresado?", "¿Requisitos para la constancia de egresado?", "¿Qué documentos presento para pedir la constancia?"],
+      "respuesta": "Necesitas:\n✔️ Solicitud (FUT).\n✔️ Constancia de aprobación de prácticas (firmada por Coordinador).\n✔️ Constancias y fichas de prácticas.\n✔️ 2 fotos pasaporte formal.\n✔️ Constancia de no adeudar. 📄",
+      "requisitos": ["Solicitud (FUT)", "Constancia de prácticas", "Fichas de prácticas", "2 fotos pasaporte", "Constancia de no adeudar"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-088", "categoria": "Constancia de egresado", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento de la constancia de egresado?", "¿Qué pasos sigue la emisión de la constancia?", "¿Qué proceso comprende la constancia de egresado?"],
+      "respuesta": "1️⃣ Pago por constancia.\n2️⃣ Presentación de solicitud y requisitos.\n3️⃣ Evaluación.\n4️⃣ Emisión de constancia firmada por Dirección. 📝",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-089", "categoria": "Constancia de egresado", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la constancia de egresado?", "¿Quién firma la constancia de egresado?", "¿Quién es el responsable de emitir la constancia?"],
+      "respuesta": "La **Secretaría Académica** y la firma la Dirección General. 🏢",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-090", "categoria": "Constancia de egresado", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la constancia de egresado?", "¿Qué me entregan al pedir la constancia?", "¿Cuál es el producto de la constancia?"],
+      "respuesta": "La Constancia de Egresado firmada y sellada por Dirección. 📜 ¡Listo para iniciar tu titulación!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-091", "categoria": "Constancia de egresado", "subcategoria": "Diferencia con certificado", "preguntas": ["¿Cuál es la diferencia entre constancia de egresado y certificado de estudios?", "¿Qué diferencia hay entre constancia y certificado?", "¿Es lo mismo constancia de egresado que certificado de estudios?"],
+      "respuesta": "¡No son lo mismo! ⚠️\n\n*Certificado de Estudios:* Acredita tus calificaciones hasta el momento.\n*Constancia de Egresado:* Acredita que terminaste TODA la carrera y tus prácticas. \n\n¡La constancia es requisito para titularte! 🎓",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-092", "categoria": "Titulación", "subcategoria": "Modalidades", "preguntas": ["¿Cómo puedo titularme?", "¿Qué modalidades de titulación hay?", "¿Cuáles son las formas de sacar el título?", "¿Cómo obtengo mi título profesional técnico?"],
+      "respuesta": "¡Tienes 2 caminos para obtener tu Título a nombre de la Nación! 🎓\n\n1️⃣ *Trabajo de Aplicación Profesional (TAP).*\n2️⃣ *Examen de Suficiencia Profesional.*\n\n¿Cuál te gustaría elegir? Te cuento más si quieres. 😉",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-093", "categoria": "Titulación", "subcategoria": "Trabajo de Aplicación Profesional", "preguntas": ["¿Qué es el Trabajo de Aplicación Profesional?", "¿En qué consiste el TAP?", "¿Qué es el TAP?", "¿Cómo es la modalidad de trabajo de aplicación profesional?"],
+      "respuesta": "El TAP es un trabajo de investigación donde demuestras tus capacidades resolviendo un problema real de tu profesión. 🛠️ Propones una solución técnica y la justificas. ¡Demuestras lo que aprendiste! 💪",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-094", "categoria": "Titulación", "subcategoria": "Examen de Suficiencia", "preguntas": ["¿Qué es el Examen de Suficiencia Profesional?", "¿En qué consiste el examen de suficiencia?", "¿Cómo es la modalidad de examen de suficiencia?"],
+      "respuesta": "Es una prueba (30% teórica-práctica virtual y 70% práctica demostrativa) donde evalúan tus competencias. 📝🛠️ ¡Si te va bien, obtienes tu título!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-095", "categoria": "Titulación", "subcategoria": "Declaración de expedito", "preguntas": ["¿Qué es ser declarado expedito?", "¿Qué significa estar expedito para titularme?", "¿Cómo me declaro expedito?"],
+      "respuesta": "¡Ser expedito significa que ya cumpliste con TODOS los requisitos! ✅ Es el paso previo para que puedas sustentar tu TAP o dar tu Examen de Suficiencia. ¡Ya casi eres titulado! 🎉",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": "Depende de la modalidad.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-096", "categoria": "Titulación", "subcategoria": "TAP - Requisitos", "preguntas": ["¿Qué necesito para el TAP?", "¿Requisitos para titularme por Trabajo de Aplicación Profesional?", "¿Qué documentos presento para la modalidad TAP?", "¿Requisitos para declararme expedito por TAP?"],
+      "respuesta": "¡Ojo con esta lista! 📋 Para el TAP necesitas:\n1) Solicitud (FUT) de declaración de expedito.\n2) Constancia de egresado.\n3) Certificado de estudios.\n4) Constancia de aprobación de prácticas.\n5) Fichas de evaluación.\n6) Ejemplar del TAP (digital y físico).\n7) Resolución de designación del Asesor.\n8) Constancia de no adeudar.\n9) Partida de nacimiento original.\n10) Certificados de secundaria.\n11) Recibo de pago de sustentación.\n12) DNI.\n13) 4 fotos pasaporte.\n14) Declaración jurada. 🎓",
+      "requisitos": ["Solicitud (FUT)", "Constancia de egresado", "Certificado de estudios", "Constancia de prácticas", "Fichas de prácticas", "Ejemplar TAP", "R.D. de Asesor", "Constancia de no adeudar", "Partida de nacimiento", "Certificados secundaria", "Recibo de pago", "DNI", "4 fotos", "Declaración jurada"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-097", "categoria": "Titulación", "subcategoria": "Examen - Requisitos", "preguntas": ["¿Qué necesito para el examen de suficiencia?", "¿Requisitos para titularme por Examen de Suficiencia?", "¿Qué documentos presento para la modalidad de examen?", "¿Requisitos para declararme expedito por examen?"],
+      "respuesta": "Para el Examen de Suficiencia necesitas:\n1) Solicitud (FUT) de declaración de expedito.\n2) Constancia de egresado.\n3) Certificado de estudios.\n4) Constancia de prácticas (firmada por Coordinador).\n5) Constancia de haber realizado prácticas.\n6) Fichas de evaluación.\n7) Constancia de no adeudar.\n8) Partida de nacimiento.\n9) Certificados de secundaria.\n10) Recibo de pago.\n11) DNI.\n12) 4 fotos pasaporte.\n13) Declaración jurada. 📋",
+      "requisitos": ["Solicitud (FUT)", "Constancia de egresado", "Certificado de estudios", "Constancia de prácticas", "Fichas de prácticas", "Constancia de no adeudar", "Partida de nacimiento", "Certificados secundaria", "Recibo de pago", "DNI", "4 fotos", "Declaración jurada"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-098", "categoria": "Titulación", "subcategoria": "Diferencia entre modalidades", "preguntas": ["¿Cuál es la diferencia entre TAP y Examen de Suficiencia?", "¿Qué modalidad de titulación me conviene?", "¿Qué diferencia hay entre las dos modalidades de titulación?"],
+      "respuesta": "¡La gran diferencia! ⚖️\n\n*TAP:* Haces un trabajo de investigación aplicada (más elaborado, requiere asesor). 🛠️\n*Examen:* Das una prueba teórico-práctica. 📝\n\nSi te gusta investigar y proponer soluciones, el TAP es para ti. Si prefieres demostrar en una prueba, dale al Examen. 💡",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-099", "categoria": "Titulación", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento de titulación?", "¿Qué pasos sigue la titulación?", "¿Qué proceso comprende la titulación?"],
+      "respuesta": "El proceso es:\n1️⃣ Pago por derecho de titulación.\n2️⃣ Presentación de solicitud con requisitos.\n3️⃣ Evaluación del expediente.\n4️⃣ Registro en el IESTP.\n5️⃣ Envío al MINEDU (plataforma TITULA).\n6️⃣ Emisión de tu título. 🎓✨",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-100", "categoria": "Titulación", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la titulación?", "¿Quién emite el título?", "¿Quién es el responsable de titulación?"],
+      "respuesta": "La **Secretaría Académica** con apoyo de Coordinadores y Dirección. 👩‍💻",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-101", "categoria": "Titulación", "subcategoria": "Producto", "preguntas": ["¿Qué me entregan al titularme?", "¿Qué resultado tiene la titulación?", "¿Cuál es el producto de la titulación?"],
+      "respuesta": "¡Recibes tu **Título a nombre de la Nación**! 🎉 El documento oficial que te acredita como profesional técnico. ¡Tu esfuerzo valió la pena! 🏆",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-102", "categoria": "Titulación", "subcategoria": "Registro en MINEDU", "preguntas": ["¿Dónde se registra el título?", "¿El título se registra en el MINEDU?", "¿Cómo se registra el título a nivel nacional?"],
+      "respuesta": "Tu título se registra en el IESTP y en el **MINEDU** a través de la plataforma TITULA. 📲 ¡Tiene validez nacional!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-103", "categoria": "Titulación", "subcategoria": "Asesor TAP", "preguntas": ["¿Necesito un asesor para el TAP?", "¿Cómo me designan asesor para el TAP?", "¿Quién es el asesor del Trabajo de Aplicación Profesional?"],
+      "respuesta": "¡Sí! Para el TAP necesitas un Asesor designado por Resolución Directoral. 📜 Esa resolución es un requisito para declararte expedito. ¡Tu asesor te guiará en el camino! 🧑‍🏫",
+      "requisitos": ["Resolución Directoral de Asesor"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-104", "categoria": "Titulación", "subcategoria": "Requisitos comunes", "preguntas": ["¿Qué documentos son comunes a las dos modalidades de titulación?", "¿Qué necesito en ambos casos para titularme?", "¿Qué requisitos comparten el TAP y el examen de suficiencia?"],
+      "respuesta": "Ambas modalidades comparten:\n✔️ Solicitud (FUT).\n✔️ Constancia de egresado.\n✔️ Certificado de estudios.\n✔️ Constancias de prácticas y fichas.\n✔️ Constancia de no adeudar.\n✔️ Partida de nacimiento.\n✔️ Certificados de secundaria.\n✔️ Recibo de pago.\n✔️ DNI.\n✔️ Fotos.\n✔️ Declaración jurada. 📋\n\n*La diferencia principal es el ejemplar del TAP y la resolución de asesor.*",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-105", "categoria": "Duplicado de título", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es el duplicado de título?", "¿Para qué sirve el duplicado de título?", "¿Qué acredita el duplicado de título?"],
+      "respuesta": "Es un documento oficial que reemplaza tu Título Profesional Técnico en caso de pérdida o deterioro. 📜 ¡Para que sigas demostrando tu profesionalismo!",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-106", "categoria": "Duplicado de título", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para el duplicado de título?", "¿Requisitos para duplicado de título?", "¿Qué documentos presento para pedir el duplicado?"],
+      "respuesta": "Necesitas:\n✔️ Solicitud (FUT) de duplicado.\n✔️ Requisitos de emisión.\n✔️ DNI.\n✔️ Recibo de pago.\n✔️ 2 fotos pasaporte. 📄",
+      "requisitos": ["Solicitud (FUT)", "DNI", "Recibo de pago", "2 fotos pasaporte"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-107", "categoria": "Duplicado de título", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento del duplicado de título?", "¿Qué pasos sigue el duplicado?", "¿Qué proceso comprende el duplicado de título?"],
+      "respuesta": "1️⃣ Pago por duplicado.\n2️⃣ Presentación de solicitud.\n3️⃣ Evaluación.\n4️⃣ Registro del duplicado.\n5️⃣ Emisión y firma. 📝",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-108", "categoria": "Duplicado de título", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo del duplicado de título?", "¿Quién firma el duplicado de título?", "¿Quién es el responsable de emitir el duplicado?"],
+      "respuesta": "La **Secretaría Académica** y firma la Dirección General. 🖋️",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-109", "categoria": "Duplicado de título", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene el duplicado de título?", "¿Qué me entregan al pedir el duplicado?", "¿Cuál es el producto del duplicado?"],
+      "respuesta": "Recibes tu Duplicado de Título firmado y sellado. ¡Listo para seguir brillando! 🌟",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-110", "categoria": "Certificación modular", "subcategoria": "¿Qué es?", "preguntas": ["¿Qué es la certificación modular?", "¿Qué es el certificado modular?", "¿Para qué sirve el certificado modular?", "¿Qué acredita el certificado modular?"],
+      "respuesta": "Es un documento oficial que acredita que lograste las competencias de un módulo formativo. 🏅 ¡Es progresivo y te sirve para demostrar tus habilidades mientras avanzas en la carrera! 🎓",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-111", "categoria": "Certificación modular", "subcategoria": "Condición para emisión", "preguntas": ["¿Qué necesito aprobar para que me den el certificado modular?", "¿Cuándo me emiten el certificado modular?", "¿Qué debo tener aprobado para el certificado modular?"],
+      "respuesta": "Para que te lo emitan, debes haber aprobado todas las UD, los Módulos Transversales y las prácticas profesionales del módulo correspondiente. ✅",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-112", "categoria": "Certificación modular", "subcategoria": "Requisitos", "preguntas": ["¿Qué necesito para certificarme?", "¿Requisitos para el certificado modular?", "¿Qué documentos presento para el certificado modular?", "¿Requisitos de certificación modular?"],
+      "respuesta": "Los requisitos son:\n✔️ Solicitud (FUT).\n✔️ 2 fotos pasaporte formal.\n✔️ Certificado de estudios.\n✔️ Constancia de prácticas (Coordinador + V°B° Jefe de Unidad).\n✔️ Carpeta de prácticas.\n✔️ Recibo de pago.\n✔️ DNI. 📄",
+      "requisitos": ["Solicitud (FUT)", "2 fotos", "Certificado de estudios", "Constancia de prácticas", "Carpeta de prácticas", "Recibo de pago", "DNI"], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-113", "categoria": "Certificación modular", "subcategoria": "Procedimiento", "preguntas": ["¿Cómo es el procedimiento de certificación modular?", "¿Qué pasos sigue el certificado modular?", "¿Qué proceso comprende la certificación modular?"],
+      "respuesta": "1️⃣ Pago.\n2️⃣ Presentación de solicitud.\n3️⃣ Evaluación del expediente.\n4️⃣ Registro.\n5️⃣ Emisión y firma del certificado. 📝",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-114", "categoria": "Certificación modular", "subcategoria": "Responsable", "preguntas": ["¿Quién está a cargo de la certificación modular?", "¿Quién firma el certificado modular?", "¿Quién es el responsable de emitir el certificado modular?"],
+      "respuesta": "La **Secretaría Académica** y firma la Dirección General. 🖋️",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-115", "categoria": "Certificación modular", "subcategoria": "¿Quiénes pueden solicitarlo?", "preguntas": ["¿Quiénes pueden pedir el certificado modular?", "¿Solo los egresados pueden pedir el certificado modular?", "¿Puedo pedir el certificado modular siendo estudiante?"],
+      "respuesta": "¡Todos! 🙌 Estudiantes, egresados y titulados de los programas de estudio del IESTP pueden solicitar su Certificado Modular. 🎓",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-116", "categoria": "Certificación modular", "subcategoria": "Producto", "preguntas": ["¿Qué resultado tiene la certificación modular?", "¿Qué me entregan al certificarme por módulo?", "¿Cuál es el producto de la certificación modular?"],
+      "respuesta": "Recibes tu Certificado Modular firmado y sellado. ¡Un logro más para tu portafolio profesional! 📜✨",
+      "requisitos": [], "costo": null, "oficina": "Secretaría Académica", "observaciones": null, "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-117",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Cambio de Turno",
+      "preguntas": ["¿Cómo cambio de turno?", "¿Puedo pasar de turno noche a mañana?", "¿Cuándo es el cambio de turno?"],
+      "respuesta": "¡Claro que sí! 😊 Para solicitar tu cambio de turno, debes estar atento al cronograma académico (suele hacerse antes del inicio de clases). \n\n📌 *Requisitos:*\n- Presentar una Solicitud (FUT).\n- Realizar el pago de S/ 123.00.\n\n⚠️ *Importante:* El cambio está sujeto estrictamente a la disponibilidad de vacantes en el turno que deseas. ¡Te recomendamos hacerlo con anticipación! 🏃‍♂️💨",
+      "requisitos": ["Solicitud (FUT)", "Recibo de pago"], "costo": "S/ 123.00", "oficina": "Secretaría Académica", "observaciones": "Sujeto a disponibilidad de vacantes.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-118",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Subsanación",
+      "preguntas": [
+        "¿Qué es subsanación?",
+        "¿Cómo recupero un curso jalado?",
+        "¿Cuánto cuesta subsanar una unidad didáctica?",
+        "¿Qué necesito para subsanar un curso?"
+      ],
+      "respuesta": "¡No te preocupes, tiene solución! 💪 La *subsanación* es el proceso que te permite recuperar una Unidad Didáctica (curso) que hayas desaprobado.\n\n📌 *¿Cómo se hace?* Debes estar atento a la fecha de subsanación en el cronograma académico (suele ser antes de las matrículas).\n\n💰 *Costo:* S/ 40.00 (por cada Unidad Didáctica)\n🏢 *Oficina:* Secretaría Académica.\n\n¡No dejes pasar la fecha para que no se te complique el ciclo! 🗓️✨",
+      "requisitos": [
+        "Solicitud (FUT) especificando el turno",
+        "Fotocopia del Récord de Notas del semestre desaprobado",
+        "Recibo de pago por concepto de subsanación (por cada U.D.)",
+        "Fotocopia del DNI"
+      ],
+      "costo": "S/ 40.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "El FUT debe especificar el turno. Revisar cronograma académico para la fecha exacta.",
+      "fuente": "Comunicado oficial IESTP-JCT"
+    },
+    {
+      "id": "FAQ-119",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Convalidación - Plazos",
+      "preguntas": ["¿Cuándo se piden las convalidaciones?", "¿Cuándo salen los resultados de convalidación?"],
+      "respuesta": "¡Hola! 😊 Las convalidaciones de estudios (para alumnos que vienen de otras instituciones o planes antiguos) se solicitan una vez que se publican los resultados del semestre anterior. \n\n📌 *¿Qué necesitas?*\n- Tu solicitud (FUT) con los sílabos y certificados.\n- Estar atento a la ventana de días establecida en el cronograma académico.\n\n💰 *Costo:* S/ 61.00\n\n¡Revisa siempre las fechas oficiales en la página del instituto para no perder tu oportunidad! 🗓️🎓",
+      "requisitos": [], "costo": "S/ 61.00", "oficina": "Secretaría Académica / Mesa de Partes", "observaciones": "Se realiza en la ventana de tiempo establecida tras la publicación de resultados.", "fuente": "Información institucional IESTP-JCT"
+    },
+    {
+      "id": "FAQ-120",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Pagos y Vouchers",
+      "preguntas": ["¿Dónde pago mis tasas?","¿Qué hago con el voucher del banco?","¿Dónde canjeo el voucher?","¿Necesito llevar copia del voucher?"],
+      "respuesta": "¡Atención, este paso es súper importante para que no tengas problemas! 🚨\n\nTodo concepto de pago se realiza en el *Banco de la Nación* a la *Cuenta Corriente N° 00000-289078*.\n\n📌 *¿Qué hacer después?*\nDeberás entregar en Caja el voucher ORIGINAL y una COPIA física.\n\n⏳ *Plazo:* Una vez realizado el pago, tendrás un máximo de *48 horas* para hacer el canje en Caja del Instituto. \n\n⚠️ *Ojo:* En casos excepcionales, podrás realizar el canje de tu pago solo durante el año en que se ha realizado este pago. ¡No lo dejes para el próximo año!",
+      "requisitos": ["Voucher original del Banco de la Nación","Copia del voucher"],"costo": null,"oficina": "Caja / Tesorería del instituto","observaciones": "El canje se realiza en un plazo máximo de 48 horas. Llevar copia obligatoriamente.","fuente": "Comunicado oficial IESTP-JCT"
+    }
+  ],
+  "conceptos_pago": [
+    { "id": "PAGO-001", "tipo": "bien", "concepto": "Ficha de Evaluación de la Práctica Pre-Profesional por módulo", "porcentaje_uit": 0.19, "monto": 10.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-002", "tipo": "bien", "concepto": "Ficha de Evaluación de la Práctica Pre-Profesional (Sistema Tradicional)", "porcentaje_uit": 0.28, "monto": 15.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-003", "tipo": "bien", "concepto": "Formato de Título Profesional", "porcentaje_uit": 2.75, "monto": 147.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-004", "tipo": "bien", "concepto": "Formato de Título Profesional Duplicado", "porcentaje_uit": 4.58, "monto": 245.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-005", "tipo": "bien", "concepto": "Certificado Plan Piloto del Nivel Bachillerato", "porcentaje_uit": 0.75, "monto": 40.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-006", "tipo": "bien", "concepto": "Certificado Modular", "porcentaje_uit": 1.03, "monto": 55.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-007", "tipo": "bien", "concepto": "Certificados de Estudios I al VI semestre", "porcentaje_uit": 2.41, "monto": 129.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-008", "tipo": "bien", "concepto": "Certificados de Estudios por Semestre", "porcentaje_uit": 0.47, "monto": 25.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-009", "tipo": "bien", "concepto": "Constancia de Aprobación de prácticas Pre-Profesionales por módulo", "porcentaje_uit": 0.73, "monto": 39.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-010", "tipo": "bien", "concepto": "Constancia de Aprobación del Trabajo de Aplicación profesional", "porcentaje_uit": 0.75, "monto": 40.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-011", "tipo": "bien", "concepto": "Constancia de Aprobación del Trabajo de Aplicación profesional", "porcentaje_uit": 1.03, "monto": 55.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-012", "tipo": "bien", "concepto": "Constancia de Aprobación en la modalidad autogestionaria por módulo", "porcentaje_uit": 1.12, "monto": 60.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-013", "tipo": "bien", "concepto": "Constancia de Egresado", "porcentaje_uit": 1.50, "monto": 80.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-014", "tipo": "bien", "concepto": "Constancia de Egresado Duplicado", "porcentaje_uit": 2.52, "monto": 135.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-015", "tipo": "bien", "concepto": "Constancia de Estudios", "porcentaje_uit": 0.37, "monto": 20.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-016", "tipo": "bien", "concepto": "Constancia de No Adeudar", "porcentaje_uit": 0.37, "monto": 20.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-017", "tipo": "bien", "concepto": "Constancia de Vacante", "porcentaje_uit": 0.37, "monto": 20.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-018", "tipo": "bien", "concepto": "Constancia Otros", "porcentaje_uit": 0.37, "monto": 20.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-019", "tipo": "bien", "concepto": "Carta de Presentación para Prácticas pre profesionales", "porcentaje_uit": 0.19, "monto": 10.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-020", "tipo": "bien", "concepto": "Duplicado de Recibos", "porcentaje_uit": 0.09, "monto": 5.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-021", "tipo": "bien", "concepto": "Prospecto de Admisión (Virtual)", "porcentaje_uit": 0.19, "monto": 10.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-022", "tipo": "bien", "concepto": "Récord de notas por semestre", "porcentaje_uit": 0.15, "monto": 8.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-023", "tipo": "bien", "concepto": "Récord de notas I al VI semestre", "porcentaje_uit": 0.75, "monto": 40.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-024", "tipo": "bien", "concepto": "Sílabo por Unidad Didáctica", "porcentaje_uit": 0.07, "monto": 4.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-025", "tipo": "tasa", "concepto": "Cambio de Programa de Estudios (traslado interno)", "porcentaje_uit": 4.86, "monto": 250.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-026", "tipo": "tasa", "concepto": "Cambio de Turno", "porcentaje_uit": 2.30, "monto": 123.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-027", "tipo": "tasa", "concepto": "Convalidación de Unidad Didáctica", "porcentaje_uit": 1.14, "monto": 61.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-028", "tipo": "tasa", "concepto": "Convalidación por semestre (traslado externo)", "porcentaje_uit": 2.80, "monto": 150.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-029", "tipo": "tasa", "concepto": "Convalidación de Trabajo por horas Práctica", "porcentaje_uit": 0.84, "monto": 45.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-030", "tipo": "tasa", "concepto": "Derecho de Titulación", "porcentaje_uit": 2.34, "monto": 125.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-031", "tipo": "tasa", "concepto": "Evaluación de Recuperación por Unidad Didáctica o Módulo Transversal", "porcentaje_uit": 0.56, "monto": 30.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-032", "tipo": "tasa", "concepto": "Evaluación Extraordinaria", "porcentaje_uit": 1.87, "monto": 100.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-033", "tipo": "tasa", "concepto": "Examen de Suficiencia de Idioma Extranjero o Lengua Nativa", "porcentaje_uit": 1.12, "monto": 60.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-034", "tipo": "tasa", "concepto": "Examen de Suficiencia Profesional", "porcentaje_uit": 3.44, "monto": 184.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-035", "tipo": "tasa", "concepto": "Inscripción de Admisión", "porcentaje_uit": 3.18, "monto": 170.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-036", "tipo": "tasa", "concepto": "Matrícula de Ingresante", "porcentaje_uit": 3.36, "monto": 180.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-037", "tipo": "tasa", "concepto": "Matrícula por subsanación de Unidad Didáctica", "porcentaje_uit": 0.75, "monto": 40.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-038", "tipo": "tasa", "concepto": "Ratificación de Matrícula", "porcentaje_uit": 3.36, "monto": 180.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-039", "tipo": "tasa", "concepto": "Ratificación de Matrícula 1er Puesto", "porcentaje_uit": 0.00, "monto": 0.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-040", "tipo": "tasa", "concepto": "Ratificación de Matrícula 2do Puesto", "porcentaje_uit": 1.68, "monto": 90.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-041", "tipo": "tasa", "concepto": "Ratificación de Matrícula por Segunda Carrera Profesional", "porcentaje_uit": 4.64, "monto": 248.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-042", "tipo": "tasa", "concepto": "Reincorporación con Licencia de Estudios", "porcentaje_uit": 0.93, "monto": 50.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-043", "tipo": "tasa", "concepto": "Reincorporación con Reserva de Matrícula", "porcentaje_uit": 1.87, "monto": 100.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-044", "tipo": "tasa", "concepto": "Reincorporación casos excepcionales", "porcentaje_uit": 3.74, "monto": 200.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-045", "tipo": "tasa", "concepto": "Licencia de Estudios o Reserva de Matrícula", "porcentaje_uit": 0.56, "monto": 30.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-046", "tipo": "tasa", "concepto": "Trámite de anulación de constancia de Egresado", "porcentaje_uit": 0.37, "monto": 20.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-047", "tipo": "tasa", "concepto": "Sustentación por Trabajo de Aplicación Profesional", "porcentaje_uit": 3.44, "monto": 184.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-048", "tipo": "tasa", "concepto": "Traslado Externo", "porcentaje_uit": 5.61, "monto": 300.00, "moneda": "PEN", "fuente": "TUPA 2025" }
+  ]
+}
