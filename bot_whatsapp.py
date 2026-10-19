@@ -215,11 +215,11 @@ async def recibir_mensaje(request: Request):
             # 🚨 ESCUDO ANTI-VISTO (Cancelar en cualquier momento)
             if texto_lower in ["cancelar", "reiniciar", "salir", "menu", "menú"]:
                 if estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"]:
-                    user_states[numero] = "inicio"
+                    user_states[numero] = "esperando_nombre" # <--- ESTA ES LA CLAVE
                     user_data[numero] = {}
                     enviar_mensaje_meta(numero, "🔄 Entendido. He reiniciado el registro. ¡Hola de nuevo! 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊")
                     return Response(content="OK", status_code=200)
-            
+                    
             # --- REGISTRO ---
             if estado == "inicio":
                 cliente_existente = cargar_cliente(numero)
