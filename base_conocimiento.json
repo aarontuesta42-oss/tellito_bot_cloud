@@ -706,7 +706,7 @@
     { "id": "PAGO-032", "tipo": "tasa", "concepto": "Evaluación Extraordinaria", "porcentaje_uit": 1.87, "monto": 100.00, "moneda": "PEN", "fuente": "TUPA 2025" },
     { "id": "PAGO-033", "tipo": "tasa", "concepto": "Examen de Suficiencia de Idioma Extranjero o Lengua Nativa", "porcentaje_uit": 1.12, "monto": 60.00, "moneda": "PEN", "fuente": "TUPA 2025" },
     { "id": "PAGO-034", "tipo": "tasa", "concepto": "Examen de Suficiencia Profesional", "porcentaje_uit": 3.44, "monto": 184.00, "moneda": "PEN", "fuente": "TUPA 2025" },
-    { "id": "PAGO-035", "tipo": "tasa", "concepto": "Inscripción de Admisión", "porcentaje_uit": 3.18, "monto": 170.00, "moneda": "PEN", "fuente": "TUPA 2025" },
+    { "id": "PAGO-035", "tipo": "tasa", "concepto": "Inscripción de Admisión (Incluye Prospecto)", "porcentaje_uit": 3.18, "monto": 180.00, "moneda": "PEN", "fuente": "TUPA 2025" },
     { "id": "PAGO-036", "tipo": "tasa", "concepto": "Matrícula de Ingresante", "porcentaje_uit": 3.36, "monto": 180.00, "moneda": "PEN", "fuente": "TUPA 2025" },
     { "id": "PAGO-037", "tipo": "tasa", "concepto": "Matrícula por subsanación de Unidad Didáctica", "porcentaje_uit": 0.75, "monto": 40.00, "moneda": "PEN", "fuente": "TUPA 2025" },
     { "id": "PAGO-038", "tipo": "tasa", "concepto": "Ratificación de Matrícula", "porcentaje_uit": 3.36, "monto": 180.00, "moneda": "PEN", "fuente": "TUPA 2025" },
