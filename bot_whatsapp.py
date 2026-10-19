@@ -216,29 +216,46 @@ async def recibir_mensaje(request: Request):
                     respuesta = "¡Hola! 👋 Qué gusto tenerte por aquí. Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*, tu asistente virtual. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊"
 
             elif estado == "esperando_nombre":
-                user_data[numero]['nombres'] = texto.title()
-                user_states[numero] = "esperando_perfil"
-                respuesta = f"¡Un gusto, *{texto.split()[0]}*! 🤝\n\nCuéntame, ¿cuál es tu situación actual? (Responde con el número):\n\n1️⃣ 🎓 Soy *Prospecto* (quiero postular)\n2️⃣ 📚 Soy *Estudiante* actual\n3️⃣ 🎉 Soy *Egresado*"
+                if texto_lower in ["cancelar", "menu", "menú", "reiniciar"]:
+                    user_states[numero] = "inicio"
+                    respuesta = "Entendido. He reiniciado el registro. ¡Hola de nuevo! 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝"
+                else:
+                    user_data[numero]['nombres'] = texto.title()
+                    user_states[numero] = "esperando_perfil"
+                    respuesta = f"¡Un gusto, *{texto.split()[0]}*! 🤝\n\nCuéntame, ¿cuál es tu situación actual? (Responde con el número):\n\n1️⃣ 🎓 Soy *Prospecto* (quiero postular)\n2️⃣ 📚 Soy *Estudiante* actual\n3️⃣ 🎉 Soy *Egresado*"
 
             elif estado == "esperando_perfil":
-                if texto_lower in ["1", "prospecto"]: perfil = "Prospecto"
-                elif texto_lower in ["2", "estudiante"]: perfil = "Estudiante"
-                elif texto_lower in ["3", "egresado"]: perfil = "Egresado"
-                else: 
-                    enviar_mensaje_meta(numero, "⚠️ Elige 1, 2 o 3.")
-                    return Response(content="OK", status_code=200)
-                
-                user_data[numero]['perfil'] = perfil
-                user_states[numero] = "esperando_carrera"
-                pregunta = "¡Excelente! 🚀 Ahora dime, ¿cuál es la *carrera de tu interés*? (Responde con el número):" if perfil == "Prospecto" else "¡Excelente! 🎓 Ahora dime, ¿*a qué carrera perteneces*? (Responde con el número):"
-                respuesta = f"{pregunta}\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas de Información\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa"
+                if texto_lower in ["cancelar", "menu", "menú", "reiniciar"]:
+                    user_states[numero] = "inicio"
+                    respuesta = "Entendido. He reiniciado el registro. ¡Hola de nuevo! 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝"
+                else:
+                    if texto_lower in ["1", "prospecto"]: perfil = "Prospecto"
+                    elif texto_lower in ["2", "estudiante"]: perfil = "Estudiante"
+                    elif texto_lower in ["3", "egresado"]: perfil = "Egresado"
+                    else: 
+                        enviar_mensaje_meta(numero, "⚠️ Elige 1, 2 o 3 (o escribe 'cancelar' para reiniciar).")
+                        return Response(content="OK", status_code=200)
+                    
+                    user_data[numero]['perfil'] = perfil
+                    user_states[numero] = "esperando_carrera"
+                    pregunta = "¡Excelente! 🚀 Ahora dime, ¿cuál es la *carrera de tu interés*? (Responde con el número):" if perfil == "Prospecto" else "¡Excelente! 🎓 Ahora dime, ¿*a qué carrera perteneces*? (Responde con el número):"
+                    respuesta = f"{pregunta}\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas de Información\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa"
 
             elif estado == "esperando_carrera":
-                carreras = {"1": "Administración de Empresas", "2": "Contabilidad", "3": "Desarrollo de Sistemas", "4": "Electricidad Industrial", "5": "Mecánica Automotriz", "6": "Mecánica de Producción", "7": "Asistencia Administrativa"}
-                if texto_lower in carreras: carrera_elegida = carreras[texto_lower]
-                else: 
-                    enviar_mensaje_meta(numero, "⚠️ Elige un número del 1 al 7.")
-                    return Response(content="OK", status_code=200)
+                if texto_lower in ["cancelar", "menu", "menú", "reiniciar"]:
+                    user_states[numero] = "inicio"
+                    respuesta = "Entendido. He reiniciado el registro. ¡Hola de nuevo! 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝"
+                else:
+                    carreras = {"1": "Administración de Empresas", "2": "Contabilidad", "3": "Desarrollo de Sistemas", "4": "Electricidad Industrial", "5": "Mecánica Automotriz", "6": "Mecánica de Producción", "7": "Asistencia Administrativa"}
+                    if texto_lower in carreras: carrera_elegida = carreras[texto_lower]
+                    else: 
+                        enviar_mensaje_meta(numero, "⚠️ Elige un número del 1 al 7 (o escribe 'cancelar' para reiniciar).")
+                        return Response(content="OK", status_code=200)
+                    
+                    user_data[numero]['carrera'] = carrera_elegida
+                    user_states[numero] = "menu_principal"
+                    guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
+                    respuesta = get_menu_principal(user_data[numero]['perfil'], user_data[numero]['nombres'].split()[0], is_new=True)
                 
                 user_data[numero]['carrera'] = carrera_elegida
                 user_states[numero] = "menu_principal"
