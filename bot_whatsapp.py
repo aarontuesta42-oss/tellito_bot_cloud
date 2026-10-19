@@ -94,20 +94,27 @@ def get_faq_by_id(faq_id):
             return f
     return None
 
-# --- IA DEEPSEEK (SOLO REDACTA) ---
+# --- IA (SOLO REDACTA) ---
 def redactar_con_ia(faq_dict):
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
     
     contexto_str = json.dumps(faq_dict, indent=2, ensure_ascii=False)
 
+    # 🚨 LÓGICA INTELIGENTE: Solo ponemos la regla de pago si el trámite tiene costo
+    regla_pago = ""
+    if faq_dict.get('costo'):
+        regla_pago = (
+            f"REGLA DE ORO: Como este trámite tiene un costo, SIEMPRE debes recordar al usuario:\n"
+            f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
+            f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
+        )
+
     prompt_sistema = (
         f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
         f"Tu única tarea es redactar la información del trámite de forma amigable, clara y CONCISA. Usa emojis. "
         f"Aquí tienes la información oficial:\n\n{contexto_str}\n\n"
-        f"REGLA DE ORO: SIEMPRE debes recordar al usuario:\n"
-        f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
-        f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
+        f"{regla_pago}"
         f"REGLAS DE FORMATO ESTRICTAS (ESTÁS EN WHATSAPP):\n"
         f"- Usa SOLO un asterisco a cada lado para negrita: *texto*\n"
         f"- Usa guion bajo a cada lado para cursiva: _texto_\n"
@@ -307,10 +314,8 @@ async def recibir_mensaje(request: Request):
                     user_states[numero] = "menu_principal"
                     respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0])
                 else:
-                    respuesta = "🔹 _Escribe *0* para volver atrás o *menú* para ir al inicio._"
-
-            else:
-                enviar_fallback_ciclico(numero); enviar_texto_final = False
+                    enviar_fallback_ciclico(numero)
+                    enviar_texto_final = False
 
             # --- ENVÍO FINAL ---
             if enviar_texto_final:
