@@ -172,7 +172,6 @@ def get_menu_principal(perfil, primer_nombre, is_new=False):
     elif perfil == "Egresado":
         menu += "1️⃣  🎓 Titulación (TAP o Examen)\n2️⃣  📜 Constancia de Egresado\n3️⃣  📑 Certificación Modular\n4️⃣  🏫 Nuestro Instituto\n5️⃣  📍 Contacto y Ubicación\n6️⃣  🔍 Explorar otros perfiles\n7️⃣  💬 *Chatea con Tellito (IA)*\n\n"
         
-    menu += "🔹 _Escribe el número de tu opción._"
     return menu
 
 @app.get("/webhook")
