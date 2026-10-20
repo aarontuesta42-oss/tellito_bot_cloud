@@ -307,10 +307,7 @@ async def recibir_mensaje(request: Request):
                 
                 # 5. Cortamos la ejecución para que no siga al flujo normal
                 return Response(content="OK", status_code=200)
-
-            # --- REGISTRO ---
-            if estado == "inicio":
-            
+    
             # --- REGISTRO ---
             if estado == "inicio":
                 cliente = cargar_cliente(numero)
