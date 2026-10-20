@@ -320,6 +320,56 @@
       "costo": null,
       "oficina": "Caja / Tesorería del instituto",
       "observaciones": "El canje se realiza en un plazo máximo de 48 horas."
+    },
+    {
+      "id": "FAQ-024",
+      "categoria": "Prácticas Pre Profesionales",
+      "subcategoria": "Horas de Prácticas por Carrera",
+      "respuesta": "Las horas de prácticas dependen de tu carrera y del módulo. Según el reglamento, debes cumplir como mínimo el **35% del total de horas** de cada Módulo Técnico Profesional.\n\n📌 *Ejemplo para Administración de Empresas:*\n✔️ Módulo 1 (Gestión Administrativa): 265 horas.\n✔️ Módulo 2 (Gestión de Comercialización): 289 horas.\n✔️ Módulo 3 (Gestión de Recursos Financieros): 296 horas.\n\nPara otras carreras, puedes consultar a tu Coordinador o Secretaría Académica.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Secretaría Académica / Coordinación",
+      "observaciones": "El mínimo es el 35% de las horas del módulo."
+    },
+    {
+      "id": "FAQ-025",
+      "categoria": "Prácticas Pre Profesionales",
+      "subcategoria": "Convalidación de Prácticas",
+      "respuesta": "¡Sí es posible! Si trabajas en un área relacionada a tu carrera, puedes convalidar tus prácticas pre profesionales.\n\n📌 *Requisitos principales:*\n✔️ Constancia o Certificado de trabajo.\n✔️ Informe Técnico de las tareas realizadas (firmado por tu jefe).\n✔️ Copia autenticada del contrato o resolución.\n✔️ Hoja de supervisión y monitoreo.\n\nLa evaluación la realiza una Comisión de Convalidación.",
+      "requisitos": ["Constancia de trabajo", "Informe Técnico", "Contrato", "Hoja de supervisión"],
+      "costo": "S/ 61.00 (Según TUPA)",
+      "oficina": "Secretaría Académica / Coordinación",
+      "observaciones": "Las funciones laborales deben coincidir con el Módulo Técnico."
+    },
+    {
+      "id": "FAQ-026",
+      "categoria": "Titulación",
+      "subcategoria": "Envío de Expediente y Correo",
+      "respuesta": "Para iniciar tu proceso de titulación (TAP o Suficiencia), debes enviar tu solicitud (FUT) y todos los requisitos escaneados en formato PDF al correo oficial: **titulaciones@iestpictello.edu.pe**\n\n📌 *Etapas del proceso:*\n1. Declaración de Expedito (envío de documentos).\n2. Sustentación del TAP o Examen de Suficiencia.\n3. Examen de Idioma Extranjero (S/ 60.00).\n4. Trámite de Derecho y Registro de Título (S/ 125.00 + S/ 147.00).",
+      "requisitos": ["Correo institucional de titulaciones", "Documentos escaneados en PDF"],
+      "costo": null,
+      "oficina": "Coordinación de Titulación",
+      "observaciones": "La sustentación del TAP dura entre 30 y 60 minutos."
+    },
+    {
+      "id": "FAQ-027",
+      "categoria": "Titulación",
+      "subcategoria": "Puntaje Examen de Suficiencia",
+      "respuesta": "El Examen de Suficiencia Profesional tiene un peso evaluativo específico:\n\n📌 *Fórmula de calificación:*\n`Calificación Final = (3 * Prueba Objetiva + 7 * Aplicación Práctica) / 10`\n\nEsto significa que el 30% de tu nota es teórico-práctico (prueba objetiva) y el 70% es la evaluación práctica o demostrativa de tus capacidades.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Coordinación del Programa de Estudios",
+      "observaciones": "Si desapruebas, tienes hasta 2 oportunidades adicionales."
+    },
+    {
+      "id": "FAQ-028",
+      "categoria": "Titulación",
+      "subcategoria": "Reglas del TAP",
+      "respuesta": "Si eliges la modalidad de Trabajo de Aplicación Profesional (TAP), ten en cuenta estas reglas:\n\n✔️ Puede ser desarrollado por un máximo de **2 participantes** del mismo programa de estudios.\n✔️ Puede ser multidisciplinario (con alumnos de otras carreras) hasta un máximo de **4 participantes**.\n✔️ Una vez aprobado el perfil, tienes **6 meses** para sustentar.\n✔️ La Constancia de Aprobación del TAP tiene una vigencia de **60 días calendario**.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Coordinación del Programa de Estudios",
+      "observaciones": "El perfil se presenta con el visto bueno del Asesor."
     }
   ],
   "conceptos_pago": [
