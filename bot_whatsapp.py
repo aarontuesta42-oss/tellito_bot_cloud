@@ -398,7 +398,6 @@ async def recibir_mensaje(request: Request):
                     enviar_imagen_meta(numero, info['url'], info['titulo'])
                     
                     # 2. Hacemos una pausa de 1 segundo para que la imagen se cargue primero
-                    import time
                     time.sleep(1.5)
                     
                     # 3. Enviamos el texto
