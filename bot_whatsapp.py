@@ -81,21 +81,54 @@ def enviar_imagen_meta(numero_destino, url_imagen, texto_opcional=""):
     requests.post(url, headers=headers, json=payload)
 
 def enviar_fallback_ciclico(numero):
-    # 1. Mensaje de felicitación
-    enviar_mensaje_meta(numero, "🎉 ¡Felicidades! Acabas de descubrir un *Easter Egg* de Tellito Bot. 🕵️‍♂️\n\nNo olvides compartir este secreto con tus amigos. 😉")
+    # 1. Mensaje de felicitación y secreto (Se mantiene igual)
+    mensaje_secreto = (
+        "🕵️‍♂️✨ *¡ALERTA! ¡HAS DESCUBIERTO UN SECRETO DE TELLITO BOT!*\n\n"
+        "🎉 ¡Felicidades, explorador! No todos llegan hasta aquí... Parece que tienes buen ojo para descubrir lo que otros pasan por alto. 👀\n\n"
+        "🤖 *Tellito Bot tiene más de una sorpresa escondida...* ¿Será este el único secreto o habrá otros esperando a ser descubiertos? 🤫\n\n"
+        "😎 Ahora formas parte del pequeño grupo que conoce este Easter Egg. Pero recuerda: *un buen secreto merece compartirse*... aunque ya no sea tan secreto. JAJAJA xd.\n\n"
+        "📲 *¿Quieres que tus amigos también lo descubran?* Comparte a Tellito Bot y deja que comience la búsqueda:\n\n"
+        "👉 https://wa.me/51916281454\n\n"
+        "🍀 ¡Sigue explorando! Nunca sabes qué otra sorpresa podrías encontrar por aquí.\n\n"
+        "— *Tellito Bot* 🤖💚"
+    )
+    enviar_mensaje_meta(numero, mensaje_secreto)
     
-    # Pausa para que no se envíen los mensajes pegados
-    import time
+    # Pausa para que se sienta natural
     time.sleep(1.5)
     
-    # 2. Imagen de Fallout con el texto en primera persona
-    url_imagen = "https://i.ibb.co/7tJZHVc2/1.png" # La primera imagen de Fallout
-    texto_imagen = "🛡️ *Yo no salgo a la superficie del instituto, yo realizo mis consultas con Tellito Bot.*\n\n¡Comparte esta imagen con tus amigos para que también descubran la magia de la IA! 🤖✨"
+    # 2. Lista de las 3 imágenes con sus textos
+    opciones_imagenes = [
+        {
+            "url": "https://i.ibb.co/7tJZHVc2/1.png", 
+            "texto": "🛡️ *¿SALIR AL YERMO? ¡NI HABLAR!*\n\nEn el Refugio Tellito, las respuestas están a un mensaje de distancia. 🤖📡\n\n☢️ Menos vueltas, más información y cero necesidad de explorar el yermo para resolver tus dudas académicas. ¡Tu Pip-Boy no tiene nada que envidiarle a Tellito Bot! 😂\n\n📢 *Comparte esta imagen con tu escuadrón y ayúdalo a sobrevivir al apocalipsis académico.*\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: conocimiento para los habitantes del yermo.* 💛"
+        },
+        {
+            "url": "https://i.ibb.co/zhbXXXsX/2.png", 
+            "texto": "🥤 *MI BEBIDA FAVORITA NO ES LA NUKA-COLA... ¡ES LA INFORMACIÓN INSTANTÁNEA!*\n\n¿Por qué conformarte con una bebida refrescante cuando puedes saciar tu sed de conocimiento? ☢️🤖\n\n📚 Carreras, consultas y respuestas sin tener que recorrer todo el yermo. ¡Tellito Bot es el combustible de todo estudiante que quiere llegar más lejos!\n\n📢 *Comparte esta imagen con tus compañeros de refugio. ¡El conocimiento sabe mejor cuando se comparte!* 😂\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: mantén tu mente hidratada... metafóricamente.* 🥤✨"
+        },
+        {
+            "url": "https://i.ibb.co/LXJDyTQd/3.png", 
+            "texto": "🚪 *EN CASO DE APOCALIPSIS, REFÚGIATE EN TELLITO BOT.*\n\n¿Filas interminables? ¿Recorrer medio yermo para encontrar información? ¿Gastar tus chapas en preguntar lo mismo de siempre? ¡Qué va! 😂☢️\n\n🤖 Desde tu propio refugio digital, puedes realizar consultas sobre el instituto y descubrir información útil sin organizar una expedición al exterior.\n\n📢 *Comparte esta imagen con tu comunidad de supervivientes. Porque en el yermo, la información también puede salvarte el día.* 💛\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot. ¡La guerra nunca cambia, pero la forma de hacer consultas sí!* ⚡"
+        }
+    ]
     
-    enviar_imagen_meta(numero, url_imagen, texto_imagen)
+    # 3. Lógica Cíclica (Round-Robin)
+    if numero not in user_data: 
+        user_data[numero] = {}
+    
+    # Obtenemos el índice actual (por defecto 0) y lo actualizamos para la próxima vez
+    indice_actual = user_data[numero].get('fallback_indice', 0)
+    imagen_elegida = opciones_imagenes[indice_actual]
+    
+    # Guardamos el siguiente índice (si llega a 2, vuelve a 0)
+    user_data[numero]['fallback_indice'] = (indice_actual + 1) % len(opciones_imagenes)
+    
+    enviar_imagen_meta(numero, imagen_elegida["url"], imagen_elegida["texto"])
+    
     time.sleep(1.5)
     
-    # 3. Enviar el menú principal de nuevo para evitar el bucle
+    # 4. Enviar el menú principal de nuevo para evitar el bucle (Se mantiene igual)
     if numero in user_data and 'nombres' in user_data[numero]:
         nombres = user_data[numero]['nombres']
         primer_nombre = nombres.split()[0] if nombres else "amigo"
@@ -151,6 +184,35 @@ def redactar_con_ia(faq_dict):
     except Exception as e:
         print(f"Error IA: {e}")
         return "Tuve un pequeño problema pensando la respuesta, pero aquí tienes la info oficial."
+
+def redactar_texto_libre(texto_usuario):
+    url = "https://api.deepseek.com/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
+    
+    # Le pasamos TODA la base de conocimiento para que pueda buscar respuestas académicas
+    contexto_faqs = json.dumps(faqs, ensure_ascii=False)
+
+    prompt_sistema = (
+        f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
+        f"El usuario ha escrito este mensaje: '{texto_usuario}'.\n\n"
+        f"INSTRUCCIONES:\n"
+        f"1. Si el mensaje es una pregunta académica (ej. cursos jalados, costos, trámites), usa esta información oficial para responder: {contexto_faqs}. Indícale el costo, la oficina y recuérdale revisar el cronograma oficial.\n"
+        f"2. Si el mensaje es una broma, consejo personal o algo gracioso (ej. chicas, consejos de vida), responde con mucho humor y amabilidad. Dile que eres un asistente virtual del instituto, pero que solo por esta vez le darás un consejo breve y divertido. Luego, invítalo a seguir consultando sus dudas académicas.\n"
+        f"3. No uses menús de opciones (1, 2, 3). Solo entrega un texto amigable con emojis."
+    )
+    
+    payload = {
+        "model": "deepseek-chat",
+        "messages": [{"role": "system", "content": prompt_sistema}],
+        "temperature": 0.7
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        return response.json()['choices'][0]['message']['content']
+    except Exception as e:
+        print(f"Error IA Libre: {e}")
+        return "¡Jaja! Buena esa. 😄 Pero mi función principal es ser tu asistente virtual del instituto. Si tienes dudas académicas, aquí estoy para ayudarte."
 
 # --- TEXTOS DE MENÚS ---
 def get_menu_principal(primer_nombre, is_new=False):
@@ -223,6 +285,32 @@ async def recibir_mensaje(request: Request):
             respuesta = ""
             enviar_texto_final = True
 
+            # 🚨 LÓGICA DE TEXTO LIBRE (Preguntas largas o consejos)
+            if len(texto) > 12 and estado not in ["esperando_nombre", "esperando_perfil", "esperando_carrera"]:
+                # 1. La IA genera la respuesta
+                respuesta_libre = redactar_texto_libre(texto)
+                
+                # 2. Enviamos la respuesta de la IA
+                enviar_mensaje_meta(numero, respuesta_libre)
+                
+                # 3. Pausa para que no se amontonen los mensajes
+                time.sleep(1.5)
+                
+                # 4. Enviamos el menú principal automáticamente
+                if numero in user_data and 'nombres' in user_data[numero]:
+                    nombres = user_data[numero]['nombres']
+                    primer_nombre = nombres.split()[0] if nombres else "amigo"
+                    menu = get_menu_principal(primer_nombre, is_new=False)
+                    enviar_mensaje_meta(numero, menu)
+                else:
+                    enviar_mensaje_meta(numero, "Para comenzar, por favor dime tu *Nombre y Apellido*.")
+                
+                # 5. Cortamos la ejecución para que no siga al flujo normal
+                return Response(content="OK", status_code=200)
+
+            # --- REGISTRO ---
+            if estado == "inicio":
+            
             # --- REGISTRO ---
             if estado == "inicio":
                 cliente = cargar_cliente(numero)
