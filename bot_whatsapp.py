@@ -2,6 +2,7 @@ import os
 import json
 import random
 import requests
+import time
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
@@ -80,12 +81,28 @@ def enviar_imagen_meta(numero_destino, url_imagen, texto_opcional=""):
     requests.post(url, headers=headers, json=payload)
 
 def enviar_fallback_ciclico(numero):
-    if not fallbacks: return
-    if numero not in user_data: user_data[numero] = {}
-    indice_actual = user_data[numero].get('fallback_indice', 0)
-    poster_elegido = fallbacks[indice_actual]
-    user_data[numero]['fallback_indice'] = (indice_actual + 1) % len(fallbacks)
-    enviar_imagen_meta(numero, poster_elegido["url"], poster_elegido["texto"])
+    # 1. Mensaje de felicitación
+    enviar_mensaje_meta(numero, "🎉 ¡Felicidades! Acabas de descubrir un *Easter Egg* de Tellito Bot. 🕵️‍♂️\n\nNo olvides compartir este secreto con tus amigos. 😉")
+    
+    # Pausa para que no se envíen los mensajes pegados
+    import time
+    time.sleep(1.5)
+    
+    # 2. Imagen de Fallout con el texto en primera persona
+    url_imagen = "https://i.ibb.co/7tJZHVc2/1.png" # La primera imagen de Fallout
+    texto_imagen = "🛡️ *Yo no salgo a la superficie del instituto, yo realizo mis consultas con Tellito Bot.*\n\n¡Comparte esta imagen con tus amigos para que también descubran la magia de la IA! 🤖✨"
+    
+    enviar_imagen_meta(numero, url_imagen, texto_imagen)
+    time.sleep(1.5)
+    
+    # 3. Enviar el menú principal de nuevo para evitar el bucle
+    if numero in user_data and 'nombres' in user_data[numero]:
+        nombres = user_data[numero]['nombres']
+        primer_nombre = nombres.split()[0] if nombres else "amigo"
+        menu = get_menu_principal(primer_nombre, is_new=False)
+        enviar_mensaje_meta(numero, menu)
+    else:
+        enviar_mensaje_meta(numero, "Para comenzar, por favor dime tu *Nombre y Apellido*.")
 
 # --- BÚSQUEDA DE FAQ ---
 def get_faq_by_id(faq_id):
@@ -219,19 +236,25 @@ async def recibir_mensaje(request: Request):
                     respuesta = "¡Hola! 👋 Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊"
 
             elif estado == "esperando_nombre":
-                user_data[numero]['nombres'] = texto.title()
+                # Formateamos el nombre para que empiece con mayúscula (Ej: aaron -> Aaron)
+                nombre_formateado = texto.title()
+                user_data[numero]['nombres'] = nombre_formateado
                 user_states[numero] = "esperando_perfil"
-                respuesta = f"¡Un gusto, *{texto.split()[0]}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto*\n2️⃣ 📚 Soy *Estudiante*\n3️⃣ 🎉 Soy *Egresado*"
+                
+                # Extraemos solo el primer nombre para el saludo
+                primer_nombre = nombre_formateado.split()[0] if nombre_formateado.split() else "amigo"
+                
+                respuesta = f"¡Un gusto, *{primer_nombre}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto* (me gustaría postular al instituto)\n2️⃣ 📚 Soy *Estudiante* (estoy actualmente estudiando en el instituto)\n3️⃣ 🎉 Soy *Egresado* (ya terminé mi carrera del instituto)\n\n_Responde únicamente con el número de tu opción._"
 
             elif estado == "esperando_perfil":
                 perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
                 if texto_lower in perfiles:
                     user_data[numero]['perfil'] = perfiles[texto_lower]
                     user_states[numero] = "esperando_carrera"
-                    respuesta = "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Sistemas\n4️⃣ ⚡ Electricidad\n5️⃣ 🚗 Mec. Automotriz\n6️⃣ ⚙️ Mec. Producción\n7️⃣ 📋 Asistencia Adm."
+                    respuesta = "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n_Responde únicamente con el número de la carrera._"
                 else:
-                    enviar_fallback_ciclico(numero)
-                    enviar_texto_final = False
+                    # Error amigable sin easter egg
+                    respuesta = "⚠️ Por favor, elige una opción válida enviando solo el número: 1, 2 o 3."
 
             elif estado == "esperando_carrera":
                 carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
@@ -241,8 +264,8 @@ async def recibir_mensaje(request: Request):
                     guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
                     respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0], is_new=True)
                 else:
-                    enviar_fallback_ciclico(numero)
-                    enviar_texto_final = False
+                    # Error amigable sin easter egg
+                    respuesta = "⚠️ Por favor, elige una opción válida enviando solo el número del 1 al 7."
 
             # --- MENÚ PRINCIPAL ---
             elif estado == "menu_principal":
@@ -286,7 +309,14 @@ async def recibir_mensaje(request: Request):
                 
                 elif estado == "menu_carreras" and texto_lower in carreras_info:
                     info = carreras_info[texto_lower]
+                    # 1. Enviamos la imagen
                     enviar_imagen_meta(numero, info['url'], info['titulo'])
+                    
+                    # 2. Hacemos una pausa de 1 segundo para que la imagen se cargue primero
+                    import time
+                    time.sleep(1.5)
+                    
+                    # 3. Enviamos el texto
                     enviar_mensaje_meta(numero, info['texto'])
                     respuesta = "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice."
                 
