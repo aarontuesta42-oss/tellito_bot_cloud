@@ -378,19 +378,22 @@ async def recibir_mensaje(request: Request):
             texto_lower = texto.lower()
             print(f"📩 {numero}: {texto}")
             
-            # 🚨 LIMPIEZA DE TEXTO (Para que "09" sea "9" y "carreras 11" sea "11")
+            # 🚨 LIMPIEZA DE TEXTO INTELIGENTE
+            # 1. Convertir "09" en "9"
             if texto_lower.isdigit() and len(texto_lower) == 2 and texto_lower.startswith("0"):
                 texto_lower = texto_lower.lstrip("0")
                 if texto_lower == "": texto_lower = "0"
             
-            for prefijo in ["carreras ", "carrera ", "opcion ", "opción "]:
-                if texto_lower.startswith(prefijo):
-                    texto_lower = texto_lower.replace(prefijo, "")
+            # 2. Extraer el número si el mensaje es corto (ej: "paso 11", "opcion 12", "numero 9")
+            if len(texto_lower) <= 15:
+                match = re.search(r'\b(1[0-2]|[1-9]|0)\b', texto_lower)
+                if match:
+                    texto_lower = match.group(1)
             
             estado = user_states.get(numero, "inicio")
             respuesta = ""
             enviar_texto_final = True
-
+            
             # 🚨 PREGUNTAS DURANTE EL REGISTRO (Error 6)
             if len(texto) > 12 and estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"] and not texto.isdigit():
                 respuesta_libre = redactar_texto_libre(texto)
