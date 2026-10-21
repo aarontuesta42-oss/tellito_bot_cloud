@@ -1,8 +1,11 @@
 import os
+import re
 import json
 import random
-import requests
 import time
+import unicodedata
+import requests
+from itertools import combinations_with_replacement
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
@@ -35,6 +38,61 @@ fallbacks = data.get('fallbacks', [])
 
 user_states = {}
 user_data = {}
+
+# ============================================================
+# 🧠 GROUNDING: construir contexto desde el JSON completo
+# ============================================================
+
+PALABRAS_CARRERA = {
+    "carrera", "carreras", "estudiar", "estudio", "profesion",
+    "profesional", "campo laboral", "especialidad", "programa de estudios"
+}
+
+def normalizar(t: str) -> str:
+    t = unicodedata.normalize('NFKD', t).encode('ascii', 'ignore').decode()
+    return re.sub(r'[^a-z0-9\s]', '', t.lower())
+
+def construir_contexto(texto_usuario: str = "") -> str:
+    """Arma el contexto completo del JSON para pasárselo a la IA."""
+    partes = []
+
+    meta = data.get('metadata', {})
+    partes.append("=== INSTITUCIÓN ===")
+    partes.append(meta.get('institucion', 'IESTP Julio César Tello'))
+    partes.append(f"Moneda: {meta.get('moneda', 'PEN')} | UIT: S/ {meta.get('uit_vigente', '')}")
+
+    # Carreras: títulos SIEMPRE
+    partes.append("\n=== CARRERAS OFICIALES (SOLO estas 7) ===")
+    for v in carreras_info.values():
+        partes.append(f"- {v['titulo']}")
+
+    # Detección: ¿incluir detalle de alguna carrera?
+    user_norm = normalizar(texto_usuario)
+    tokens_user = {t for t in user_norm.split() if len(t) > 4}
+    pide_carreras = any(p in user_norm for p in PALABRAS_CARRERA)
+
+    carreras_detalle = []
+    for v in carreras_info.values():
+        nombre_norm = normalizar(v['titulo'])
+        if pide_carreras or any(t in nombre_norm for t in tokens_user):
+            carreras_detalle.append(v)
+
+    if carreras_detalle:
+        partes.append("\n=== DETALLE DE CARRERAS ===")
+        for v in carreras_detalle:
+            partes.append(v['texto'])
+
+    # FAQs: TODAS, siempre
+    partes.append("\n=== FAQs OFICIALES ===")
+    for f in faqs:
+        partes.append(json.dumps(f, ensure_ascii=False))
+
+    # Conceptos de pago: TODOS, siempre
+    partes.append("\n=== CONCEPTOS DE PAGO (TUPA) ===")
+    for p in data.get('conceptos_pago', []):
+        partes.append(f"- {p['concepto']}: S/ {p['monto']:.2f}")
+
+    return "\n".join(partes)
 
 # --- BASE DE DATOS ---
 if not os.path.exists('logs'): os.makedirs('logs')
@@ -188,31 +246,102 @@ def redactar_con_ia(faq_dict):
 def redactar_texto_libre(texto_usuario):
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
-    
-    # Le pasamos TODA la base de conocimiento para que pueda buscar respuestas académicas
-    contexto_faqs = json.dumps(faqs, ensure_ascii=False)
+
+    contexto = construir_contexto(texto_usuario)
 
     prompt_sistema = (
-        f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
-        f"El usuario ha escrito este mensaje: '{texto_usuario}'.\n\n"
-        f"INSTRUCCIONES:\n"
-        f"1. Si el mensaje es una pregunta académica (ej. cursos jalados, costos, trámites), usa esta información oficial para responder: {contexto_faqs}. Indícale el costo, la oficina y recuérdale revisar el cronograma oficial.\n"
-        f"2. Si el mensaje es una broma, consejo personal o algo gracioso (ej. chicas, consejos de vida), responde con mucho humor y amabilidad. Dile que eres un asistente virtual del instituto, pero que solo por esta vez le darás un consejo breve y divertido. Luego, invítalo a seguir consultando sus dudas académicas.\n"
-        f"3. No uses menús de opciones (1, 2, 3). Solo entrega un texto amigable con emojis."
+        "Eres Tellito Bot del IESTP Julio César Tello.\n\n"
+        f"=== BASE DE CONOCIMIENTO OFICIAL ===\n{contexto}\n\n"
+        f"=== MENSAJE DEL USUARIO ===\n'{texto_usuario}'\n\n"
+        "=== REGLAS ABSOLUTAS ===\n"
+        "1. SOLO responde con datos que aparezcan LITERALMENTE en la base de arriba.\n"
+        "2. Si el dato no está, responde EXACTAMENTE: "
+        "'No tengo ese dato en mi base oficial 😅. Escribe *menú* para ver opciones "
+        "o consulta en Secretaría Académica.'\n"
+        "3. PROHIBIDO inventar carreras, montos, oficinas, fechas o requisitos.\n"
+        "4. Las carreras son EXACTAMENTE las 7 listadas. NO menciones Computación, "
+        "Enfermería, Derecho, Nutrición, Medicina, etc. — no existen en el instituto.\n"
+        "5. Los montos deben coincidir EXACTAMENTE con los de la base. Si sumas, "
+        "muestra el cálculo.\n"
+        "6. Máximo 6 líneas. Directo. Máx. 2-3 emojis.\n"
+        "7. Sin menús numerados (1,2,3). Sin preguntas de seguimiento.\n"
     )
-    
+
     payload = {
         "model": "deepseek-chat",
-        "messages": [{"role": "system", "content": prompt_sistema}],
-        "temperature": 0.7
+        "messages": [
+            {"role": "system", "content": prompt_sistema},
+            {"role": "user", "content": texto_usuario}
+        ],
+        "temperature": 0.2,
+        "max_tokens": 400
     }
-    
+
     try:
-        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        response = requests.post(url, headers=headers, json=payload, timeout=20)
+        response.raise_for_status()
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
         print(f"Error IA Libre: {e}")
-        return "¡Jaja! Buena esa. 😄 Pero mi función principal es ser tu asistente virtual del instituto. Si tienes dudas académicas, aquí estoy para ayudarte."
+        return "Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones."
+
+# ============================================================
+# 🛡️ VALIDADOR: rechaza respuestas inventadas por la IA
+# ============================================================
+
+# Precalcular montos oficiales (1 sola vez al arrancar)
+MONTOS_OFICIALES = set()
+for _f in faqs:
+    for _m in re.findall(r'\d[\d.,]*', _f.get('costo', '') or ''):
+        MONTOS_OFICIALES.add(_m.replace(',', '.'))
+for _p in data.get('conceptos_pago', []):
+    MONTOS_OFICIALES.add(f"{_p['monto']:.2f}")
+    MONTOS_OFICIALES.add(f"{_p['monto']:.0f}")
+
+CARRERAS_FANTASMA = {
+    'computacion', 'informatica', 'enfermeria', 'enfermeria tecnica',
+    'nutricion', 'farmacia', 'odontologia', 'derecho', 'medicina',
+    'psicologia', 'arquitectura', 'ingenieria civil',
+    'ingenieria de sistemas', 'administracion de negocios',
+    'contabilidad publica'
+}
+
+def _es_suma_valida(valor, max_n=3):
+    """Verifica si `valor` es una suma de 1 a 3 montos oficiales (ej: 170 + 10 = 180)."""
+    nums = sorted({
+        float(x) for x in MONTOS_OFICIALES
+        if re.match(r'^\d+(\.\d+)?$', x)
+    })
+    for n in range(1, max_n + 1):
+        for combo in combinations_with_replacement(nums, n):
+            if abs(sum(combo) - valor) < 0.01:
+                return True
+    return False
+
+def validar_respuesta(respuesta: str) -> tuple[bool, str]:
+    """Devuelve (es_valida, motivo). Si es_valida=False, hay que reemplazar la respuesta."""
+    resp_norm = normalizar(respuesta)
+
+    # 1) Carreras fantasma
+    for f in CARRERAS_FANTASMA:
+        if f in resp_norm:
+            return False, f"carrera inexistente: '{f}'"
+
+    # 2) Montos (solo >= 20 para evitar falsos positivos con "4 fotos", "2 semestres")
+    for m in re.findall(r'\b\d+(?:[.,]\d+)?\b', respuesta):
+        try:
+            valor = float(m.replace(',', '.'))
+        except ValueError:
+            continue
+        if valor < 20:
+            continue
+        if (f"{valor:.2f}" in MONTOS_OFICIALES
+                or str(int(valor)) in MONTOS_OFICIALES
+                or _es_suma_valida(valor)):
+            continue
+        return False, f"monto no verificado: S/ {valor}"
+
+    return True, "ok"
 
 # --- TEXTOS DE MENÚS ---
 def get_menu_principal(primer_nombre, is_new=False):
@@ -289,14 +418,23 @@ async def recibir_mensaje(request: Request):
             if len(texto) > 12 and estado not in ["esperando_nombre", "esperando_perfil", "esperando_carrera"]:
                 # 1. La IA genera la respuesta
                 respuesta_libre = redactar_texto_libre(texto)
-                
-                # 2. Enviamos la respuesta de la IA
+
+                # 2. VALIDAR: si inventó algo, reemplazar por fallback seguro
+                es_valida, razon = validar_respuesta(respuesta_libre)
+                if not es_valida:
+                    print(f"⚠️ IA rechazada ({razon}) | texto='{texto}' | respuesta='{respuesta_libre}'")
+                    respuesta_libre = (
+                        "No tengo ese dato exacto en mi base oficial 😅. "
+                        "Escribe *menú* para ver las opciones o consulta en Secretaría Académica."
+                    )
+
+                # 3. Enviamos la respuesta (validada o fallback)
                 enviar_mensaje_meta(numero, respuesta_libre)
-                
-                # 3. Pausa para que no se amontonen los mensajes
+
+                # 4. Pausa para que no se amontonen los mensajes
                 time.sleep(1.5)
                 
-                # 4. Enviamos el menú principal automáticamente
+                # 5. Enviamos el menú principal automáticamente
                 if numero in user_data and 'nombres' in user_data[numero]:
                     nombres = user_data[numero]['nombres']
                     primer_nombre = nombres.split()[0] if nombres else "amigo"
@@ -305,7 +443,7 @@ async def recibir_mensaje(request: Request):
                 else:
                     enviar_mensaje_meta(numero, "Para comenzar, por favor dime tu *Nombre y Apellido*.")
                 
-                # 5. Cortamos la ejecución para que no siga al flujo normal
+                # 6. Cortamos la ejecución para que no siga al flujo normal
                 return Response(content="OK", status_code=200)
     
             # --- REGISTRO ---
