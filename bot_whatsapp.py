@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
 from supabase import create_client
+from prompts import PROMPT_FAQ, PROMPT_LIBRE
 
 # 1. Cargar variables de entorno
 load_dotenv()
@@ -208,31 +209,23 @@ def redactar_con_ia(faq_dict):
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
     
     contexto_str = json.dumps(faq_dict, indent=2, ensure_ascii=False)
-
-    # 🚨 LÓGICA INTELIGENTE: Solo ponemos la regla de pago si el trámite tiene costo
     regla_pago = ""
     if faq_dict.get('costo'):
         regla_pago = (
-            f"REGLA DE ORO: Como este trámite tiene un costo, SIEMPRE debes recordar al usuario:\n"
+            f"REGLA DE ORO: Como este trámite tiene un costo, incluye siempre:\n"
             f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
             f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
         )
 
-    prompt_sistema = (
-        f"Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
-        f"Tu única tarea es redactar la información del trámite de forma amigable, clara y CONCISA. Usa emojis. "
-        f"Aquí tienes la información oficial:\n\n{contexto_str}\n\n"
-        f"{regla_pago}"
-        f"REGLAS DE FORMATO ESTRICTAS (ESTÁS EN WHATSAPP):\n"
-        f"- Usa SOLO un asterisco a cada lado para negrita: *texto*\n"
-        f"- Usa guion bajo a cada lado para cursiva: _texto_\n"
-        f"- NO uses almohadillas (#) ni doble asterisco (**).\n"
-        f"- ¡PROHIBIDO! NO agregues menús de opciones (1, 2, 3...). NO hagas preguntas de seguimiento. Solo entrega la información."
+    # Usamos el prompt importado y le pasamos las variables
+    prompt_final = PROMPT_FAQ.format(
+        contexto_str=contexto_str,
+        regla_pago=regla_pago
     )
-    
+
     payload = {
         "model": "deepseek-chat",
-        "messages": [{"role": "system", "content": prompt_sistema}, {"role": "user", "content": "Redacta la información oficial."}],
+        "messages": [{"role": "system", "content": prompt_final}],
         "temperature": 0.3
     }
     
@@ -242,36 +235,29 @@ def redactar_con_ia(faq_dict):
     except Exception as e:
         print(f"Error IA: {e}")
         return "Tuve un pequeño problema pensando la respuesta, pero aquí tienes la info oficial."
-
+        
 def redactar_texto_libre(texto_usuario):
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
 
     contexto = construir_contexto(texto_usuario)
+    
+    # Creamos la lista de carreras para pasársela al prompt
+    lista_carreras = ", ".join([v['titulo'] for v in carreras_info.values()])
 
-    prompt_sistema = (
-        "Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
-        "Tu personalidad es amigable, servicial y te encanta usar emojis. "
-        "Tu objetivo es ayudar a los estudiantes, prospectos y egresados.\n\n"
-        f"=== BASE DE CONOCIMIENTO OFICIAL ===\n{contexto}\n\n"
-        "=== REGLAS ESTRICTAS ===\n"
-        "1. SOLO responde con datos LITERALES de la base de arriba. NO INVENTES NADA (ni carreras, ni montos, ni fechas).\n"
-        "2. Las ÚNICAS carreras oficiales son las 7 listadas en '=== CARRERAS OFICIALES (SOLO estas 7) ==='. Si preguntan por otra, di que no la tienes.\n"
-        "3. Los montos deben coincidir exactamente. Si haces una suma, muestra el cálculo.\n"
-        "4. Si el dato NO está, di exactamente: 'No tengo ese dato en mi base oficial 😅. Te recomiendo escribir *menú* para ver las opciones o consultar en Secretaría Académica.'\n"
-        "5. Sé CONCISO (máximo 6 líneas). Usa negritas para lo importante (*texto*).\n"
-        "6. ¡PROHIBIDO! NO agregues menús numerados (1, 2, 3). NO hagas preguntas de seguimiento tipo '¿Quieres saber más?'.\n"
-        "7. Si el usuario hace una broma o pregunta algo externo, responde con humor, dile que eres el bot del instituto y devuélvelo al tema.\n"
-        f"\n=== MENSAJE DEL USUARIO ===\n'{texto_usuario}'"
+    # Usamos el prompt importado
+    prompt_final = PROMPT_LIBRE.format(
+        contexto=contexto,
+        lista_carreras=lista_carreras,
+        texto_usuario=texto_usuario
     )
 
     payload = {
         "model": "deepseek-chat",
         "messages": [
-            {"role": "system", "content": prompt_sistema},
-            {"role": "user", "content": texto_usuario}
+            {"role": "system", "content": prompt_final}
         ],
-        "temperature": 0.4, # Subimos un poco para recuperar la chispa
+        "temperature": 0.3, # Un poco de temperatura para que sea amigable
         "max_tokens": 400
     }
 
@@ -282,7 +268,7 @@ def redactar_texto_libre(texto_usuario):
     except Exception as e:
         print(f"Error IA Libre: {e}")
         return "¡Ups! Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones."
-
+        
 # ============================================================
 # 🛡️ VALIDADOR: rechaza respuestas inventadas por la IA
 # ============================================================
