@@ -393,6 +393,11 @@ async def recibir_mensaje(request: Request):
             texto = message['text']['body'].strip()
             texto_lower = texto.lower()
 
+            # 🚨 PARCHE PARA EL QR: Si el texto viene del link impreso, lo forzamos a ser un saludo corto
+            if "deseo mas informacion" in texto_lower or "deseo más información" in texto_lower:
+                texto_lower = "hola"
+                texto = "hola"
+
             # 🚨 LIMPIEZA DE TEXTO (Para que "09" sea "9" y "carreras 11" sea "11")
             if texto_lower.isdigit() and len(texto_lower) == 2 and texto_lower.startswith("0"):
                 texto_lower = texto_lower.lstrip("0")
