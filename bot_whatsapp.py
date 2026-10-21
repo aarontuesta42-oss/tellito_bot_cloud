@@ -250,21 +250,19 @@ def redactar_texto_libre(texto_usuario):
     contexto = construir_contexto(texto_usuario)
 
     prompt_sistema = (
-        "Eres Tellito Bot del IESTP Julio César Tello.\n\n"
+        "Eres Tellito Bot, el asistente virtual del IESTP Julio César Tello. "
+        "Tu personalidad es amigable, servicial y te encanta usar emojis. "
+        "Tu objetivo es ayudar a los estudiantes, prospectos y egresados.\n\n"
         f"=== BASE DE CONOCIMIENTO OFICIAL ===\n{contexto}\n\n"
-        f"=== MENSAJE DEL USUARIO ===\n'{texto_usuario}'\n\n"
-        "=== REGLAS ABSOLUTAS ===\n"
-        "1. SOLO responde con datos que aparezcan LITERALMENTE en la base de arriba.\n"
-        "2. Si el dato no está, responde EXACTAMENTE: "
-        "'No tengo ese dato en mi base oficial 😅. Escribe *menú* para ver opciones "
-        "o consulta en Secretaría Académica.'\n"
-        "3. PROHIBIDO inventar carreras, montos, oficinas, fechas o requisitos.\n"
-        "4. Las carreras son EXACTAMENTE las 7 listadas. NO menciones Computación, "
-        "Enfermería, Derecho, Nutrición, Medicina, etc. — no existen en el instituto.\n"
-        "5. Los montos deben coincidir EXACTAMENTE con los de la base. Si sumas, "
-        "muestra el cálculo.\n"
-        "6. Máximo 6 líneas. Directo. Máx. 2-3 emojis.\n"
-        "7. Sin menús numerados (1,2,3). Sin preguntas de seguimiento.\n"
+        "=== REGLAS ESTRICTAS ===\n"
+        "1. SOLO responde con datos LITERALES de la base de arriba. NO INVENTES NADA (ni carreras, ni montos, ni fechas).\n"
+        "2. Las ÚNICAS carreras oficiales son las 7 listadas en '=== CARRERAS OFICIALES (SOLO estas 7) ==='. Si preguntan por otra, di que no la tienes.\n"
+        "3. Los montos deben coincidir exactamente. Si haces una suma, muestra el cálculo.\n"
+        "4. Si el dato NO está, di exactamente: 'No tengo ese dato en mi base oficial 😅. Te recomiendo escribir *menú* para ver las opciones o consultar en Secretaría Académica.'\n"
+        "5. Sé CONCISO (máximo 6 líneas). Usa negritas para lo importante (*texto*).\n"
+        "6. ¡PROHIBIDO! NO agregues menús numerados (1, 2, 3). NO hagas preguntas de seguimiento tipo '¿Quieres saber más?'.\n"
+        "7. Si el usuario hace una broma o pregunta algo externo, responde con humor, dile que eres el bot del instituto y devuélvelo al tema.\n"
+        f"\n=== MENSAJE DEL USUARIO ===\n'{texto_usuario}'"
     )
 
     payload = {
@@ -273,7 +271,7 @@ def redactar_texto_libre(texto_usuario):
             {"role": "system", "content": prompt_sistema},
             {"role": "user", "content": texto_usuario}
         ],
-        "temperature": 0.2,
+        "temperature": 0.4, # Subimos un poco para recuperar la chispa
         "max_tokens": 400
     }
 
@@ -283,7 +281,7 @@ def redactar_texto_libre(texto_usuario):
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
         print(f"Error IA Libre: {e}")
-        return "Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones."
+        return "¡Ups! Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones."
 
 # ============================================================
 # 🛡️ VALIDADOR: rechaza respuestas inventadas por la IA
@@ -424,8 +422,8 @@ async def recibir_mensaje(request: Request):
                 if not es_valida:
                     print(f"⚠️ IA rechazada ({razon}) | texto='{texto}' | respuesta='{respuesta_libre}'")
                     respuesta_libre = (
-                        "No tengo ese dato exacto en mi base oficial 😅. "
-                        "Escribe *menú* para ver las opciones o consulta en Secretaría Académica."
+                        "Mmm, no tengo ese dato exacto en mi base oficial 😅. "
+                        "Pero puedo ayudarte con trámites, carreras o costos. Escribe *menú* para ver las opciones."
                     )
 
                 # 3. Enviamos la respuesta (validada o fallback)
@@ -521,8 +519,15 @@ async def recibir_mensaje(request: Request):
                 
                 # Easter egg / Fallback
                 else:
-                    enviar_fallback_ciclico(numero)
-                    enviar_texto_final = False
+                    # Si es un saludo o palabra corta común, NO activamos Fallout. 
+                    # Le mostramos el menú amigablemente.
+                    if texto_lower in ["hola", "holi", "buenas", "hey", "hi", "que tal", "ola"]:
+                        primer_nombre = user_data[numero]['nombres'].split()[0] if 'nombres' in user_data[numero] else "amigo"
+                        respuesta = f"¡Hola, *{primer_nombre}*! 👋 ¿En qué te puedo ayudar hoy?\n\nEscribe *menú* para ver todas las opciones."
+                    else:
+                        # Solo si escribe algo raro (xd, asdf) sale el Easter Egg
+                        enviar_fallback_ciclico(numero)
+                        enviar_texto_final = False
 
             # --- SUBMENÚS ---
             elif estado in SUBMENUS:
