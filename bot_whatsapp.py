@@ -464,17 +464,32 @@ async def recibir_mensaje(request: Request):
                     respuesta = "¡Hola! 👋 Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊"
 
             elif estado == "esperando_nombre":
-                palabras_prohibidas = ["0", "1", "2", "3", "menu", "menú", "salir", "cancelar", "xd", "hola", "info", "informacion"]
+                # 1. Salida de emergencia (Cancelar, menú o 0)
+                if texto_lower in ["cancelar", "menu", "menú", "salir", "0"]:
+                    cliente = cargar_cliente(numero)
+                    if cliente:
+                        user_data[numero] = cliente
+                        user_states[numero] = "menu_principal"
+                        respuesta = get_menu_principal(cliente['nombres'].split()[0], is_new=False)
+                    else:
+                        user_states[numero] = "inicio"
+                        respuesta = "Entendido. Volviendo al inicio. 👋 ¡Hola! ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
                 
-                # Validación: mínimo 3 letras, no es un número, no es palabra prohibida
-                if texto_lower in palabras_prohibidas or len(texto) < 3 or texto.isdigit():
-                    respuesta = "⚠️ Por favor, ingresa un nombre válido (mínimo 3 letras) o escribe *cancelar* para reiniciar."
+                # 2. Si escribe la frase del QR por error
+                elif "deseo" in texto_lower and ("informacion" in texto_lower or "información" in texto_lower):
+                    respuesta = "¡Claro que sí! 😊 Para brindarte una atención personalizada, primero necesito que te registres. ¿Me podrías decir tus *Nombres y Apellidos*? 📝"
+                
+                # 3. Validación normal de nombres
                 else:
-                    nombre_formateado = texto.title()
-                    user_data[numero]['nombres'] = nombre_formateado
-                    user_states[numero] = "esperando_perfil"
-                    primer_nombre = nombre_formateado.split()[0] if nombre_formateado.split() else "amigo"
-                    respuesta = f"¡Un gusto, *{primer_nombre}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto* (me gustaría postular al instituto)\n2️⃣ 📚 Soy *Estudiante* (estoy actualmente estudiando en el instituto)\n3️⃣ 🎉 Soy *Egresado* (ya terminé mi carrera del instituto)\n\n_Responde únicamente con el número de tu opción._"
+                    palabras_prohibidas = ["1", "2", "3", "xd", "hola", "info", "informacion"]
+                    if texto_lower in palabras_prohibidas or len(texto) < 3 or texto.isdigit():
+                        respuesta = "⚠️ Por favor, ingresa un nombre válido (mínimo 3 letras) o escribe *cancelar* para reiniciar."
+                    else:
+                        nombre_formateado = texto.title()
+                        user_data[numero]['nombres'] = nombre_formateado
+                        user_states[numero] = "esperando_perfil"
+                        primer_nombre = nombre_formateado.split()[0] if nombre_formateado.split() else "amigo"
+                        respuesta = f"¡Un gusto, *{primer_nombre}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto* (me gustaría postular al instituto)\n2️⃣ 📚 Soy *Estudiante* (estoy actualmente estudiando en el instituto)\n3️⃣ 🎉 Soy *Egresado* (ya terminé mi carrera del instituto)\n\n_Responde únicamente con el número de tu opción._"
                     
             elif estado == "esperando_perfil":
                 if texto_lower in ["0", "menu", "menú", "cancelar", "reiniciar"]:
