@@ -533,6 +533,10 @@ async def recibir_mensaje(request: Request):
                         respuesta += "\n\n🔹 _Escribe *menú* para ir al inicio._"
                     else:
                         respuesta = "⚠️ Información no encontrada."
+
+                elif texto_lower in ["menu", "menú", "inicio"]:
+                    primer_nombre = user_data[numero]['nombres'].split()[0] if 'nombres' in user_data[numero] else "amigo"
+                    respuesta = get_menu_principal(primer_nombre, is_new=False)
                 
                 # Easter egg / Fallback
                 else:
