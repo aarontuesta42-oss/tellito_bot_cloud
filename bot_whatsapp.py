@@ -392,6 +392,17 @@ async def recibir_mensaje(request: Request):
             
             texto = message['text']['body'].strip()
             texto_lower = texto.lower()
+
+            # 🚨 LIMPIEZA DE TEXTO (Para que "09" sea "9" y "carreras 11" sea "11")
+            if texto_lower.isdigit() and len(texto_lower) == 2 and texto_lower.startswith("0"):
+                texto_lower = texto_lower.lstrip("0")
+                if texto_lower == "": texto_lower = "0"
+            
+            # Limpiar prefijos como "carreras 11" o "opcion 5"
+            for prefijo in ["carreras ", "carrera ", "opcion ", "opción "]:
+                if texto_lower.startswith(prefijo):
+                    texto_lower = texto_lower.replace(prefijo, "")
+
             print(f"📩 {numero}: {texto}")
             
             estado = user_states.get(numero, "inicio")
@@ -418,16 +429,21 @@ async def recibir_mensaje(request: Request):
                 # 4. Pausa para que no se amontonen los mensajes
                 time.sleep(1.5)
                 
-                # 5. Enviamos el menú principal automáticamente
-                if numero in user_data and 'nombres' in user_data[numero]:
-                    nombres = user_data[numero]['nombres']
-                    primer_nombre = nombres.split()[0] if nombres else "amigo"
-                    menu = get_menu_principal(primer_nombre, is_new=False)
-                    enviar_mensaje_meta(numero, menu)
-                else:
-                    enviar_mensaje_meta(numero, "Para comenzar, por favor dime tu *Nombre y Apellido*.")
-                
                 # 6. Cortamos la ejecución para que no siga al flujo normal
+                return Response(content="OK", status_code=200)
+
+            # 🚨 PREGUNTAS DURANTE EL REGISTRO
+            if len(texto) > 12 and estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"] and not texto.isdigit():
+                respuesta_libre = redactar_texto_libre(texto)
+                enviar_mensaje_meta(numero, respuesta_libre)
+                time.sleep(1.5)
+                
+                if estado == "esperando_nombre":
+                    enviar_mensaje_meta(numero, "Ahora sí, dime tus *Nombres y Apellidos* 📝")
+                elif estado == "esperando_perfil":
+                    enviar_mensaje_meta(numero, "Volviendo al registro: ¿cuál es tu situación? 1️⃣2️⃣3️⃣")
+                elif estado == "esperando_carrera":
+                    enviar_mensaje_meta(numero, "Volviendo al registro: elige el número de tu carrera (1-7).")
                 return Response(content="OK", status_code=200)
     
             # --- REGISTRO ---
@@ -461,8 +477,7 @@ async def recibir_mensaje(request: Request):
                     user_data[numero] = {}
                     respuesta = "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
                 elif texto_lower in {"1", "2", "3"}:
-                perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
-                if texto_lower in perfiles:
+                    perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
                     user_data[numero]['perfil'] = perfiles[texto_lower]
                     user_states[numero] = "esperando_carrera"
                     respuesta = "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n_Responde únicamente con el número de la carrera._"
@@ -476,8 +491,7 @@ async def recibir_mensaje(request: Request):
                     user_data[numero] = {}
                     respuesta = "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
                 elif texto_lower in {"1", "2", "3", "4", "5", "6", "7"}:
-                carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
-                if texto_lower in carreras:
+                    carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
                     user_data[numero]['carrera'] = carreras[texto_lower]
                     user_states[numero] = "menu_principal"
                     guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
@@ -517,13 +531,12 @@ async def recibir_mensaje(request: Request):
                 
                 # Easter egg / Fallback
                 else:
-                    # Si es un saludo o palabra corta común, NO activamos Fallout. 
-                    # Le mostramos el menú amigablemente.
-                    if texto_lower in ["hola", "holi", "buenas", "hey", "hi", "que tal", "ola"]:
+                    # Si es un saludo, mostramos menú amigable, NO Fallout
+                    if texto_lower in ["hola", "holi", "holis", "buenas", "hey", "hi", "hello", "que tal", "buenos dias", "buenas tardes", "buenas noches"]:
                         primer_nombre = user_data[numero]['nombres'].split()[0] if 'nombres' in user_data[numero] else "amigo"
                         respuesta = f"¡Hola, *{primer_nombre}*! 👋 ¿En qué te puedo ayudar hoy?\n\nEscribe *menú* para ver todas las opciones."
                     else:
-                        # Solo si escribe algo raro (xd, asdf) sale el Easter Egg
+                        # Solo si escribe basura (ej. xd, asdf), sale el Easter Egg
                         enviar_fallback_ciclico(numero)
                         enviar_texto_final = False
 
