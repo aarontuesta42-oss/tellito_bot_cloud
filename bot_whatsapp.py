@@ -1,601 +1,924 @@
+# ==========================================================
+# 🤖 TELLITO BOT — IESTP Julio César Tello
+# ----------------------------------------------------------
+# Este archivo contiene SOLO lógica. Ningún texto, menú, dato ni
+# Easter egg vive aquí: todo está en base_conocimiento.json
+# (y en config_bot.json, bajo la clave "bot", si no la has fusionado).
+# ==========================================================
 import os
 import re
 import json
-import random
 import time
+import hmac
+import hashlib
+import threading
+import traceback
 import unicodedata
-import requests
+from collections import defaultdict, deque
+from datetime import datetime, timezone
 from itertools import combinations_with_replacement
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import PlainTextResponse
+
+import requests
 from dotenv import load_dotenv
+from fastapi import BackgroundTasks, FastAPI, Request, Response
+from fastapi.responses import PlainTextResponse
 from supabase import create_client
+
 from prompts import PROMPT_FAQ, PROMPT_LIBRE
 
-# 1. Cargar variables de entorno
+# ----------------------------------------------------------
+# 1. ENTORNO
+# ----------------------------------------------------------
 load_dotenv()
 
 META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
 META_PHONE_NUMBER_ID = os.getenv("META_PHONE_NUMBER_ID")
+META_APP_SECRET = os.getenv("META_APP_SECRET")  # opcional: valida la firma de Meta
+META_GRAPH_VERSION = os.getenv("META_GRAPH_VERSION", "v21.0")
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
+DEEPSEEK_MODEL = "deepseek-chat"
+META_URL = f"https://graph.facebook.com/{META_GRAPH_VERSION}/{META_PHONE_NUMBER_ID}/messages"
+TABLA_SESIONES = "sesiones_bot"
 
+http = requests.Session()
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"status": "Tellito Bot está despierto y funcionando!"}
 
-# 2. Cargar JSON
-with open('base_conocimiento.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
-faqs = data['faqs']
-carreras_info = data.get('info_carreras', {})
-fallbacks = data.get('fallbacks', [])
+def log(*args):
+    print(*args, flush=True)
 
-user_states = {}
-user_data = {}
 
-# ============================================================
-# 🧠 GROUNDING: construir contexto desde el JSON completo
-# ============================================================
+if not META_APP_SECRET:
+    log("⚠️ META_APP_SECRET no está definido: el webhook NO verifica la firma de Meta.")
 
-PALABRAS_CARRERA = {
-    "carrera", "carreras", "estudiar", "estudio", "profesion",
-    "profesional", "campo laboral", "especialidad", "programa de estudios"
-}
+# ----------------------------------------------------------
+# 2. CONTENIDO (JSON)
+# ----------------------------------------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def _cargar_json(nombre):
+    with open(os.path.join(BASE_DIR, nombre), "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+data = _cargar_json("base_conocimiento.json")
+if "bot" not in data:
+    data.update(_cargar_json("config_bot.json"))
+
+BOT = data["bot"]
+AJ = BOT["ajustes"]
+MSG = BOT["mensajes"]
+LENG = BOT["lenguaje"]
+MENUS = BOT["menus"]
+SUBMENUS = BOT["submenus"]
+MAPEO_FAQS = BOT["mapeo_faqs"]
+DIRECTOS = BOT["directos"]
+REGISTRO = BOT["registro"]
+SALUDOS_MENU = BOT["saludos_menu"]
+PIES = BOT["pies"]
+ETIQ = BOT["etiquetas"]
+PAGOS = BOT["pagos"]
+EASTER = BOT["easter_egg"]
+IA_CFG = BOT["ia"]
+
+faqs = data["faqs"]
+carreras_info = data.get("info_carreras", {})
+metadata = data.get("metadata", {})
+INSTITUCION = metadata.get("institucion", "")
+
+PAUSA = float(AJ["pausa_segundos"])
+LONG_LIBRE = int(AJ["longitud_texto_libre"])
+
+
+def render(plantilla, **kw):
+    for k, v in kw.items():
+        plantilla = plantilla.replace("{" + k + "}", str(v))
+    return plantilla
+
+
+def _verificar_config():
+    """Falla al arrancar (con un mensaje claro) si falta algo del JSON."""
+    faltan = []
+    for clave in ("ajustes", "lenguaje", "atajos", "registro", "saludos_menu", "mensajes", "pies",
+                  "etiquetas", "pagos", "menus", "submenus", "mapeo_faqs", "directos",
+                  "easter_egg", "sensibles", "validador", "ia"):
+        if clave not in BOT:
+            faltan.append(clave)
+    if faltan:
+        raise RuntimeError(f"Falta en el JSON la clave bot.{', bot.'.join(faltan)}")
+    ids = {f.get("id") for f in faqs}
+    ids_usados = set(DIRECTOS.values()) | {v for m in MAPEO_FAQS.values() for v in m.values()}
+    for faq_id in sorted(ids_usados - ids):
+        log(f"⚠️ El menú apunta a {faq_id}, que no existe en faqs.")
+    for clave in MAPEO_FAQS:
+        if clave not in SUBMENUS:
+            log(f"⚠️ mapeo_faqs.{clave} no tiene submenú en submenus.")
+
+
+_verificar_config()
+
+# ----------------------------------------------------------
+# 3. TEXTO: NORMALIZACIÓN Y DETECCIÓN
+# ----------------------------------------------------------
+
 
 def normalizar(t: str) -> str:
-    t = unicodedata.normalize('NFKD', t).encode('ascii', 'ignore').decode()
-    return re.sub(r'[^a-z0-9\s]', '', t.lower())
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode()
+    t = re.sub(r"[^a-z0-9\s]", " ", t.lower())
+    return re.sub(r"\s+", " ", t).strip()
 
-def construir_contexto(texto_usuario: str = "") -> str:
-    """Arma el contexto completo del JSON para pasárselo a la IA."""
-    partes = []
 
-    meta = data.get('metadata', {})
-    partes.append("=== INSTITUCIÓN ===")
-    partes.append(meta.get('institucion', 'IESTP Julio César Tello'))
-    partes.append(f"Moneda: {meta.get('moneda', 'PEN')} | UIT: S/ {meta.get('uit_vigente', '')}")
+SALUDOS = {normalizar(s) for s in LENG["saludos"]}
+AGRADECIMIENTOS = {normalizar(s) for s in LENG["agradecimientos"]}
+INTERROGATIVOS = [normalizar(s) for s in LENG["interrogativos"]]
+NOMBRES_NO_VALIDOS = {normalizar(s) for s in LENG["nombres_no_validos"]}
+COMANDOS_MENU = {normalizar(s) for s in LENG["comandos_menu"]}
+COMANDOS_REINICIO = {normalizar(s) for s in LENG["comandos_reinicio_registro"]}
+ATAJOS = {normalizar(k): v for k, v in BOT["atajos"].items()}
+SENSIBLES = [normalizar(s) for s in BOT["sensibles"]["palabras"]]
+_PREF_OPCION = "|".join(re.escape(normalizar(p)) for p in sorted(LENG["prefijos_opcion"], key=len, reverse=True))
+_PREF_NOMBRE = "|".join(re.escape(p) for p in sorted(LENG["prefijos_nombre"], key=len, reverse=True))
+RE_PREFIJO_OPCION = re.compile(rf"(?:{_PREF_OPCION})\s+(\d+)")
+RE_PREFIJO_NOMBRE = re.compile(rf"^(?:{_PREF_NOMBRE})\s+", re.IGNORECASE)
+RE_NOMBRE = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ'’.\- ]*")
 
-    # Carreras: títulos SIEMPRE
-    partes.append("\n=== CARRERAS OFICIALES (SOLO estas 7) ===")
-    for v in carreras_info.values():
-        partes.append(f"- {v['titulo']}")
 
-    # Detección: ¿incluir detalle de alguna carrera?
-    user_norm = normalizar(texto_usuario)
-    tokens_user = {t for t in user_norm.split() if len(t) > 4}
-    pide_carreras = any(p in user_norm for p in PALABRAS_CARRERA)
+def limpiar_comando(texto: str) -> str:
+    """'09' -> '9' | 'carreras 11' -> '11' | 'Menú!' -> 'menu' | '1️⃣1️⃣' -> '11'."""
+    t = texto
+    for k, v in LENG["reemplazos"].items():
+        t = t.replace(k, f" {v} ")
+    t = normalizar(t)
+    m = RE_PREFIJO_OPCION.fullmatch(t)
+    if m:
+        t = m.group(1)
+    if t.isdigit():
+        t = str(int(t))
+    return t
 
-    carreras_detalle = []
-    for v in carreras_info.values():
-        nombre_norm = normalizar(v['titulo'])
-        if pide_carreras or any(t in nombre_norm for t in tokens_user):
-            carreras_detalle.append(v)
 
-    if carreras_detalle:
-        partes.append("\n=== DETALLE DE CARRERAS ===")
-        for v in carreras_detalle:
-            partes.append(v['texto'])
+def es_saludo(cmd: str) -> bool:
+    c = re.sub(r"(.)\1{2,}", r"\1", cmd)
+    if not c or len(c.split()) > 4:
+        return False
+    return any(c == s or c.startswith(s + " ") for s in SALUDOS)
 
-    # FAQs: TODAS, siempre
-    partes.append("\n=== FAQs OFICIALES ===")
-    for f in faqs:
-        partes.append(json.dumps(f, ensure_ascii=False))
 
-    # Conceptos de pago: TODOS, siempre
-    partes.append("\n=== CONCEPTOS DE PAGO (TUPA) ===")
-    for p in data.get('conceptos_pago', []):
-        partes.append(f"- {p['concepto']}: S/ {p['monto']:.2f}")
+def es_agradecimiento(cmd: str) -> bool:
+    return re.sub(r"(.)\1{2,}", r"\1", cmd) in AGRADECIMIENTOS
 
-    return "\n".join(partes)
 
-# --- BASE DE DATOS ---
-if not os.path.exists('logs'): os.makedirs('logs')
+def parece_pregunta(texto: str) -> bool:
+    tokens = normalizar(texto).split()
+    if len(tokens) < 2:
+        return False
+    if "?" in texto or "¿" in texto:
+        return True
+    frase = " ".join(tokens)
+    return any(frase.startswith(i + " ") for i in INTERROGATIVOS)
+
+
+def es_consulta(texto: str, cmd: str) -> bool:
+    """Texto libre que merece respuesta de la IA (no es opción, saludo ni atajo)."""
+    if not cmd or cmd.isdigit() or cmd in ATAJOS or es_saludo(cmd) or es_agradecimiento(cmd):
+        return False
+    return len(texto) > LONG_LIBRE or parece_pregunta(texto)
+
+
+def es_sensible(texto: str) -> bool:
+    n = " " + normalizar(texto) + " "
+    return any(s in n for s in SENSIBLES)
+
+
+def validar_nombre(texto: str):
+    """Devuelve el nombre formateado o None si no parece un nombre real."""
+    t = RE_PREFIJO_NOMBRE.sub("", texto.strip()).strip()
+    if not t or len(t) > int(AJ["nombre_max_caracteres"]) or not RE_NOMBRE.fullmatch(t):
+        return None
+    palabras = t.split()
+    if len(palabras) > int(AJ["nombre_max_palabras"]):
+        return None
+    letras = re.sub(r"[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]", "", t)
+    if len(letras) < int(AJ["nombre_min_letras"]):
+        return None
+    n = normalizar(t)
+    if n in NOMBRES_NO_VALIDOS or all(p in NOMBRES_NO_VALIDOS for p in n.split()):
+        return None
+    if es_saludo(n) or not re.search(r"[aeiou]", n):
+        return None
+    return t.title()
+
+
+def nombre_parece_consulta(texto: str) -> bool:
+    """En el paso del nombre: ¿la persona hizo una pregunta en vez de dar su nombre?"""
+    tokens = texto.split()
+    if len(tokens) < 2:
+        return False
+    if parece_pregunta(texto) or any(c.isdigit() for c in texto):
+        return True
+    return len(tokens) > int(AJ["nombre_max_palabras"])
+
+
+# ----------------------------------------------------------
+# 4. ENVÍO A WHATSAPP (Meta)
+# ----------------------------------------------------------
+
+
+def _post_meta(payload) -> bool:
+    headers = {"Authorization": f"Bearer {META_ACCESS_TOKEN}", "Content-Type": "application/json"}
+    for _ in range(2):
+        try:
+            r = http.post(META_URL, headers=headers, json=payload, timeout=15)
+            if r.status_code < 300:
+                return True
+            log(f"❌ Meta {r.status_code}: {r.text[:300]}")
+            if r.status_code < 500:
+                return False
+        except requests.RequestException as e:
+            log(f"❌ Meta (red): {e}")
+    return False
+
+
+def _partir(texto: str, limite: int):
+    if len(texto) <= limite:
+        return [texto]
+    partes, actual = [], ""
+    for parrafo in texto.split("\n\n"):
+        while len(parrafo) > limite:
+            corte = parrafo.rfind("\n", 0, limite)
+            corte = corte if corte > 0 else limite
+            if actual:
+                partes.append(actual)
+                actual = ""
+            partes.append(parrafo[:corte])
+            parrafo = parrafo[corte:].lstrip("\n")
+        if len(actual) + len(parrafo) + 2 > limite and actual:
+            partes.append(actual)
+            actual = parrafo
+        else:
+            actual = f"{actual}\n\n{parrafo}" if actual else parrafo
+    if actual:
+        partes.append(actual)
+    return partes
+
+
+def enviar_texto(numero, texto):
+    if not texto:
+        return
+    for i, parte in enumerate(_partir(texto, int(AJ["max_chars_mensaje"]))):
+        if i:
+            time.sleep(0.6)
+        _post_meta({"messaging_product": "whatsapp", "to": numero, "type": "text",
+                    "text": {"body": parte, "preview_url": False}})
+
+
+def enviar_imagen(numero, url_imagen, caption=""):
+    """Si el caption es muy largo o la imagen falla, el texto igual llega."""
+    limite = int(AJ["max_chars_caption"])
+    imagen = {"link": url_imagen}
+    if caption and len(caption) <= limite:
+        imagen["caption"] = caption
+        caption_enviado = True
+    else:
+        caption_enviado = not caption
+    ok = _post_meta({"messaging_product": "whatsapp", "to": numero, "type": "image", "image": imagen})
+    if caption and not (ok and caption_enviado):
+        enviar_texto(numero, caption)
+    return ok
+
+
+def pausa():
+    time.sleep(PAUSA)
+
+
+# ----------------------------------------------------------
+# 5. BASE DE DATOS (Supabase)
+# ----------------------------------------------------------
+_persistencia_apagada_hasta = 0.0
+
+
+def _apagar_persistencia(e):
+    global _persistencia_apagada_hasta
+    if time.time() >= _persistencia_apagada_hasta:
+        log(f"⚠️ Sesiones solo en memoria por 5 min (¿existe la tabla {TABLA_SESIONES}?): {e}")
+    _persistencia_apagada_hasta = time.time() + 300
+
 
 def guardar_cliente(numero, nombres, perfil, carrera):
     try:
-        response = supabase.table('clientes').update({
-            "nombres": nombres, "perfil": perfil, "carrera": carrera
-        }).eq('whatsapp', numero).execute()
-        if not response.data:
-            supabase.table('clientes').insert({
-                "whatsapp": numero, "nombres": nombres, "perfil": perfil, "carrera": carrera
-            }).execute()
-        print(f"✅ Cliente guardado: {nombres}")
+        r = supabase.table("clientes").update(
+            {"nombres": nombres, "perfil": perfil, "carrera": carrera}
+        ).eq("whatsapp", numero).execute()
+        if not r.data:
+            supabase.table("clientes").insert(
+                {"whatsapp": numero, "nombres": nombres, "perfil": perfil, "carrera": carrera}
+            ).execute()
+        log(f"✅ Cliente guardado: {nombres}")
     except Exception as e:
-        print(f"❌ Error BD: {e}")
+        log(f"❌ Error BD (clientes): {e}")
+
 
 def cargar_cliente(numero):
     try:
-        response = supabase.table('clientes').select('*').eq('whatsapp', numero).execute()
-        if response.data:
-            return {
-                "nombres": response.data[0]['nombres'],
-                "perfil": response.data[0]['perfil'],
-                "carrera": response.data[0]['carrera']
-            }
+        r = supabase.table("clientes").select("*").eq("whatsapp", numero).execute()
+        if r.data and r.data[0].get("nombres"):
+            return {"nombres": r.data[0]["nombres"], "perfil": r.data[0].get("perfil"),
+                    "carrera": r.data[0].get("carrera")}
     except Exception as e:
-        print(f"❌ Error BD: {e}")
+        log(f"❌ Error BD (clientes): {e}")
     return None
 
-# --- ENVÍO DE MENSAJES ---
-def enviar_mensaje_meta(numero_destino, texto):
-    if not texto: return
-    url = f"https://graph.facebook.com/v18.0/{META_PHONE_NUMBER_ID}/messages"
-    headers = {"Authorization": f"Bearer {META_ACCESS_TOKEN}", "Content-Type": "application/json"}
-    payload = {"messaging_product": "whatsapp", "to": numero_destino, "type": "text", "text": {"body": texto}}
-    requests.post(url, headers=headers, json=payload)
 
-def enviar_imagen_meta(numero_destino, url_imagen, texto_opcional=""):
-    url = f"https://graph.facebook.com/v18.0/{META_PHONE_NUMBER_ID}/messages"
-    headers = {"Authorization": f"Bearer {META_ACCESS_TOKEN}", "Content-Type": "application/json"}
-    payload = {"messaging_product": "whatsapp", "to": numero_destino, "type": "image", "image": {"link": url_imagen}}
-    if texto_opcional: payload["image"]["caption"] = texto_opcional
-    requests.post(url, headers=headers, json=payload)
+def _cargar_sesion_db(numero):
+    if time.time() < _persistencia_apagada_hasta:
+        return None
+    try:
+        r = supabase.table(TABLA_SESIONES).select("estado,datos").eq("whatsapp", numero).limit(1).execute()
+        if r.data:
+            datos = r.data[0].get("datos") or {}
+            if isinstance(datos, str):
+                datos = json.loads(datos)
+            return {"estado": r.data[0].get("estado") or "inicio", "datos": datos}
+    except Exception as e:
+        _apagar_persistencia(e)
+    return None
 
-def enviar_fallback_ciclico(numero):
-    # 1. Mensaje de felicitación y secreto (Se mantiene igual)
-    mensaje_secreto = (
-        "🕵️‍♂️✨ *¡ALERTA! ¡HAS DESCUBIERTO UN SECRETO DE TELLITO BOT!*\n\n"
-        "🎉 ¡Felicidades, explorador! No todos llegan hasta aquí... Parece que tienes buen ojo para descubrir lo que otros pasan por alto. 👀\n\n"
-        "🤖 *Tellito Bot tiene más de una sorpresa escondida...* ¿Será este el único secreto o habrá otros esperando a ser descubiertos? 🤫\n\n"
-        "😎 Ahora formas parte del pequeño grupo que conoce este Easter Egg. Pero recuerda: *un buen secreto merece compartirse*... aunque ya no sea tan secreto. JAJAJA xd.\n\n"
-        "📲 *¿Quieres que tus amigos también lo descubran?* Comparte a Tellito Bot y deja que comience la búsqueda:\n\n"
-        "👉 https://wa.me/51916281454\n\n"
-        "🍀 ¡Sigue explorando! Nunca sabes qué otra sorpresa podrías encontrar por aquí.\n\n"
-        "— *Tellito Bot* 🤖💚"
-    )
-    enviar_mensaje_meta(numero, mensaje_secreto)
-    
-    # Pausa para que se sienta natural
-    time.sleep(1.5)
-    
-    # 2. Lista de las 3 imágenes con sus textos
-    opciones_imagenes = [
-        {
-            "url": "https://i.ibb.co/7tJZHVc2/1.png", 
-            "texto": "🛡️ *¿SALIR AL YERMO? ¡NI HABLAR!*\n\nEn el Refugio Tellito, las respuestas están a un mensaje de distancia. 🤖📡\n\n☢️ Menos vueltas, más información y cero necesidad de explorar el yermo para resolver tus dudas académicas. ¡Tu Pip-Boy no tiene nada que envidiarle a Tellito Bot! 😂\n\n📢 *Comparte esta imagen con tu escuadrón y ayúdalo a sobrevivir al apocalipsis académico.*\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: conocimiento para los habitantes del yermo.* 💛"
-        },
-        {
-            "url": "https://i.ibb.co/zhbXXXsX/2.png", 
-            "texto": "🥤 *MI BEBIDA FAVORITA NO ES LA NUKA-COLA... ¡ES LA INFORMACIÓN INSTANTÁNEA!*\n\n¿Por qué conformarte con una bebida refrescante cuando puedes saciar tu sed de conocimiento? ☢️🤖\n\n📚 Carreras, consultas y respuestas sin tener que recorrer todo el yermo. ¡Tellito Bot es el combustible de todo estudiante que quiere llegar más lejos!\n\n📢 *Comparte esta imagen con tus compañeros de refugio. ¡El conocimiento sabe mejor cuando se comparte!* 😂\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: mantén tu mente hidratada... metafóricamente.* 🥤✨"
-        },
-        {
-            "url": "https://i.ibb.co/LXJDyTQd/3.png", 
-            "texto": "🚪 *EN CASO DE APOCALIPSIS, REFÚGIATE EN TELLITO BOT.*\n\n¿Filas interminables? ¿Recorrer medio yermo para encontrar información? ¿Gastar tus chapas en preguntar lo mismo de siempre? ¡Qué va! 😂☢️\n\n🤖 Desde tu propio refugio digital, puedes realizar consultas sobre el instituto y descubrir información útil sin organizar una expedición al exterior.\n\n📢 *Comparte esta imagen con tu comunidad de supervivientes. Porque en el yermo, la información también puede salvarte el día.* 💛\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot. ¡La guerra nunca cambia, pero la forma de hacer consultas sí!* ⚡"
-        }
-    ]
-    
-    # 3. Lógica Cíclica (Round-Robin)
-    if numero not in user_data: 
-        user_data[numero] = {}
-    
-    # Obtenemos el índice actual (por defecto 0) y lo actualizamos para la próxima vez
-    indice_actual = user_data[numero].get('fallback_indice', 0)
-    imagen_elegida = opciones_imagenes[indice_actual]
-    
-    # Guardamos el siguiente índice (si llega a 2, vuelve a 0)
-    user_data[numero]['fallback_indice'] = (indice_actual + 1) % len(opciones_imagenes)
-    
-    enviar_imagen_meta(numero, imagen_elegida["url"], imagen_elegida["texto"])
-    
-    time.sleep(1.5)
-    
-    # 4. Enviar el menú principal de nuevo para evitar el bucle (Se mantiene igual)
-    if numero in user_data and 'nombres' in user_data[numero]:
-        nombres = user_data[numero]['nombres']
-        primer_nombre = nombres.split()[0] if nombres else "amigo"
-        menu = get_menu_principal(primer_nombre, is_new=False)
-        enviar_mensaje_meta(numero, menu)
-    else:
-        enviar_mensaje_meta(numero, "Para comenzar, por favor dime tu *Nombre y Apellido*.")
 
-# --- BÚSQUEDA DE FAQ ---
-def get_faq_by_id(faq_id):
+def _guardar_sesion_db(numero, ses):
+    if time.time() < _persistencia_apagada_hasta:
+        return
+    try:
+        supabase.table(TABLA_SESIONES).upsert(
+            {"whatsapp": numero, "estado": ses["estado"], "datos": ses["datos"],
+             "actualizado": datetime.now(timezone.utc).isoformat()},
+            on_conflict="whatsapp",
+        ).execute()
+    except Exception as e:
+        _apagar_persistencia(e)
+
+
+sesiones = {}
+
+
+def obtener_sesion(numero):
+    ses = sesiones.get(numero)
+    if ses is None:
+        ses = _cargar_sesion_db(numero) or {"estado": "inicio", "datos": {}}
+        sesiones[numero] = ses
+    return ses
+
+
+def _huella(ses):
+    return json.dumps([ses["estado"], ses["datos"]], sort_keys=True, ensure_ascii=False)
+
+
+def primer_nombre(ses):
+    nombres = (ses["datos"].get("nombres") or "").split()
+    return nombres[0] if nombres else MSG["nombre_defecto"]
+
+
+# ----------------------------------------------------------
+# 6. CONOCIMIENTO PARA LA IA + VALIDADOR
+# ----------------------------------------------------------
+
+
+def _nombre_carrera(titulo):
+    return re.sub(r"[^\wáéíóúüñÁÉÍÓÚÜÑ\s]", "", titulo).strip()
+
+
+LISTA_CARRERAS = ", ".join(_nombre_carrera(v["titulo"]) for v in carreras_info.values())
+TOTAL_CARRERAS = len(carreras_info)
+PALABRAS_DETALLE = [normalizar(p) for p in IA_CFG["palabras_detalle_carreras"]]
+
+
+def construir_contexto(texto_usuario: str = "") -> str:
+    partes = [IA_CFG["titulo_institucion"], INSTITUCION,
+              render(IA_CFG["linea_moneda"], moneda=metadata.get("moneda", ""),
+                     uit=metadata.get("uit_vigente", ""))]
+
+    partes += ["\n" + IA_CFG["titulo_carreras"]]
+    partes += [f"- {_nombre_carrera(v['titulo'])}" for v in carreras_info.values()]
+
+    user_norm = normalizar(texto_usuario)
+    tokens = {t for t in user_norm.split() if len(t) > 4}
+    pide_detalle = any(p in user_norm for p in PALABRAS_DETALLE)
+    detalle = [v for v in carreras_info.values()
+               if pide_detalle or any(t in normalizar(v["titulo"]) for t in tokens)]
+    if detalle:
+        partes.append("\n" + IA_CFG["titulo_detalle"])
+        partes += [v["texto"] for v in detalle]
+
+    partes.append("\n" + IA_CFG["titulo_faqs"])
     for f in faqs:
-        if f.get('id') == faq_id:
-            return f
-    return None
+        partes.append(json.dumps({k: v for k, v in f.items() if k != "id" and v},
+                                 ensure_ascii=False))
 
-# --- IA (SOLO REDACTA) ---
-def redactar_con_ia(faq_dict):
-    url = "https://api.deepseek.com/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
-    
-    contexto_str = json.dumps(faq_dict, indent=2, ensure_ascii=False)
-    regla_pago = ""
-    if faq_dict.get('costo'):
-        regla_pago = (
-            f"REGLA DE ORO: Como este trámite tiene un costo, incluye siempre:\n"
-            f"1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n"
-            f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
-        )
+    partes.append("\n" + IA_CFG["titulo_pagos"])
+    for p in data.get("conceptos_pago", []):
+        partes.append(render(IA_CFG["formato_pago"], concepto=p["concepto"], monto=f"{p['monto']:.2f}"))
+    return "\n".join(partes)
 
-    # Usamos el prompt importado y le pasamos las variables
-    prompt_final = PROMPT_FAQ.format(
-        contexto_str=contexto_str,
-        regla_pago=regla_pago
-    )
 
-    payload = {
-        "model": "deepseek-chat",
-        "messages": [{"role": "system", "content": prompt_final}],
-        "temperature": 0.3
-    }
-    
+# --- Validador: rechaza datos que la IA no pudo sacar del conocimiento ---
+_CONOCIMIENTO = {k: data[k] for k in ("metadata", "faqs", "conceptos_pago", "info_carreras") if k in data}
+_TEXTO_CONOC = json.dumps(_CONOCIMIENTO, ensure_ascii=False)
+_CORPUS = " " + normalizar(_TEXTO_CONOC) + " "
+_RE_NUM = re.compile(r"\d+(?:[.,]\d+)*")
+CARRERAS_FANTASMA = [normalizar(c) for c in BOT["validador"]["carreras_fantasma"]]
+
+
+def _valor(token):
+    if re.fullmatch(r"\d{1,3}(?:[.,]\d{3})+", token):
+        token = re.sub(r"[.,]", "", token)
+    else:
+        token = token.replace(",", ".")
     try:
-        response = requests.post(url, headers=headers, json=payload, timeout=10)
-        return response.json()['choices'][0]['message']['content']
-    except Exception as e:
-        print(f"Error IA: {e}")
-        return "Tuve un pequeño problema pensando la respuesta, pero aquí tienes la info oficial."
-        
-def redactar_texto_libre(texto_usuario):
-    url = "https://api.deepseek.com/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
+        return round(float(token), 2)
+    except ValueError:
+        return None
 
-    contexto = construir_contexto(texto_usuario)
-    
-    # Creamos la lista de carreras para pasársela al prompt
-    lista_carreras = ", ".join([v['titulo'] for v in carreras_info.values()])
 
-    # Usamos el prompt importado
-    prompt_final = PROMPT_LIBRE.format(
-        contexto=contexto,
-        lista_carreras=lista_carreras,
-        texto_usuario=texto_usuario
-    )
+# Todo número que aparece en el conocimiento (montos, teléfonos, cuenta, leyes, horas, plazos…)
+NUMEROS_PERMITIDOS = {v for v in (_valor(t) for t in _RE_NUM.findall(_TEXTO_CONOC)) if v is not None}
 
-    payload = {
-        "model": "deepseek-chat",
-        "messages": [
-            {"role": "system", "content": prompt_final}
-        ],
-        "temperature": 0.3, # Un poco de temperatura para que sea amigable
-        "max_tokens": 400
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=20)
-        response.raise_for_status()
-        return response.json()['choices'][0]['message']['content']
-    except Exception as e:
-        print(f"Error IA Libre: {e}")
-        return "¡Ups! Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones."
-        
-# ============================================================
-# 🛡️ VALIDADOR: rechaza respuestas inventadas por la IA
-# ============================================================
-
-# Precalcular montos oficiales (1 sola vez al arrancar)
-MONTOS_OFICIALES = set()
+# Montos oficiales y sus sumas (1 a 3 conceptos): "2 cursos = 80", "180 + 123 = 303"
+_MONTOS = {float(p["monto"]) for p in data.get("conceptos_pago", [])}
 for _f in faqs:
-    for _m in re.findall(r'\d[\d.,]*', _f.get('costo', '') or ''):
-        MONTOS_OFICIALES.add(_m.replace(',', '.'))
-for _p in data.get('conceptos_pago', []):
-    MONTOS_OFICIALES.add(f"{_p['monto']:.2f}")
-    MONTOS_OFICIALES.add(f"{_p['monto']:.0f}")
+    for _t in _RE_NUM.findall(_f.get("costo") or ""):
+        _v = _valor(_t)
+        if _v:
+            _MONTOS.add(_v)
+SUMAS_PERMITIDAS = set()
+for _n in (1, 2, 3):
+    for _c in combinations_with_replacement(sorted(_MONTOS), _n):
+        SUMAS_PERMITIDAS.add(round(sum(_c), 2))
 
-CARRERAS_FANTASMA = {
-    'computacion', 'informatica', 'enfermeria', 'enfermeria tecnica',
-    'nutricion', 'farmacia', 'odontologia', 'derecho', 'medicina',
-    'psicologia', 'arquitectura', 'ingenieria civil',
-    'ingenieria de sistemas', 'administracion de negocios',
-    'contabilidad publica'
-}
 
-def _es_suma_valida(valor, max_n=3):
-    """Verifica si `valor` es una suma de 1 a 3 montos oficiales (ej: 170 + 10 = 180)."""
-    nums = sorted({
-        float(x) for x in MONTOS_OFICIALES
-        if re.match(r'^\d+(\.\d+)?$', x)
-    })
-    for n in range(1, max_n + 1):
-        for combo in combinations_with_replacement(nums, n):
-            if abs(sum(combo) - valor) < 0.01:
-                return True
-    return False
-
-def validar_respuesta(respuesta: str) -> tuple[bool, str]:
-    """Devuelve (es_valida, motivo). Si es_valida=False, hay que reemplazar la respuesta."""
-    resp_norm = normalizar(respuesta)
-
-    # 1) Carreras fantasma
+def validar_respuesta(resp: str):
+    """(es_valida, motivo). Solo vigila carreras inexistentes y cifras sin respaldo."""
+    rn = " " + normalizar(resp) + " "
     for f in CARRERAS_FANTASMA:
-        if f in resp_norm:
+        if f" {f} " in rn and f" {f} " not in _CORPUS:
             return False, f"carrera inexistente: '{f}'"
-
-    # 2) Montos (solo >= 20 para evitar falsos positivos con "4 fotos", "2 semestres")
-    for m in re.findall(r'\b\d+(?:[.,]\d+)?\b', respuesta):
-        try:
-            valor = float(m.replace(',', '.'))
-        except ValueError:
+    for tok in _RE_NUM.findall(resp):
+        v = _valor(tok)
+        if v is None or v < 20:
             continue
-        if valor < 20:
+        if v == int(v) and 2020 <= v <= 2035:
             continue
-        if (f"{valor:.2f}" in MONTOS_OFICIALES
-                or str(int(valor)) in MONTOS_OFICIALES
-                or _es_suma_valida(valor)):
+        if v in NUMEROS_PERMITIDOS or v in SUMAS_PERMITIDAS:
             continue
-        return False, f"monto no verificado: S/ {valor}"
-
+        return False, f"dato no verificado: {tok}"
     return True, "ok"
 
-# --- TEXTOS DE MENÚS ---
-def get_menu_principal(primer_nombre, is_new=False):
-    saludo = "¡Todo listo! 🚀 Ya estás registrado." if is_new else f"¡Hola de nuevo, *{primer_nombre}*! 👋"
-    return f"{saludo}\nAquí tienes nuestro índice de consultas:\n\n" \
-           "🎓 *INFORMACIÓN DE PROSPECTO*\n" \
-           "1️⃣ Modalidades de Admisión\n2️⃣ Costos de Postular\n3️⃣ Requisitos de Matrícula\n4️⃣ Traslado Externo\n\n" \
-           "📚 *INFORMACIÓN DE ESTUDIANTE*\n" \
-           "5️⃣ Trámites Académicos\n6️⃣ Certificados y Constancias\n7️⃣ Ratificación, Reserva o Licencia\n\n" \
-           "🎉 *INFORMACIÓN DE EGRESADO*\n" \
-           "8️⃣ Titulación (TAP o Examen)\n9️⃣ Constancia de Egresado\n🔟 Certificación Modular\n\n" \
-           "🏫 *GENERAL*\n" \
-           "1️⃣1️⃣ Nuestras Carreras\n1️⃣2️⃣ Contacto y Ubicación\n\n" \
-           "0️⃣ Reiniciar registro\n\n" \
-           "🔹 _Escribe el número de tu opción._"
 
-SUBMENUS = {
-    "submenu_1": "🎓 *MODALIDADES DE ADMISIÓN*\n\n1️⃣ Ingreso Ordinario\n2️⃣ Ingreso por Exoneración\n3️⃣ Ingreso Extraordinario\n\n0️⃣ Volver al menú principal",
-    "submenu_2": "💰 *COSTOS DE POSTULAR*\n\n1️⃣ Costo de Inscripción y Prospecto\n2️⃣ Costo de Matrícula\n3️⃣ ¿Cómo pagar y canjear el voucher?\n\n0️⃣ Volver al menú principal",
-    "submenu_5": "📄 *TRÁMITES ACADÉMICOS*\n\n1️⃣ Cambio de Turno\n2️⃣ Subsanación de Cursos\n3️⃣ Convalidación de Cursos\n\n0️⃣ Volver al menú principal",
-    "submenu_6": "📑 *CERTIFICADOS Y CONSTANCIAS*\n\n1️⃣ Certificado de Estudios\n2️⃣ Constancia de Egresado\n3️⃣ Duplicado de Título\n\n0️⃣ Volver al menú principal",
-    "submenu_7": "🎓 *MATRÍCULA*\n\n1️⃣ Ratificación de Matrícula\n2️⃣ Reserva de Matrícula\n3️⃣ Licencia de Estudios\n\n0️⃣ Volver al menú principal",
-    "submenu_8": "🎉 *TITULACIÓN*\n\n1️⃣ Trabajo de Aplicación Profesional (TAP)\n2️⃣ Examen de Suficiencia Profesional\n3️⃣ Requisitos para Titularse\n\n0️⃣ Volver al menú principal",
-    "menu_carreras": "🏫 *NUESTRAS CARRERAS*\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n0️⃣ Volver al menú principal",
-}
+def limpiar_salida_ia(t: str) -> str:
+    t = t.strip()
+    t = re.sub(r"\*\*(.+?)\*\*", r"*\1*", t, flags=re.S)
+    t = re.sub(r"(?m)^#{1,6}\s*", "", t)
+    t = re.sub(r"\s*\(?\bFAQ-\d+\b\)?", "", t)
+    return t.strip()
 
-MAPEO_FAQS = {
-    "submenu_1": {"1": "FAQ-001", "2": "FAQ-002", "3": "FAQ-003"},
-    "submenu_2": {"1": "FAQ-004", "2": "FAQ-005", "3": "FAQ-023"},
-    "submenu_5": {"1": "FAQ-008", "2": "FAQ-009", "3": "FAQ-010"},
-    "submenu_6": {"1": "FAQ-011", "2": "FAQ-012", "3": "FAQ-013"},
-    "submenu_7": {"1": "FAQ-014", "2": "FAQ-015", "3": "FAQ-016"},
-    "submenu_8": {"1": "FAQ-017", "2": "FAQ-018", "3": "FAQ-019"},
-}
 
-# FAQs directas (sin submenú)
-DIRECTOS = {
-    "3": "FAQ-006",
-    "4": "FAQ-007",
-    "9": "FAQ-020",
-    "10": "FAQ-021",
-    "12": "FAQ-022"
-}
+# ----------------------------------------------------------
+# 7. IA (DeepSeek)
+# ----------------------------------------------------------
+_ia_hist = defaultdict(deque)
+
+
+def ia_permitida(numero) -> bool:
+    ahora, q = time.time(), _ia_hist[numero]
+    while q and ahora - q[0] > 60:
+        q.popleft()
+    if len(q) >= int(AJ["ia_max_por_minuto"]):
+        return False
+    q.append(ahora)
+    return True
+
+
+def _llamar_ia(system, user, temperature, max_tokens, timeout):
+    headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
+    payload = {"model": DEEPSEEK_MODEL, "temperature": temperature, "max_tokens": max_tokens,
+               "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
+    for _ in range(2):
+        try:
+            r = http.post(DEEPSEEK_URL, headers=headers, json=payload, timeout=timeout)
+            r.raise_for_status()
+            texto = r.json()["choices"][0]["message"]["content"].strip()
+            if texto:
+                return texto
+        except Exception as e:
+            log(f"❌ IA: {e}")
+    return None
+
+
+def get_faq_by_id(faq_id):
+    return next((f for f in faqs if f.get("id") == faq_id), None)
+
+
+def _tiene_costo(faq) -> bool:
+    return bool(re.search(r"S/\s*\d", faq.get("costo") or ""))
+
+
+def formatear_faq(faq) -> str:
+    """Versión sin IA (respaldo): sale directo del JSON."""
+    partes = [(faq.get("respuesta") or "").strip()]
+    reqs = faq.get("requisitos") or []
+    if reqs:
+        partes.append(ETIQ["requisitos"] + "\n" + "\n".join(f"{ETIQ['vineta']} {r}" for r in reqs))
+    if faq.get("costo"):
+        partes.append(f"{ETIQ['costo']} {faq['costo']}")
+    if faq.get("oficina"):
+        partes.append(f"{ETIQ['oficina']} {faq['oficina']}")
+    if faq.get("observaciones"):
+        partes.append(f"{ETIQ['observaciones']} {faq['observaciones']}")
+    if _tiene_costo(faq):
+        partes.append(PAGOS["aviso_manual"])
+    return "\n\n".join(p for p in partes if p)
+
+
+def redactar_faq(faq) -> str:
+    """La IA solo redacta. Si falla o inventa algo, se envía la ficha tal cual."""
+    ficha = json.dumps({k: v for k, v in faq.items() if k != "id" and v}, indent=2, ensure_ascii=False)
+    prompt = PROMPT_FAQ.format(institucion=INSTITUCION, ficha=ficha,
+                               regla_pago=PAGOS["regla_ia"] if _tiene_costo(faq) else "")
+    r = _llamar_ia(prompt, "Redacta el mensaje con la ficha oficial.", 0.2, 900, 25)
+    if r:
+        r = limpiar_salida_ia(r)
+        ok, motivo = validar_respuesta(r)
+        if ok:
+            return r
+        log(f"⚠️ Redacción FAQ rechazada ({motivo}) | {faq.get('id')}")
+    return formatear_faq(faq)
+
+
+def redactar_libre(texto_usuario):
+    consulta = texto_usuario[: int(AJ["max_chars_consulta"])]
+    prompt = PROMPT_LIBRE.format(institucion=INSTITUCION, contexto=construir_contexto(consulta),
+                                 lista_carreras=LISTA_CARRERAS, total_carreras=TOTAL_CARRERAS,
+                                 mensaje_sin_dato=MSG["sin_dato"])
+    r = _llamar_ia(prompt, consulta, 0.3, 450, 30)
+    return limpiar_salida_ia(r) if r else None
+
+
+def responder_consulta(numero, texto):
+    if not ia_permitida(numero):
+        enviar_texto(numero, MSG["demasiadas_consultas"])
+        return
+    r = redactar_libre(texto)
+    if r is None:
+        enviar_texto(numero, MSG["error_ia"])
+        return
+    ok, motivo = validar_respuesta(r)
+    if not ok:
+        log(f"⚠️ IA rechazada ({motivo}) | texto='{texto}' | respuesta='{r}'")
+        r = MSG["respuesta_rechazada"]
+    enviar_texto(numero, r)
+
+
+# ----------------------------------------------------------
+# 8. MENÚS Y ACCIONES
+# ----------------------------------------------------------
+
+
+def menu_principal(ses, nuevo=False):
+    saludo = SALUDOS_MENU["nuevo"] if nuevo else render(SALUDOS_MENU["regreso"], nombre=primer_nombre(ses))
+    return render(MENUS["principal"], saludo=saludo)
+
+
+def ir_menu_principal(numero, ses, nuevo=False):
+    ses["estado"] = "menu_principal"
+    enviar_texto(numero, menu_principal(ses, nuevo))
+
+
+def reiniciar_registro(numero, ses, mensaje):
+    ses["estado"] = "esperando_nombre"
+    ses["datos"] = {k: v for k, v in ses["datos"].items() if k == "fallback_indice"}
+    enviar_texto(numero, MSG[mensaje])
+
+
+def mostrar_faq(numero, ses, faq_id, volver, pie):
+    faq = get_faq_by_id(faq_id)
+    if not faq:
+        enviar_texto(numero, MSG["info_no_encontrada"])
+        return
+    ses["estado"] = "viendo_info"
+    ses["datos"]["estado_anterior"] = volver
+    enviar_texto(numero, redactar_faq(faq) + "\n\n" + PIES[pie])
+
+
+def mostrar_carrera(numero, clave):
+    info = carreras_info[clave]
+    enviar_imagen(numero, info["url"], info["titulo"])
+    pausa()
+    enviar_texto(numero, info["texto"])
+    enviar_texto(numero, MSG["otra_carrera"])
+
+
+def enviar_easter_egg(numero, ses):
+    imagenes = EASTER["imagenes"]
+    enviar_texto(numero, EASTER["mensaje_secreto"])
+    pausa()
+    i = int(ses["datos"].get("fallback_indice", 0)) % len(imagenes)
+    ses["datos"]["fallback_indice"] = (i + 1) % len(imagenes)
+    enviar_imagen(numero, imagenes[i]["url"], imagenes[i]["texto"])
+    pausa()
+    if ses["datos"].get("nombres"):
+        enviar_texto(numero, menu_principal(ses))
+    else:
+        enviar_texto(numero, MSG["recordar_nombre"])
+
+
+def abrir_opcion_principal(numero, ses, opcion):
+    """Opciones del menú principal (también las usan los atajos como 'carreras')."""
+    if opcion == "0":
+        reiniciar_registro(numero, ses, "reinicio_desde_menu")
+    elif f"submenu_{opcion}" in SUBMENUS:
+        ses["estado"] = f"submenu_{opcion}"
+        enviar_texto(numero, SUBMENUS[ses["estado"]])
+    elif opcion == "11":
+        ses["estado"] = "menu_carreras"
+        enviar_texto(numero, SUBMENUS["menu_carreras"])
+    elif opcion in DIRECTOS:
+        mostrar_faq(numero, ses, DIRECTOS[opcion], "menu_principal", "info_directa")
+    else:
+        enviar_texto(numero, MSG["opcion_invalida_menu"])
+
+
+# ----------------------------------------------------------
+# 9. FLUJO DE CONVERSACIÓN
+# ----------------------------------------------------------
+ESTADOS_REGISTRO = ("esperando_nombre", "esperando_perfil", "esperando_carrera")
+
+
+def flujo_registro(numero, texto, cmd, ses):
+    estado, datos = ses["estado"], ses["datos"]
+
+    if cmd in COMANDOS_REINICIO:
+        reiniciar_registro(numero, ses, "reinicio_registro")
+        return
+
+    if estado == "esperando_nombre":
+        if nombre_parece_consulta(texto):
+            responder_consulta(numero, texto)
+            pausa()
+            enviar_texto(numero, MSG["recordar_nombre"])
+            return
+        nombre = validar_nombre(texto)
+        if not nombre:
+            enviar_texto(numero, MSG["nombre_invalido"])
+            return
+        datos["nombres"] = nombre
+        ses["estado"] = "esperando_perfil"
+        enviar_texto(numero, render(MSG["pregunta_perfil"], nombre=nombre.split()[0]))
+        return
+
+    if estado == "esperando_perfil":
+        if cmd in REGISTRO["perfiles"]:
+            datos["perfil"] = REGISTRO["perfiles"][cmd]
+            ses["estado"] = "esperando_carrera"
+            enviar_texto(numero, MSG["pregunta_carrera"])
+        elif len(texto) > LONG_LIBRE or parece_pregunta(texto):
+            responder_consulta(numero, texto)
+            pausa()
+            enviar_texto(numero, MSG["recordar_perfil"])
+        else:
+            enviar_texto(numero, MSG["perfil_invalido"])
+        return
+
+    if estado == "esperando_carrera":
+        if cmd in REGISTRO["carreras"]:
+            datos["carrera"] = REGISTRO["carreras"][cmd]
+            ses["estado"] = "menu_principal"
+            guardar_cliente(numero, datos["nombres"], datos.get("perfil"), datos["carrera"])
+            enviar_texto(numero, menu_principal(ses, nuevo=True))
+        elif len(texto) > LONG_LIBRE or parece_pregunta(texto):
+            responder_consulta(numero, texto)
+            pausa()
+            enviar_texto(numero, MSG["recordar_carrera"])
+        else:
+            enviar_texto(numero, MSG["carrera_invalida"])
+
+
+def flujo_inicio(numero, texto, cmd, ses) -> bool:
+    """Primer contacto (o primer mensaje tras un reinicio del servidor).
+    Devuelve True si el mensaje debe seguir procesándose como menú."""
+    cliente = cargar_cliente(numero)
+    if cliente:
+        ses["datos"].update(cliente)
+        ses["estado"] = "menu_principal"
+        if cmd.isdigit() or cmd in ATAJOS or es_consulta(texto, cmd):
+            return True
+        enviar_texto(numero, menu_principal(ses))
+        return False
+    ses["estado"] = "esperando_nombre"
+    if es_consulta(texto, cmd):
+        responder_consulta(numero, texto)
+        pausa()
+    enviar_texto(numero, MSG["bienvenida"])
+    return False
+
+
+def flujo_menus(numero, texto, cmd, ses):
+    estado, datos = ses["estado"], ses["datos"]
+
+    if not cmd:  # solo emojis, stickers de texto, etc.
+        enviar_texto(numero, MSG["no_texto"])
+        return
+    if cmd in COMANDOS_MENU:
+        ir_menu_principal(numero, ses)
+        return
+    if es_saludo(cmd):
+        enviar_texto(numero, render(MSG["saludo_en_menu"], nombre=primer_nombre(ses)))
+        return
+    if es_agradecimiento(cmd):
+        enviar_texto(numero, MSG["agradecimiento"])
+        return
+    if cmd in ATAJOS:
+        abrir_opcion_principal(numero, ses, ATAJOS[cmd])
+        return
+    if es_consulta(texto, cmd):
+        responder_consulta(numero, texto)
+        return
+
+    # ---- menú principal ----
+    if estado == "menu_principal":
+        if cmd.isdigit():
+            abrir_opcion_principal(numero, ses, cmd)
+        else:
+            enviar_easter_egg(numero, ses)
+        return
+
+    # ---- submenús y carreras ----
+    if estado in SUBMENUS:
+        if cmd == "0":
+            ir_menu_principal(numero, ses)
+        elif estado == "menu_carreras" and cmd in carreras_info:
+            mostrar_carrera(numero, cmd)
+        elif cmd in MAPEO_FAQS.get(estado, {}):
+            mostrar_faq(numero, ses, MAPEO_FAQS[estado][cmd], estado, "info_submenu")
+        elif cmd.isdigit():
+            enviar_texto(numero, MSG["opcion_invalida_menu"])
+            enviar_texto(numero, SUBMENUS[estado])
+        else:
+            enviar_easter_egg(numero, ses)
+        return
+
+    # ---- leyendo una ficha ----
+    if estado == "viendo_info":
+        anterior = datos.get("estado_anterior", "menu_principal")
+        if cmd == "0":
+            if anterior in SUBMENUS:
+                ses["estado"] = anterior
+                enviar_texto(numero, SUBMENUS[anterior])
+            else:
+                ir_menu_principal(numero, ses)
+        elif cmd in MAPEO_FAQS.get(anterior, {}):
+            mostrar_faq(numero, ses, MAPEO_FAQS[anterior][cmd], anterior, "info_submenu")
+        elif cmd.isdigit():
+            enviar_texto(numero, MSG["opcion_invalida_info"])
+        else:
+            enviar_easter_egg(numero, ses)
+        return
+
+    # ---- estado desconocido (sesión vieja o corrupta): recomponer ----
+    if datos.get("nombres"):
+        ir_menu_principal(numero, ses)
+    else:
+        ses["estado"] = "esperando_nombre"
+        enviar_texto(numero, MSG["bienvenida"])
+
+
+def procesar_mensaje(numero, texto):
+    texto = (texto or "").strip()
+    if not texto:
+        return
+    ses = obtener_sesion(numero)
+    antes = _huella(ses)
+    try:
+        cmd = limpiar_comando(texto)
+        if es_sensible(texto):
+            enviar_texto(numero, MSG["sensible"])
+            return
+        if ses["estado"] == "inicio":
+            if not flujo_inicio(numero, texto, cmd, ses):
+                return
+        if ses["estado"] in ESTADOS_REGISTRO:
+            flujo_registro(numero, texto, cmd, ses)
+        else:
+            flujo_menus(numero, texto, cmd, ses)
+    finally:
+        if _huella(ses) != antes:
+            _guardar_sesion_db(numero, ses)
+
+
+# ----------------------------------------------------------
+# 10. WEBHOOK
+# ----------------------------------------------------------
+TIPOS_IGNORADOS = {"reaction", "system", "ephemeral", "request_welcome", "unknown"}
+_locks, _locks_guard = {}, threading.Lock()
+_vistos, _vistos_guard = {}, threading.Lock()
+
+
+def _lock_de(numero):
+    with _locks_guard:
+        return _locks.setdefault(numero, threading.Lock())
+
+
+def _es_duplicado(mensaje_id) -> bool:
+    """Meta reenvía el webhook si tardamos en responder: evita contestar dos veces."""
+    if not mensaje_id:
+        return False
+    ahora = time.time()
+    with _vistos_guard:
+        if len(_vistos) > 2000:
+            ventana = float(AJ["ventana_duplicados_segundos"])
+            for k in [k for k, t in _vistos.items() if ahora - t > ventana]:
+                del _vistos[k]
+        if mensaje_id in _vistos:
+            return True
+        _vistos[mensaje_id] = ahora
+        return False
+
+
+def firma_valida(raw: bytes, cabecera) -> bool:
+    if not META_APP_SECRET:
+        return True
+    if not cabecera or not cabecera.startswith("sha256="):
+        return False
+    esperado = hmac.new(META_APP_SECRET.encode(), raw, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(esperado, cabecera.split("=", 1)[1])
+
+
+def atender_mensaje(mensaje):
+    numero = mensaje.get("from")
+    if not numero or _es_duplicado(mensaje.get("id")):
+        return
+    tipo = mensaje.get("type")
+    if tipo in TIPOS_IGNORADOS:
+        return
+    with _lock_de(numero):
+        try:
+            if tipo == "text":
+                texto = mensaje["text"]["body"]
+                log(f"📩 ***{numero[-4:]}: {texto}")
+                procesar_mensaje(numero, texto)
+            else:
+                enviar_texto(numero, MSG["no_texto"])
+        except Exception:
+            log(f"❌ Error en el flujo:\n{traceback.format_exc()}")
+            try:
+                enviar_texto(numero, MSG["error_general"])
+            except Exception:
+                pass
+
+
+def procesar_webhook(body):
+    try:
+        if body.get("object") != "whatsapp_business_account":
+            return
+        for entrada in body.get("entry", []):
+            for cambio in entrada.get("changes", []):
+                for mensaje in (cambio.get("value", {}).get("messages") or []):
+                    atender_mensaje(mensaje)
+    except Exception:
+        log(f"❌ Error procesando webhook:\n{traceback.format_exc()}")
+
+
+@app.api_route("/", methods=["GET", "HEAD"])
+def read_root():
+    return {"status": "Tellito Bot está despierto y funcionando!"}
+
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
-    params = request.query_params
-    if params.get("hub.mode") == "subscribe" and params.get("hub.verify_token") == VERIFY_TOKEN:
-        return PlainTextResponse(params.get("hub.challenge"))
+    p = request.query_params
+    if p.get("hub.mode") == "subscribe" and p.get("hub.verify_token") == VERIFY_TOKEN:
+        return PlainTextResponse(p.get("hub.challenge"))
     return Response(status_code=403)
 
+
 @app.post("/webhook")
-async def recibir_mensaje(request: Request):
-    body = await request.json()
+async def recibir_mensaje(request: Request, background_tasks: BackgroundTasks):
+    raw = await request.body()
+    if not firma_valida(raw, request.headers.get("X-Hub-Signature-256")):
+        return Response(status_code=403)
     try:
-        if body.get("object") == "whatsapp_business_account":
-            value = body['entry'][0]['changes'][0]['value']
-            if 'messages' not in value: return Response(content="OK", status_code=200)
-            message = value['messages'][0]
-            if 'from' not in message: return Response(content="OK", status_code=200)
-                
-            numero = message['from']
-            if message.get('type') != 'text': return Response(content="OK", status_code=200)
-            
-            texto = message['text']['body'].strip()
-            texto_lower = texto.lower()
-
-            # 🚨 LIMPIEZA DE TEXTO (Para que "09" sea "9" y "carreras 11" sea "11")
-            if texto_lower.isdigit() and len(texto_lower) == 2 and texto_lower.startswith("0"):
-                texto_lower = texto_lower.lstrip("0")
-                if texto_lower == "": texto_lower = "0"
-            
-            # Limpiar prefijos como "carreras 11" o "opcion 5"
-            for prefijo in ["carreras ", "carrera ", "opcion ", "opción "]:
-                if texto_lower.startswith(prefijo):
-                    texto_lower = texto_lower.replace(prefijo, "")
-
-            print(f"📩 {numero}: {texto}")
-            
-            estado = user_states.get(numero, "inicio")
-            respuesta = ""
-            enviar_texto_final = True
-
-            # 🚨 LÓGICA DE TEXTO LIBRE (Preguntas largas o consejos)
-            if len(texto) > 12 and estado not in ["esperando_nombre", "esperando_perfil", "esperando_carrera"]:
-                # 1. La IA genera la respuesta
-                respuesta_libre = redactar_texto_libre(texto)
-
-                # 2. VALIDAR: si inventó algo, reemplazar por fallback seguro
-                es_valida, razon = validar_respuesta(respuesta_libre)
-                if not es_valida:
-                    print(f"⚠️ IA rechazada ({razon}) | texto='{texto}' | respuesta='{respuesta_libre}'")
-                    respuesta_libre = (
-                        "Mmm, no tengo ese dato exacto en mi base oficial 😅. "
-                        "Pero puedo ayudarte con trámites, carreras o costos. Escribe *menú* para ver las opciones."
-                    )
-
-                # 3. Enviamos la respuesta (validada o fallback)
-                enviar_mensaje_meta(numero, respuesta_libre)
-
-                # 4. Pausa para que no se amontonen los mensajes
-                time.sleep(1.5)
-                
-                # 6. Cortamos la ejecución para que no siga al flujo normal
-                return Response(content="OK", status_code=200)
-
-            # 🚨 PREGUNTAS DURANTE EL REGISTRO
-            if len(texto) > 12 and estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"] and not texto.isdigit():
-                respuesta_libre = redactar_texto_libre(texto)
-                enviar_mensaje_meta(numero, respuesta_libre)
-                time.sleep(1.5)
-                
-                if estado == "esperando_nombre":
-                    enviar_mensaje_meta(numero, "Ahora sí, dime tus *Nombres y Apellidos* 📝")
-                elif estado == "esperando_perfil":
-                    enviar_mensaje_meta(numero, "Volviendo al registro: ¿cuál es tu situación? 1️⃣2️⃣3️⃣")
-                elif estado == "esperando_carrera":
-                    enviar_mensaje_meta(numero, "Volviendo al registro: elige el número de tu carrera (1-7).")
-                return Response(content="OK", status_code=200)
-    
-            # --- REGISTRO ---
-            if estado == "inicio":
-                cliente = cargar_cliente(numero)
-                if cliente:
-                    user_data[numero] = cliente
-                    user_states[numero] = "menu_principal"
-                    respuesta = get_menu_principal(cliente['nombres'].split()[0], is_new=False)
-                else:
-                    user_states[numero] = "esperando_nombre"
-                    user_data[numero] = {}
-                    respuesta = "¡Hola! 👋 Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊"
-
-            elif estado == "esperando_nombre":
-                palabras_prohibidas = ["0", "1", "2", "3", "menu", "menú", "salir", "cancelar", "xd", "hola", "info", "informacion"]
-                
-                # Validación: mínimo 3 letras, no es un número, no es palabra prohibida
-                if texto_lower in palabras_prohibidas or len(texto) < 3 or texto.isdigit():
-                    respuesta = "⚠️ Por favor, ingresa un nombre válido (mínimo 3 letras) o escribe *cancelar* para reiniciar."
-                else:
-                    nombre_formateado = texto.title()
-                    user_data[numero]['nombres'] = nombre_formateado
-                    user_states[numero] = "esperando_perfil"
-                    primer_nombre = nombre_formateado.split()[0] if nombre_formateado.split() else "amigo"
-                    respuesta = f"¡Un gusto, *{primer_nombre}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto* (me gustaría postular al instituto)\n2️⃣ 📚 Soy *Estudiante* (estoy actualmente estudiando en el instituto)\n3️⃣ 🎉 Soy *Egresado* (ya terminé mi carrera del instituto)\n\n_Responde únicamente con el número de tu opción._"
-                    
-            elif estado == "esperando_perfil":
-                if texto_lower in ["0", "menu", "menú", "cancelar", "reiniciar"]:
-                    user_states[numero] = "esperando_nombre"
-                    user_data[numero] = {}
-                    respuesta = "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
-                elif texto_lower in {"1", "2", "3"}:
-                    perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
-                    user_data[numero]['perfil'] = perfiles[texto_lower]
-                    user_states[numero] = "esperando_carrera"
-                    respuesta = "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n_Responde únicamente con el número de la carrera._"
-                else:
-                    # Error amigable sin easter egg
-                    respuesta = "⚠️ Por favor, elige una opción válida enviando solo el número: 1, 2 o 3."
-
-            elif estado == "esperando_carrera":
-                if texto_lower in ["0", "menu", "menú", "cancelar", "reiniciar"]:
-                    user_states[numero] = "esperando_nombre"
-                    user_data[numero] = {}
-                    respuesta = "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
-                elif texto_lower in {"1", "2", "3", "4", "5", "6", "7"}:
-                    carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
-                    user_data[numero]['carrera'] = carreras[texto_lower]
-                    user_states[numero] = "menu_principal"
-                    guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
-                    respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0], is_new=True)
-                else:
-                    # Error amigable sin easter egg
-                    respuesta = "⚠️ Por favor, elige una opción válida enviando solo el número del 1 al 7."
-
-            # --- MENÚ PRINCIPAL ---
-            elif estado == "menu_principal":
-                if texto_lower == "0":
-                    user_states[numero] = "esperando_nombre"
-                    user_data[numero] = {}
-                    respuesta = "Entendido. He reiniciado el registro. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
-                
-                # Submenús
-                elif texto_lower in ["1", "2", "5", "6", "7", "8"]:
-                    user_states[numero] = f"submenu_{texto_lower}"
-                    respuesta = SUBMENUS[f"submenu_{texto_lower}"]
-                
-                # Menú de carreras
-                elif texto_lower == "11":
-                    user_states[numero] = "menu_carreras"
-                    respuesta = SUBMENUS["menu_carreras"]
-                
-                # Opciones Directas (3, 4, 9, 10, 12)
-                elif texto_lower in DIRECTOS:
-                    faq_id = DIRECTOS[texto_lower]
-                    faq_data = get_faq_by_id(faq_id)
-                    if faq_data:
-                        user_states[numero] = "viendo_info"
-                        user_data[numero]['estado_anterior'] = "menu_principal"
-                        respuesta = redactar_con_ia(faq_data)
-                        respuesta += "\n\n🔹 _Escribe *menú* para ir al inicio._"
-                    else:
-                        respuesta = "⚠️ Información no encontrada."
-                
-                # Easter egg / Fallback
-                else:
-                    # Si es un saludo, mostramos menú amigable, NO Fallout
-                    if texto_lower in ["hola", "holi", "holis", "buenas", "hey", "hi", "hello", "que tal", "buenos dias", "buenas tardes", "buenas noches"]:
-                        primer_nombre = user_data[numero]['nombres'].split()[0] if 'nombres' in user_data[numero] else "amigo"
-                        respuesta = f"¡Hola, *{primer_nombre}*! 👋 ¿En qué te puedo ayudar hoy?\n\nEscribe *menú* para ver todas las opciones."
-                    else:
-                        # Solo si escribe basura (ej. xd, asdf), sale el Easter Egg
-                        enviar_fallback_ciclico(numero)
-                        enviar_texto_final = False
-
-            # --- SUBMENÚS ---
-            elif estado in SUBMENUS:
-                if texto_lower == "0" or texto_lower in ["menú", "menu"]:
-                    user_states[numero] = "menu_principal"
-                    respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0])
-                
-                elif estado == "menu_carreras" and texto_lower in carreras_info:
-                    info = carreras_info[texto_lower]
-                    # 1. Enviamos la imagen
-                    enviar_imagen_meta(numero, info['url'], info['titulo'])
-                    
-                    # 2. Hacemos una pausa de 1 segundo para que la imagen se cargue primero
-                    time.sleep(1.5)
-                    
-                    # 3. Enviamos el texto
-                    enviar_mensaje_meta(numero, info['texto'])
-                    respuesta = "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice."
-                
-                elif estado in MAPEO_FAQS and texto_lower in MAPEO_FAQS[estado]:
-                    faq_id = MAPEO_FAQS[estado][texto_lower]
-                    faq_data = get_faq_by_id(faq_id)
-                    if faq_data:
-                        user_states[numero] = "viendo_info"
-                        user_data[numero]['estado_anterior'] = estado
-                        respuesta = redactar_con_ia(faq_data)
-                        respuesta += "\n\n🔹 _Escribe *0* para volver atrás._\n🔹 _Escribe *menú* para ir al inicio._"
-                    else:
-                        respuesta = "⚠️ Información no encontrada. Escribe *0* para volver."
-                else:
-                    enviar_fallback_ciclico(numero)
-                    enviar_texto_final = False
-
-            # --- INFORMACIÓN (IA) ---
-            elif estado == "viendo_info":
-                if texto_lower == "0":
-                    estado_anterior = user_data[numero].get('estado_anterior', 'menu_principal')
-                    user_states[numero] = estado_anterior
-                    respuesta = SUBMENUS[estado_anterior]
-                elif texto_lower in ["menú", "menu"]:
-                    user_states[numero] = "menu_principal"
-                    respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0])
-                else:
-                    enviar_fallback_ciclico(numero)
-                    enviar_texto_final = False
-
-            # --- ENVÍO FINAL ---
-            if enviar_texto_final:
-                if not respuesta: 
-                    enviar_fallback_ciclico(numero)
-                else:
-                    enviar_mensaje_meta(numero, respuesta)
-
-    except Exception as e:
-        print(f"Error en el flujo: {e}")
+        body = json.loads(raw)
+    except ValueError:
+        return Response(content="OK", status_code=200)
+    # Se responde 200 de inmediato; el trabajo pesado (IA, pausas) va en segundo plano.
+    background_tasks.add_task(procesar_webhook, body)
     return Response(content="OK", status_code=200)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
