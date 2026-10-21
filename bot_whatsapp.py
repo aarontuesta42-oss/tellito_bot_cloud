@@ -10,8 +10,6 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
 from supabase import create_client
-
-# Importamos los prompts desde el nuevo archivo
 from prompts import PROMPT_FAQ, PROMPT_LIBRE
 
 # 1. Cargar variables de entorno
@@ -142,6 +140,7 @@ def enviar_imagen_meta(numero_destino, url_imagen, texto_opcional=""):
     requests.post(url, headers=headers, json=payload)
 
 def enviar_fallback_ciclico(numero):
+    # 1. Mensaje de felicitación y secreto (Se mantiene igual)
     mensaje_secreto = (
         "🕵️‍♂️✨ *¡ALERTA! ¡HAS DESCUBIERTO UN SECRETO DE TELLITO BOT!*\n\n"
         "🎉 ¡Felicidades, explorador! No todos llegan hasta aquí... Parece que tienes buen ojo para descubrir lo que otros pasan por alto. 👀\n\n"
@@ -154,8 +153,10 @@ def enviar_fallback_ciclico(numero):
     )
     enviar_mensaje_meta(numero, mensaje_secreto)
     
+    # Pausa para que se sienta natural
     time.sleep(1.5)
     
+    # 2. Lista de las 3 imágenes con sus textos
     opciones_imagenes = [
         {
             "url": "https://i.ibb.co/7tJZHVc2/1.png", 
@@ -171,18 +172,22 @@ def enviar_fallback_ciclico(numero):
         }
     ]
     
+    # 3. Lógica Cíclica (Round-Robin)
     if numero not in user_data: 
         user_data[numero] = {}
     
+    # Obtenemos el índice actual (por defecto 0) y lo actualizamos para la próxima vez
     indice_actual = user_data[numero].get('fallback_indice', 0)
     imagen_elegida = opciones_imagenes[indice_actual]
     
+    # Guardamos el siguiente índice (si llega a 2, vuelve a 0)
     user_data[numero]['fallback_indice'] = (indice_actual + 1) % len(opciones_imagenes)
     
     enviar_imagen_meta(numero, imagen_elegida["url"], imagen_elegida["texto"])
     
     time.sleep(1.5)
     
+    # 4. Enviar el menú principal de nuevo para evitar el bucle (Se mantiene igual)
     if numero in user_data and 'nombres' in user_data[numero]:
         nombres = user_data[numero]['nombres']
         primer_nombre = nombres.split()[0] if nombres else "amigo"
@@ -212,6 +217,7 @@ def redactar_con_ia(faq_dict):
             f"2. Llevar el voucher ORIGINAL y una COPIA a Caja.\n"
         )
 
+    # Usamos el prompt importado y le pasamos las variables
     prompt_final = PROMPT_FAQ.format(
         contexto_str=contexto_str,
         regla_pago=regla_pago
@@ -235,8 +241,11 @@ def redactar_texto_libre(texto_usuario):
     headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
 
     contexto = construir_contexto(texto_usuario)
+    
+    # Creamos la lista de carreras para pasársela al prompt
     lista_carreras = ", ".join([v['titulo'] for v in carreras_info.values()])
 
+    # Usamos el prompt importado
     prompt_final = PROMPT_LIBRE.format(
         contexto=contexto,
         lista_carreras=lista_carreras,
@@ -245,8 +254,10 @@ def redactar_texto_libre(texto_usuario):
 
     payload = {
         "model": "deepseek-chat",
-        "messages": [{"role": "system", "content": prompt_final}],
-        "temperature": 0.3,
+        "messages": [
+            {"role": "system", "content": prompt_final}
+        ],
+        "temperature": 0.3, # Un poco de temperatura para que sea amigable
         "max_tokens": 400
     }
 
@@ -262,6 +273,7 @@ def redactar_texto_libre(texto_usuario):
 # 🛡️ VALIDADOR: rechaza respuestas inventadas por la IA
 # ============================================================
 
+# Precalcular montos oficiales (1 sola vez al arrancar)
 MONTOS_OFICIALES = set()
 for _f in faqs:
     for _m in re.findall(r'\d[\d.,]*', _f.get('costo', '') or ''):
@@ -279,6 +291,7 @@ CARRERAS_FANTASMA = {
 }
 
 def _es_suma_valida(valor, max_n=3):
+    """Verifica si `valor` es una suma de 1 a 3 montos oficiales (ej: 170 + 10 = 180)."""
     nums = sorted({
         float(x) for x in MONTOS_OFICIALES
         if re.match(r'^\d+(\.\d+)?$', x)
@@ -290,12 +303,15 @@ def _es_suma_valida(valor, max_n=3):
     return False
 
 def validar_respuesta(respuesta: str) -> tuple[bool, str]:
+    """Devuelve (es_valida, motivo). Si es_valida=False, hay que reemplazar la respuesta."""
     resp_norm = normalizar(respuesta)
 
+    # 1) Carreras fantasma
     for f in CARRERAS_FANTASMA:
         if f in resp_norm:
             return False, f"carrera inexistente: '{f}'"
 
+    # 2) Montos (solo >= 20 para evitar falsos positivos con "4 fotos", "2 semestres")
     for m in re.findall(r'\b\d+(?:[.,]\d+)?\b', respuesta):
         try:
             valor = float(m.replace(',', '.'))
@@ -378,35 +394,9 @@ async def recibir_mensaje(request: Request):
             texto_lower = texto.lower()
             print(f"📩 {numero}: {texto}")
             
-            # 🚨 LIMPIEZA DE TEXTO INTELIGENTE
-            # 1. Convertir "09" en "9"
-            if texto_lower.isdigit() and len(texto_lower) == 2 and texto_lower.startswith("0"):
-                texto_lower = texto_lower.lstrip("0")
-                if texto_lower == "": texto_lower = "0"
-            
-            # 2. Extraer el número si el mensaje es corto (ej: "paso 11", "opcion 12", "numero 9")
-            if len(texto_lower) <= 15:
-                match = re.search(r'\b(1[0-2]|[1-9]|0)\b', texto_lower)
-                if match:
-                    texto_lower = match.group(1)
-            
             estado = user_states.get(numero, "inicio")
             respuesta = ""
             enviar_texto_final = True
-            
-            # 🚨 PREGUNTAS DURANTE EL REGISTRO (Error 6)
-            if len(texto) > 12 and estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"] and not texto.isdigit():
-                respuesta_libre = redactar_texto_libre(texto)
-                enviar_mensaje_meta(numero, respuesta_libre)
-                time.sleep(1.5)
-                
-                if estado == "esperando_nombre":
-                    enviar_mensaje_meta(numero, "Ahora sí, dime tus *Nombres y Apellidos* 📝")
-                elif estado == "esperando_perfil":
-                    enviar_mensaje_meta(numero, "Volviendo al registro: ¿cuál es tu situación? 1️⃣2️⃣3️⃣")
-                elif estado == "esperando_carrera":
-                    enviar_mensaje_meta(numero, "Volviendo al registro: elige el número de tu carrera (1-7).")
-                return Response(content="OK", status_code=200)
 
             # 🚨 LÓGICA DE TEXTO LIBRE (Preguntas largas o consejos)
             if len(texto) > 12 and estado not in ["esperando_nombre", "esperando_perfil", "esperando_carrera"]:
@@ -424,8 +414,20 @@ async def recibir_mensaje(request: Request):
 
                 # 3. Enviamos la respuesta (validada o fallback)
                 enviar_mensaje_meta(numero, respuesta_libre)
+
+                # 4. Pausa para que no se amontonen los mensajes
+                time.sleep(1.5)
                 
-                # 4. Cortamos la ejecución para que no siga al flujo normal (Error 5 - Evitar spam de menú)
+                # 5. Enviamos el menú principal automáticamente
+                if numero in user_data and 'nombres' in user_data[numero]:
+                    nombres = user_data[numero]['nombres']
+                    primer_nombre = nombres.split()[0] if nombres else "amigo"
+                    menu = get_menu_principal(primer_nombre, is_new=False)
+                    enviar_mensaje_meta(numero, menu)
+                else:
+                    enviar_mensaje_meta(numero, "Para comenzar, por favor dime tu *Nombre y Apellido*.")
+                
+                # 6. Cortamos la ejecución para que no siga al flujo normal
                 return Response(content="OK", status_code=200)
     
             # --- REGISTRO ---
@@ -443,6 +445,7 @@ async def recibir_mensaje(request: Request):
             elif estado == "esperando_nombre":
                 palabras_prohibidas = ["0", "1", "2", "3", "menu", "menú", "salir", "cancelar", "xd", "hola", "info", "informacion"]
                 
+                # Validación: mínimo 3 letras, no es un número, no es palabra prohibida
                 if texto_lower in palabras_prohibidas or len(texto) < 3 or texto.isdigit():
                     respuesta = "⚠️ Por favor, ingresa un nombre válido (mínimo 3 letras) o escribe *cancelar* para reiniciar."
                 else:
@@ -458,11 +461,13 @@ async def recibir_mensaje(request: Request):
                     user_data[numero] = {}
                     respuesta = "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
                 elif texto_lower in {"1", "2", "3"}:
-                    perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
+                perfiles = {"1": "Prospecto", "2": "Estudiante", "3": "Egresado"}
+                if texto_lower in perfiles:
                     user_data[numero]['perfil'] = perfiles[texto_lower]
                     user_states[numero] = "esperando_carrera"
                     respuesta = "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n_Responde únicamente con el número de la carrera._"
                 else:
+                    # Error amigable sin easter egg
                     respuesta = "⚠️ Por favor, elige una opción válida enviando solo el número: 1, 2 o 3."
 
             elif estado == "esperando_carrera":
@@ -471,12 +476,14 @@ async def recibir_mensaje(request: Request):
                     user_data[numero] = {}
                     respuesta = "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊"
                 elif texto_lower in {"1", "2", "3", "4", "5", "6", "7"}:
-                    carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
+                carreras = {"1": "Administración", "2": "Contabilidad", "3": "Sistemas", "4": "Electricidad", "5": "Mec. Automotriz", "6": "Mec. Producción", "7": "Asistencia Adm."}
+                if texto_lower in carreras:
                     user_data[numero]['carrera'] = carreras[texto_lower]
                     user_states[numero] = "menu_principal"
                     guardar_cliente(numero, user_data[numero]['nombres'], user_data[numero]['perfil'], user_data[numero]['carrera'])
                     respuesta = get_menu_principal(user_data[numero]['nombres'].split()[0], is_new=True)
                 else:
+                    # Error amigable sin easter egg
                     respuesta = "⚠️ Por favor, elige una opción válida enviando solo el número del 1 al 7."
 
             # --- MENÚ PRINCIPAL ---
@@ -508,12 +515,15 @@ async def recibir_mensaje(request: Request):
                     else:
                         respuesta = "⚠️ Información no encontrada."
                 
-                # Easter egg / Fallback (Error 4 - Saludos no activan Fallout)
+                # Easter egg / Fallback
                 else:
-                    if texto_lower in ["hola", "holi", "holis", "buenas", "hey", "hi", "hello", "que tal", "buenos dias", "buenas tardes", "buenas noches", "ola"]:
+                    # Si es un saludo o palabra corta común, NO activamos Fallout. 
+                    # Le mostramos el menú amigablemente.
+                    if texto_lower in ["hola", "holi", "buenas", "hey", "hi", "que tal", "ola"]:
                         primer_nombre = user_data[numero]['nombres'].split()[0] if 'nombres' in user_data[numero] else "amigo"
                         respuesta = f"¡Hola, *{primer_nombre}*! 👋 ¿En qué te puedo ayudar hoy?\n\nEscribe *menú* para ver todas las opciones."
                     else:
+                        # Solo si escribe algo raro (xd, asdf) sale el Easter Egg
                         enviar_fallback_ciclico(numero)
                         enviar_texto_final = False
 
@@ -525,8 +535,13 @@ async def recibir_mensaje(request: Request):
                 
                 elif estado == "menu_carreras" and texto_lower in carreras_info:
                     info = carreras_info[texto_lower]
+                    # 1. Enviamos la imagen
                     enviar_imagen_meta(numero, info['url'], info['titulo'])
+                    
+                    # 2. Hacemos una pausa de 1 segundo para que la imagen se cargue primero
                     time.sleep(1.5)
+                    
+                    # 3. Enviamos el texto
                     enviar_mensaje_meta(numero, info['texto'])
                     respuesta = "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice."
                 
