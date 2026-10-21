@@ -1,376 +1,447 @@
 {
-  "bot": {
-    "ajustes": {
-      "pausa_segundos": 1.5,
-      "longitud_texto_libre": 12,
-      "nombre_min_letras": 3,
-      "nombre_max_palabras": 5,
-      "nombre_max_caracteres": 60,
-      "max_chars_consulta": 500,
-      "ia_max_por_minuto": 6,
-      "ventana_duplicados_segundos": 900,
-      "max_chars_mensaje": 3800,
-      "max_chars_caption": 1000
-    },
-    "lenguaje": {
-      "comandos_menu": [
-        "menu",
-        "inicio",
-        "indice"
+  "metadata": {
+    "version": "2.2",
+    "fecha_actualizacion": "2026-10-19",
+    "institucion": "IESTP Julio César Tello",
+    "fuentes": [
+      "TUPA 2025",
+      "Manual de Procesos Académicos VES-2022"
+    ],
+    "moneda": "PEN",
+    "uit_vigente": 4600
+  },
+  "faqs": [
+    {
+      "id": "FAQ-001",
+      "categoria": "Admisión",
+      "subcategoria": "Ingreso Ordinario",
+      "respuesta": "Pueden postular por Ingreso Ordinario todos los egresados de Educación Básica Regular (Secundaria) y de Centros de Educación Básica Alternativa (CEBA). Si vienes del extranjero, tu certificado debe estar validado por la DRELM. ¡Prepárate para tu examen! 💪",
+      "requisitos": [
+        "Documento que acredite haber culminado la secundaria (para la inscripción al examen)",
+        "Validación DRELM (solo si es extranjero)"
       ],
-      "comandos_reinicio_registro": [
-        "0",
-        "menu",
-        "cancelar",
-        "reiniciar"
+      "costo": "S/ 180.00 (Incluye S/ 170.00 de inscripción y S/ 10.00 de prospecto)",
+      "oficina": "Comisión de Admisión",
+      "observaciones": "El examen se realiza una vez al año."
+    },
+    {"id": "FAQ-002","categoria": "Admisión","subcategoria": "Ingreso por Exoneración","respuesta": "¡Si cumples con algún requisito, puedes ingresar sin dar el examen de admisión! 🎉 Según la Ley N° 30512, aplican casos como: SPAYOV (3 primeros puestos), Primeros Puestos de secundaria, Titulados profesionales, Deportistas calificados, Personas con discapacidad, Servicio militar y FFAA/PNP.", 
+      "requisitos": ["Documentación original que acredite la condición de exoneración según la ley."],"costo": "Exonerados del pago de inscripción al examen (sujeto a validación)", "oficina": "Comisión de Admisión", "observaciones": "Se debe presentar la documentación en Mesa de Partes para su evaluación."
+    },
+    {"id": "FAQ-003","categoria": "Admisión","subcategoria": "Ingreso Extraordinario","respuesta": "Es una modalidad especial que se da bajo autorización directa del Ministerio de Educación (MINEDU). 🏛️ Si el MINEDU lo aprueba, el instituto abre estas vacantes para becas o programas especiales. ¡Atento a los comunicados oficiales en nuestra página web! 📢",
+      "requisitos": ["Resolución o autorización oficial emitida por el MINEDU."], "costo": "Depende de la convocatoria del MINEDU","oficina": "Dirección General / Comisión de Admisión","observaciones": "No requiere examen de admisión regular."
+    },
+    {
+      "id": "FAQ-004",
+      "categoria": "Admisión",
+      "subcategoria": "Costo de Inscripción y Prospecto",
+      "respuesta": "El costo total para inscribirte y obtener tu prospecto de admisión es de *S/ 180.00*. Este monto se divide en S/ 170.00 por derecho de inscripción y S/ 10.00 por el prospecto virtual.",
+      "requisitos": [],
+      "costo": "S/ 180.00",
+      "oficina": "Banco de la Nación / Caja del Instituto",
+      "observaciones": "Pagar en la Cta. Cte. 00000-289078 y llevar el voucher original y copia a Caja."
+    },
+    {
+      "id": "FAQ-005",
+      "categoria": "Matrícula",
+      "subcategoria": "Costo de Matrícula",
+      "respuesta": "El costo de la matrícula regular para ingresantes es de *S/ 180.00*. Si ingresaste por alguna modalidad de exoneración (como PIR, Ley 29973 o Servicio Militar), el costo puede ser cero o tener un descuento del 50%, según lo dictamine la ley.",
+      "requisitos": [],
+      "costo": "S/ 180.00",
+      "oficina": "Banco de la Nación / Caja del Instituto",
+      "observaciones": "Pagar en la Cta. Cte. 00000-289078 y realizar el canje en Caja."
+    },
+    {
+      "id": "FAQ-006",
+      "categoria": "Matrícula",
+      "subcategoria": "Documentos para Matrícula",
+      "respuesta": "📄 ¡Felicidades por ingresar! Para completar tu matrícula oficial, debes presentar estos documentos en Secretaría Académica:\n\n✔️ Recibo de caja / voucher de matrícula.\n✔️ Certificado de estudios de 1ro a 5to de secundaria (ORIGINAL).\n✔️ DNI (ambas caras).\n✔️ Partida de nacimiento original.\n✔️ 02 fotos tamaño carné (fondo blanco).\n\n*Si ingresaste por exoneración, además debes presentar los documentos que acrediten tu condición y una Declaración Jurada.*",
+      "requisitos": [
+        "Voucher de pago", "Certificado de estudios original", "DNI", "Partida de nacimiento", "2 fotos"
       ],
-      "saludos": [
-        "hola",
-        "holi",
-        "holis",
-        "ola",
-        "buenas",
-        "buenos",
-        "buenos dias",
-        "buenas tardes",
-        "buenas noches",
-        "buen dia",
-        "hey",
-        "hi",
-        "hello",
-        "wenas",
-        "que tal",
-        "saludos"
+      "costo": "S/ 180.00 (costo de matrícula)",
+      "oficina": "Secretaría Académica",
+      "observaciones": null
+    },
+    {
+      "id": "FAQ-007",
+      "categoria": "Traslado",
+      "subcategoria": "Requisitos para Traslado Externo",
+      "respuesta": "Si vienes de otro instituto, escuela o universidad, puedes pedir tu *Traslado Externo* para continuar tus estudios aquí. 🏫\n\n📌 *Requisitos:*\n✔️ Solicitud (FUT) de traslado externo.\n✔️ Certificados de estudios de los semestres estudiados.\n✔️ Constancia de vacante.\n✔️ Recibo de pago.\n\n⚠️ *Importante:* Solo aplica si hay vacante en la carrera que deseas.",
+      "requisitos": [
+        "Solicitud (FUT)", "Certificados de estudios", "Constancia de vacante", "Recibo de pago"
       ],
-      "agradecimientos": [
-        "gracias",
-        "muchas gracias",
-        "mil gracias",
-        "ok",
-        "okey",
-        "okay",
-        "listo",
-        "vale",
-        "ya",
-        "perfecto",
-        "genial",
-        "de nada",
-        "thanks",
-        "entendido",
-        "dale"
+      "costo": "S/ 300.00",
+      "oficina": "Secretaría Académica / Mesa de Partes",
+      "observaciones": "Sujeto a disponibilidad de vacantes."
+    },
+    {
+      "id": "FAQ-008",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Cambio de Turno",
+      "respuesta": "¡Claro que sí! 😊 Para solicitar tu cambio de turno, debes estar atento al cronograma académico (suele hacerse antes del inicio de clases).\n\n⚠️ *Importante:* El cambio está sujeto estrictamente a la disponibilidad de vacantes en el turno que deseas. Si es aprobado, deberás realizar el pago por el cambio y el pago de tu matrícula regular.",
+      "requisitos": [
+        "Solicitud (FUT) especificando el turno al que desea cambiar",
+        "Récord de Notas del último semestre",
+        "Fotocopia del DNI"
       ],
-      "prefijos_opcion": [
-        "opcion",
-        "opciones",
-        "carrera",
-        "carreras",
-        "numero",
-        "nro",
-        "no",
-        "n",
-        "menu"
+      "costo": "S/ 123.00 (Derecho de cambio) + S/ 180.00 (Matrícula)",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Sujeto a disponibilidad de vacantes."
+    },
+    {
+      "id": "FAQ-009",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Subsanación de Cursos",
+      "respuesta": "¡No te preocupes, tiene solución! 💪 La *subsanación* es el proceso que te permite recuperar una Unidad Didáctica (curso) que hayas desaprobado.\n\n📌 *¿Cómo se hace?* Debes estar atento a la fecha de subsanación en el cronograma académico (suele ser antes de las matrículas). El costo se paga por cada curso que desees recuperar.",
+      "requisitos": [
+        "Solicitud (FUT) especificando el turno",
+        "Fotocopia del Récord de Notas del semestre desaprobado",
+        "Recibo de pago por concepto de subsanación (por cada U.D.)",
+        "Fotocopia del DNI"
       ],
-      "prefijos_nombre": [
-        "mi nombre completo es",
-        "mi nombre es",
-        "me llamo",
-        "soy"
+      "costo": "S/ 40.00 (por cada Unidad Didáctica)",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Revisar el cronograma académico para la fecha exacta."
+    },
+    {
+      "id": "FAQ-010",
+      "categoria": "Trámites Académicos",
+      "subcategoria": "Convalidación de Cursos",
+      "respuesta": "¡Es el reconocimiento de lo que ya sabes! 🎓 La *convalidación* reconoce las capacidades que adquiriste en otra institución o en el ámbito laboral (debidamente certificado).\n\n📌 *¿Cómo se hace?* La Comisión de Convalidación evaluará tus sílabos y certificados para determinar si procede. Debes estar atento a la ventana de días establecida en el cronograma.",
+      "requisitos": [
+        "Solicitud (FUT) vía mesa de partes",
+        "Certificados de estudios de los cursos a convalidar (PDF)",
+        "Sílabos de los cursos a convalidar (PDF)",
+        "Fotocopia del DNI",
+        "Recibo de pago (según TUPA)"
       ],
-      "interrogativos": [
-        "que",
-        "como",
-        "cuanto",
-        "cuanta",
-        "cuantos",
-        "cuantas",
-        "cuando",
-        "donde",
-        "cual",
-        "cuales",
-        "quien",
-        "quienes",
-        "por que",
-        "porque",
-        "quiero",
-        "necesito",
-        "busco",
-        "tengo",
-        "hay",
-        "puedo",
-        "podria",
-        "podrian",
-        "me pueden",
-        "se puede",
-        "ayuda",
-        "informacion",
-        "info"
+      "costo": "S/ 61.00 (por Unidad Didáctica)",
+      "oficina": "Secretaría Académica / Mesa de Partes",
+      "observaciones": "Sujeto a evaluación de la Comisión de Convalidación."
+    },
+    {
+      "id": "FAQ-011",
+      "categoria": "Certificados y Constancias",
+      "subcategoria": "Certificado de Estudios",
+      "respuesta": "El *Certificado de Estudios* es el documento oficial que acredita las calificaciones de las Unidades Didácticas (UD) que has cursado hasta la fecha. 📄\n\n📌 *¿Cómo obtenerlo?* Debes presentar tu solicitud vía mesa de partes virtual (FUT) adjuntando tu récord de notas y el recibo de pago correspondiente. El costo varía si lo pides por un semestre específico o el global.",
+      "requisitos": [
+        "Solicitud (FUT) vía mesa de partes virtual",
+        "Récord de notas de logros de aprendizaje",
+        "Recibo de pago (según TUPA)",
+        "Foto tamaño pasaporte (fondo blanco, ropa formal)"
       ],
-      "nombres_no_validos": [
-        "menu",
-        "salir",
-        "cancelar",
-        "reiniciar",
-        "xd",
-        "jaja",
-        "jajaja",
-        "hola",
-        "info",
-        "informacion",
-        "amigo",
-        "amiga",
-        "prueba",
-        "test",
-        "nombre",
-        "yo",
-        "bot",
-        "si",
-        "no",
-        "ok",
-        "gracias",
-        "buenas"
+      "costo": "S/ 129.00 (Global I al VI) / S/ 25.00 (Por semestre)",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Se emite según las disposiciones de MINEDU (RVM-277-MINEDU)."
+    },
+    {
+      "id": "FAQ-012",
+      "categoria": "Certificados y Constancias",
+      "subcategoria": "Constancia de Egresado",
+      "respuesta": "La *Constancia de Egresado* acredita que culminaste satisfactoriamente todas las UD, módulos transversales y tus prácticas pre profesionales. 🎓 ¡Es el paso previo obligatorio para iniciar tu proceso de titulación!",
+      "requisitos": [
+        "Solicitud (FUT)",
+        "Constancia de aprobación de prácticas (firmada por Coordinador)",
+        "Fichas de prácticas",
+        "2 fotos tamaño pasaporte (formal)",
+        "Constancia de no adeudar"
       ],
-      "reemplazos": {
-        "🔟": "10"
-      }
+      "costo": "S/ 80.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Firmada y sellada por la Dirección General."
     },
-    "atajos": {
-      "admision": "1",
-      "examen": "1",
-      "postular": "1",
-      "postulacion": "1",
-      "ingreso": "1",
-      "costos": "2",
-      "costo": "2",
-      "precios": "2",
-      "precio": "2",
-      "pagos": "2",
-      "pago": "2",
-      "matricula": "3",
-      "requisitos": "3",
-      "traslado": "4",
-      "tramites": "5",
-      "tramite": "5",
-      "certificado": "6",
-      "certificados": "6",
-      "constancia": "6",
-      "constancias": "6",
-      "ratificacion": "7",
-      "reserva": "7",
-      "licencia": "7",
-      "titulacion": "8",
-      "titularme": "8",
-      "tap": "8",
-      "egresado": "9",
-      "modular": "10",
-      "certificacion": "10",
-      "carreras": "11",
-      "carrera": "11",
-      "especialidades": "11",
-      "contacto": "12",
-      "ubicacion": "12",
-      "direccion": "12",
-      "telefono": "12",
-      "telefonos": "12",
-      "horario": "12",
-      "horarios": "12",
-      "donde estan": "12"
+    {
+      "id": "FAQ-013",
+      "categoria": "Certificados y Constancias",
+      "subcategoria": "Duplicado de Título",
+      "respuesta": "Es el documento oficial que reemplaza tu Título Profesional Técnico en caso de pérdida o deterioro. 📜 ¡Para que sigas demostrando tu profesionalismo!\n\n📌 *¿Cómo obtenerlo?* Debes solicitar la emisión del duplicado por Mesa de Partes y adjuntar los recibos de pago por el formato y derecho correspondiente.",
+      "requisitos": [
+        "Solicitud (FUT) de duplicado de título",
+        "Fotocopia del DNI",
+        "Recibo de pago",
+        "2 fotos tamaño pasaporte"
+      ],
+      "costo": "S/ 245.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Firmado y sellado por la Dirección General."
     },
-    "registro": {
-      "perfiles": {
-        "1": "Prospecto",
-        "2": "Estudiante",
-        "3": "Egresado"
-      },
-      "carreras": {
-        "1": "Administración",
-        "2": "Contabilidad",
-        "3": "Sistemas",
-        "4": "Electricidad",
-        "5": "Mec. Automotriz",
-        "6": "Mec. Producción",
-        "7": "Asistencia Adm."
-      }
+    {
+      "id": "FAQ-014",
+      "categoria": "Matrícula",
+      "subcategoria": "Ratificación de Matrícula",
+      "respuesta": "¡Es el paso para seguir avanzando! 🚀 La ratificación es el proceso que haces al finalizar un periodo lectivo para confirmar que seguirás estudiando el siguiente semestre.\n\n⚠️ *Importante:* Debes estar atento a las fechas de ampliación en el cronograma oficial. Si eres 1° o 2° puesto, presentas tu Resolución de exoneración.",
+      "requisitos": [
+        "Boleta de notas del semestre anterior",
+        "Recibo de pago por ratificación de matrícula (o R.D. de exoneración)"
+      ],
+      "costo": "S/ 180.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Revisar los comunicados oficiales para las fechas exactas."
     },
-    "saludos_menu": {
-      "nuevo": "¡Todo listo! 🚀 Ya estás registrado.",
-      "regreso": "¡Hola de nuevo, *{nombre}*! 👋"
+    {
+      "id": "FAQ-015",
+      "categoria": "Matrícula",
+      "subcategoria": "Reserva de Matrícula",
+      "respuesta": "¡Claro que puedes hacer una pausa! 🛑 La reserva es el acto voluntario para aplazar tu matrícula por un tiempo determinado (máximo 4 semestres), según lo autorice la Dirección General.\n\n📌 *¿Cómo solicitarla?* Debes presentar tu solicitud antes de que inicie el plazo de matrícula.",
+      "requisitos": [
+        "Solicitud (FUT)",
+        "Ficha de matrícula del semestre anterior",
+        "Constancia de ingreso (solo si eres ingresante)",
+        "Fotocopia del DNI",
+        "Recibo de pago"
+      ],
+      "costo": "S/ 30.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "El trámite se realiza antes del inicio de matrícula."
     },
-    "mensajes": {
-      "nombre_defecto": "amigo",
-      "bienvenida": "¡Hola! 👋 Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊",
-      "reinicio_registro": "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊",
-      "reinicio_desde_menu": "Entendido. He reiniciado el registro. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊",
-      "nombre_invalido": "⚠️ Por favor, ingresa un nombre válido (mínimo 3 letras, sin números) o escribe *cancelar* para reiniciar.",
-      "pregunta_perfil": "¡Un gusto, *{nombre}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto* (me gustaría postular al instituto)\n2️⃣ 📚 Soy *Estudiante* (estoy actualmente estudiando en el instituto)\n3️⃣ 🎉 Soy *Egresado* (ya terminé mi carrera del instituto)\n\n_Responde únicamente con el número de tu opción._",
-      "perfil_invalido": "⚠️ Por favor, elige una opción válida enviando solo el número: 1, 2 o 3.",
-      "pregunta_carrera": "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n_Responde únicamente con el número de la carrera._",
-      "carrera_invalida": "⚠️ Por favor, elige una opción válida enviando solo el número del 1 al 7.",
-      "recordar_nombre": "Ahora sí, dime tus *Nombres y Apellidos* 📝",
-      "recordar_perfil": "Volviendo al registro: ¿cuál es tu situación? Responde 1️⃣, 2️⃣ o 3️⃣",
-      "recordar_carrera": "Volviendo al registro: elige el número de tu carrera (del 1 al 7).",
-      "saludo_en_menu": "¡Hola, *{nombre}*! 👋 ¿En qué te puedo ayudar hoy?\n\nEscribe *menú* para ver todas las opciones.",
-      "agradecimiento": "¡Con gusto! 😊 Si necesitas algo más, escribe *menú* para ver todas las opciones.",
-      "opcion_invalida_menu": "⚠️ Esa opción no existe. Elige un número del menú o escribe *menú* para ver todas las opciones.",
-      "opcion_invalida_info": "⚠️ Esa opción no existe. Escribe *0* para volver atrás o *menú* para ir al inicio.",
-      "info_no_encontrada": "⚠️ Información no encontrada. Escribe *menú* para volver al inicio.",
-      "otra_carrera": "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice.",
-      "no_texto": "📝 Por ahora solo puedo leer mensajes de texto. Escríbeme tu consulta o escribe *menú* para ver las opciones. 😊",
-      "error_ia": "¡Ups! Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones.",
-      "sin_dato": "No tengo ese dato en mi base oficial 😅. Escribe *menú* para ver las opciones o consulta en Secretaría Académica.",
-      "respuesta_rechazada": "Mmm, no tengo ese dato exacto en mi base oficial 😅. Pero puedo ayudarte con trámites, carreras o costos. Escribe *menú* para ver las opciones.",
-      "demasiadas_consultas": "⏳ ¡Vas muy rápido! Dame un minuto para ponerme al día y vuelve a escribirme. También puedes escribir *menú* para ver las opciones.",
-      "error_general": "¡Ups! 😅 Algo salió mal de mi lado. Escribe *menú* para continuar.",
-      "sensible": "💛 Gracias por contármelo. Lo que sientes importa y no tienes que pasarlo solo/a. Habla ahora con alguien de confianza (familia, amigos, tutor o docente) o llama a la *Línea 113, opción 5* (salud mental). Si estás en peligro inmediato, llama al *105*.\n\nCuando quieras volver a tus consultas del instituto, escribe *menú*. 🤗"
+    {
+      "id": "FAQ-016",
+      "categoria": "Matrícula",
+      "subcategoria": "Licencia de Estudios",
+      "respuesta": "La *Licencia de Estudios* es el permiso que te da el instituto para dejar de estudiar por un tiempo (por razones personales, laborales, etc.) luego de haberte matriculado. 🛑\n\n⚠️ *Importante:* Puedes solicitarla desde la semana 2 hasta la semana 15 del semestre en curso. El plazo máximo es de 4 periodos lectivos.",
+      "requisitos": [
+        "Solicitud (FUT) de licencia",
+        "Ficha de matrícula anterior",
+        "Fotocopia del DNI",
+        "Declaración jurada (si el trámite es virtual)",
+        "Recibo de pago"
+      ],
+      "costo": "S/ 30.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Se autoriza mediante Resolución Directoral."
     },
-    "pies": {
-      "info_directa": "🔹 _Escribe *menú* para ir al inicio._",
-      "info_submenu": "🔹 _Escribe *0* para volver atrás._\n🔹 _Escribe *menú* para ir al inicio._"
+    {
+      "id": "FAQ-017",
+      "categoria": "Titulación",
+      "subcategoria": "Trabajo de Aplicación Profesional (TAP)",
+      "respuesta": "El *TAP* es un trabajo de investigación aplicada donde demuestras tus competencias resolviendo un problema real. 🛠️\n\n📌 *Etapa 1: Declaración de Expedito (Presentar en Mesa de Partes)*\nDebes presentar tu Solicitud (FUT) indicando la modalidad TAP, junto con todos los requisitos. Una vez aprobado, pasas a la etapa de sustentación.",
+      "requisitos": [
+        "Solicitud (FUT) de declaración de expedito (Modalidad TAP)",
+        "Fotocopia de Constancia de Egresado",
+        "Original de Certificado de Estudios Superior",
+        "Original de Constancia de aprobación de prácticas (firmada por Coordinador)",
+        "Original de Constancia de prácticas (firmada por centro laboral)",
+        "Original de Ficha de evaluación de prácticas",
+        "Original de Constancia de no adeudar (últimos 2 años)",
+        "Certificado de secundaria con código QR validado por MINEDU",
+        "4 fotos tamaño pasaporte (formal)",
+        "Fotocopia de DNI ampliado",
+        "Declaración jurada de veracidad"
+      ],
+      "costo": "S/ 184.00 (Derecho de Sustentación)",
+      "oficina": "Mesa de Partes / Secretaría Académica",
+      "observaciones": "El pago se realiza en el Banco de la Nación y se canjea en Caja."
     },
-    "etiquetas": {
-      "vineta": "✔️",
-      "requisitos": "📋 *Requisitos:*",
-      "costo": "💰 *Costo:*",
-      "oficina": "🏢 *Oficina:*",
-      "observaciones": "⚠️ *Importante:*"
+    {
+      "id": "FAQ-018",
+      "categoria": "Titulación",
+      "subcategoria": "Examen de Suficiencia Profesional",
+      "respuesta": "El *Examen de Suficiencia* es una prueba teórico-práctica donde evalúan tus competencias profesionales. 📝\n\n📌 *Etapa 1: Declaración de Expedito (Presentar en Mesa de Partes)*\nDebes presentar tu Solicitud (FUT) indicando la modalidad de Suficiencia, junto con todos los requisitos. Una vez aprobado, rendirás el examen.",
+      "requisitos": [
+        "Solicitud (FUT) de declaración de expedito (Modalidad Suficiencia)",
+        "Fotocopia de Constancia de Egresado",
+        "Original de Certificado de Estudios Superior",
+        "Original de Constancia de aprobación de prácticas (firmada por Coordinador)",
+        "Original de Constancia de prácticas (firmada por centro laboral)",
+        "Original de Ficha de evaluación de prácticas",
+        "Original de Constancia de no adeudar (últimos 2 años)",
+        "Certificado de secundaria con código QR validado por MINEDU",
+        "4 fotos tamaño pasaporte (formal)",
+        "Fotocopia de DNI ampliado",
+        "Declaración jurada de veracidad"
+      ],
+      "costo": "S/ 184.00 (Derecho de Examen)",
+      "oficina": "Mesa de Partes / Secretaría Académica",
+      "observaciones": "El pago se realiza en el Banco de la Nación y se canjea en Caja."
     },
-    "pagos": {
-      "regla_ia": "REGLA DE PAGO: como este trámite tiene costo, incluye siempre estos dos pasos:\n1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n2. Llevar el voucher ORIGINAL y una COPIA a Caja.",
-      "aviso_manual": "⚠️ *Importante:*\n1. Paga en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n2. Lleva el voucher ORIGINAL y una COPIA a Caja."
+    {
+      "id": "FAQ-019",
+      "categoria": "Titulación",
+      "subcategoria": "Requisitos para Titularse (Etapas 2 y 3)",
+      "respuesta": "Después de aprobar la Etapa 1 (Declaración de Expedito), el proceso de titulación tiene dos etapas finales:\n\n📌 *Etapa 2: Examen de Idioma*\nPresentas tu FUT y pagas S/ 60.00.\n\n📌 *Etapa 3: Derecho y Registro de Título*\nPresentas tu FUT y pagas S/ 125.00 por Derecho de Titulación + S/ 147.00 por el Formato de Título Profesional.",
+      "requisitos": [
+        "Etapa 2: Solicitud (FUT) + Recibo de pago (S/ 60) + Copia de DNI",
+        "Etapa 3: Solicitud (FUT) + Recibo de pago (S/ 125) + Recibo de pago (S/ 147)"
+      ],
+      "costo": "S/ 60.00 (Idioma) + S/ 125.00 (Derecho) + S/ 147.00 (Formato) = S/ 332.00",
+      "oficina": "Mesa de Partes / Caja",
+      "observaciones": "Todos los pagos se realizan en el Banco de la Nación (Cta. Cte. 00000-289078) y se canjean en Caja."
     },
-    "menus": {
-      "principal": "{saludo}\nAquí tienes nuestro índice de consultas:\n\n🎓 *INFORMACIÓN DE PROSPECTO*\n1️⃣ Modalidades de Admisión\n2️⃣ Costos de Postular\n3️⃣ Requisitos de Matrícula\n4️⃣ Traslado Externo\n\n📚 *INFORMACIÓN DE ESTUDIANTE*\n5️⃣ Trámites Académicos\n6️⃣ Certificados y Constancias\n7️⃣ Ratificación, Reserva o Licencia\n\n🎉 *INFORMACIÓN DE EGRESADO*\n8️⃣ Titulación (TAP o Examen)\n9️⃣ Constancia de Egresado\n🔟 Certificación Modular\n\n🏫 *GENERAL*\n1️⃣1️⃣ Nuestras Carreras\n1️⃣2️⃣ Contacto y Ubicación\n\n0️⃣ Reiniciar registro\n\n🔹 _Escribe el número de tu opción._"
+    {
+      "id": "FAQ-020",
+      "categoria": "Certificados y Constancias",
+      "subcategoria": "Constancia de Egresado",
+      "respuesta": "La *Constancia de Egresado* acredita que culminaste satisfactoriamente todas las UD, módulos transversales y tus prácticas pre profesionales. 🎓 ¡Es el paso previo obligatorio para iniciar tu proceso de titulación!",
+      "requisitos": [
+        "Solicitud (FUT)",
+        "Constancia de aprobación de prácticas (firmada por Coordinador)",
+        "Fichas de prácticas",
+        "2 fotos tamaño pasaporte (formal)",
+        "Constancia de no adeudar"
+      ],
+      "costo": "S/ 80.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Firmada y sellada por la Dirección General."
     },
-    "submenus": {
-      "submenu_1": "🎓 *MODALIDADES DE ADMISIÓN*\n\n1️⃣ Ingreso Ordinario\n2️⃣ Ingreso por Exoneración\n3️⃣ Ingreso Extraordinario\n\n0️⃣ Volver al menú principal",
-      "submenu_2": "💰 *COSTOS DE POSTULAR*\n\n1️⃣ Costo de Inscripción y Prospecto\n2️⃣ Costo de Matrícula\n3️⃣ ¿Cómo pagar y canjear el voucher?\n\n0️⃣ Volver al menú principal",
-      "submenu_5": "📄 *TRÁMITES ACADÉMICOS*\n\n1️⃣ Cambio de Turno\n2️⃣ Subsanación de Cursos\n3️⃣ Convalidación de Cursos\n\n0️⃣ Volver al menú principal",
-      "submenu_6": "📑 *CERTIFICADOS Y CONSTANCIAS*\n\n1️⃣ Certificado de Estudios\n2️⃣ Constancia de Egresado\n3️⃣ Duplicado de Título\n\n0️⃣ Volver al menú principal",
-      "submenu_7": "🎓 *MATRÍCULA*\n\n1️⃣ Ratificación de Matrícula\n2️⃣ Reserva de Matrícula\n3️⃣ Licencia de Estudios\n\n0️⃣ Volver al menú principal",
-      "submenu_8": "🎉 *TITULACIÓN*\n\n1️⃣ Trabajo de Aplicación Profesional (TAP)\n2️⃣ Examen de Suficiencia Profesional\n3️⃣ Requisitos para Titularse\n\n0️⃣ Volver al menú principal",
-      "menu_carreras": "🏫 *NUESTRAS CARRERAS*\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n0️⃣ Volver al menú principal"
+    {
+      "id": "FAQ-021",
+      "categoria": "Certificados y Constancias",
+      "subcategoria": "Certificación Modular",
+      "respuesta": "La *Certificación Modular* es un documento oficial que acredita que lograste las competencias de un módulo formativo. 🏅 ¡Es progresivo y te sirve para demostrar tus habilidades mientras avanzas en la carrera!\n\n📌 *¿Cómo obtenerla?* Debes presentar tu solicitud por Mesa de Partes adjuntando tus prácticas del módulo.",
+      "requisitos": [
+        "Solicitud de Certificación Modular (FUT)",
+        "02 fotos tamaño pasaporte (fondo blanco y formal)",
+        "Certificado de estudios",
+        "Constancia de prácticas (Coordinador + V°B° Jefe de Unidad)",
+        "Carpeta de prácticas",
+        "Recibo de pago",
+        "Fotocopia de DNI"
+      ],
+      "costo": "S/ 55.00",
+      "oficina": "Secretaría Académica",
+      "observaciones": "Firmado y sellado por la Dirección General."
     },
-    "mapeo_faqs": {
-      "submenu_1": {
-        "1": "FAQ-001",
-        "2": "FAQ-002",
-        "3": "FAQ-003"
-      },
-      "submenu_2": {
-        "1": "FAQ-004",
-        "2": "FAQ-005",
-        "3": "FAQ-023"
-      },
-      "submenu_5": {
-        "1": "FAQ-008",
-        "2": "FAQ-009",
-        "3": "FAQ-010"
-      },
-      "submenu_6": {
-        "1": "FAQ-011",
-        "2": "FAQ-012",
-        "3": "FAQ-013"
-      },
-      "submenu_7": {
-        "1": "FAQ-014",
-        "2": "FAQ-015",
-        "3": "FAQ-016"
-      },
-      "submenu_8": {
-        "1": "FAQ-017",
-        "2": "FAQ-018",
-        "3": "FAQ-019"
-      }
+    {
+      "id": "FAQ-022",
+      "categoria": "Información institucional",
+      "subcategoria": "Contacto y Ubicación",
+      "respuesta": "¡Ven a visitarnos! 🏢\n\n📍 *Dirección:* Mz. \"A\", Lote 1, 3er Sector, Grupo 2, Villa El Salvador.\n🗺️ *Cómo llegar:* https://maps.app.goo.gl/D6bHwJqE885yPFUP7\n📞 *Teléfonos:* 287-3676 / 287-9783 / 287-8585\n\n🕒 *Horarios de atención:*\n- **Mesa de Partes (Turno Tarde):** En la **Biblioteca** del Instituto.\n- **Sección Cobranza (Caja):** 08:00 a.m. a 01:00 p.m. y 02:00 p.m. a 09:00 p.m.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Dirección General",
+      "observaciones": "Aviso oficial: Mesa de partes en la biblioteca."
     },
-    "directos": {
-      "3": "FAQ-006",
-      "4": "FAQ-007",
-      "9": "FAQ-020",
-      "10": "FAQ-021",
-      "12": "FAQ-022"
+    {
+      "id": "FAQ-023",
+      "categoria": "Información institucional",
+      "subcategoria": "Pagos y Vouchers",
+      "respuesta": "¡Atención, este paso es súper importante! 🚨\n\nTodo concepto de pago se realiza en el **Banco de la Nación** a la **Cuenta Corriente N° 00000-289078**.\n\n📌 *¿Qué hacer después?*\nDeberás entregar en Caja el voucher **ORIGINAL** y una **COPIA** física.\n\n⏳ *Plazo:* Tienes un máximo de 48 horas para hacer el canje en Caja del Instituto.\n\n⚠️ *Sin el canje en Caja, tu pago no será válido en el sistema.*",
+      "requisitos": ["Voucher original del Banco de la Nación", "Copia del voucher"],
+      "costo": null,
+      "oficina": "Caja / Tesorería del instituto",
+      "observaciones": "El canje se realiza en un plazo máximo de 48 horas."
     },
-    "easter_egg": {
-      "mensaje_secreto": "🕵️‍♂️✨ *¡ALERTA! ¡HAS DESCUBIERTO UN SECRETO DE TELLITO BOT!*\n\n🎉 ¡Felicidades, explorador! No todos llegan hasta aquí... Parece que tienes buen ojo para descubrir lo que otros pasan por alto. 👀\n\n🤖 *Tellito Bot tiene más de una sorpresa escondida...* ¿Será este el único secreto o habrá otros esperando a ser descubiertos? 🤫\n\n😎 Ahora formas parte del pequeño grupo que conoce este Easter Egg. Pero recuerda: *un buen secreto merece compartirse*... aunque ya no sea tan secreto. JAJAJA xd.\n\n📲 *¿Quieres que tus amigos también lo descubran?* Comparte a Tellito Bot y deja que comience la búsqueda:\n\n👉 https://wa.me/51916281454\n\n🍀 ¡Sigue explorando! Nunca sabes qué otra sorpresa podrías encontrar por aquí.\n\n— *Tellito Bot* 🤖💚",
-      "imagenes": [
-        {
-          "url": "https://i.ibb.co/7tJZHVc2/1.png",
-          "texto": "🛡️ *¿SALIR AL YERMO? ¡NI HABLAR!*\n\nEn el Refugio Tellito, las respuestas están a un mensaje de distancia. 🤖📡\n\n☢️ Menos vueltas, más información y cero necesidad de explorar el yermo para resolver tus dudas académicas. ¡Tu Pip-Boy no tiene nada que envidiarle a Tellito Bot! 😂\n\n📢 *Comparte esta imagen con tu escuadrón y ayúdalo a sobrevivir al apocalipsis académico.*\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: conocimiento para los habitantes del yermo.* 💛"
-        },
-        {
-          "url": "https://i.ibb.co/zhbXXXsX/2.png",
-          "texto": "🥤 *MI BEBIDA FAVORITA NO ES LA NUKA-COLA... ¡ES LA INFORMACIÓN INSTANTÁNEA!*\n\n¿Por qué conformarte con una bebida refrescante cuando puedes saciar tu sed de conocimiento? ☢️🤖\n\n📚 Carreras, consultas y respuestas sin tener que recorrer todo el yermo. ¡Tellito Bot es el combustible de todo estudiante que quiere llegar más lejos!\n\n📢 *Comparte esta imagen con tus compañeros de refugio. ¡El conocimiento sabe mejor cuando se comparte!* 😂\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: mantén tu mente hidratada... metafóricamente.* 🥤✨"
-        },
-        {
-          "url": "https://i.ibb.co/LXJDyTQd/3.png",
-          "texto": "🚪 *EN CASO DE APOCALIPSIS, REFÚGIATE EN TELLITO BOT.*\n\n¿Filas interminables? ¿Recorrer medio yermo para encontrar información? ¿Gastar tus chapas en preguntar lo mismo de siempre? ¡Qué va! 😂☢️\n\n🤖 Desde tu propio refugio digital, puedes realizar consultas sobre el instituto y descubrir información útil sin organizar una expedición al exterior.\n\n📢 *Comparte esta imagen con tu comunidad de supervivientes. Porque en el yermo, la información también puede salvarte el día.* 💛\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot. ¡La guerra nunca cambia, pero la forma de hacer consultas sí!* ⚡"
-        }
-      ]
+    {
+      "id": "FAQ-024",
+      "categoria": "Prácticas Pre Profesionales",
+      "subcategoria": "Horas de Prácticas por Carrera",
+      "respuesta": "Las horas de prácticas dependen de tu carrera y del módulo. Según el reglamento, debes cumplir como mínimo el **35% del total de horas** de cada Módulo Técnico Profesional.\n\n📌 *Ejemplo para Administración de Empresas:*\n✔️ Módulo 1 (Gestión Administrativa): 265 horas.\n✔️ Módulo 2 (Gestión de Comercialización): 289 horas.\n✔️ Módulo 3 (Gestión de Recursos Financieros): 296 horas.\n\nPara otras carreras, puedes consultar a tu Coordinador o Secretaría Académica.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Secretaría Académica / Coordinación",
+      "observaciones": "El mínimo es el 35% de las horas del módulo."
     },
-    "sensibles": {
-      "palabras": [
-        "suicid",
-        "quitarme la vida",
-        "quiero morir",
-        "quiero morirme",
-        "matarme",
-        "no quiero vivir",
-        "hacerme dano",
-        "autolesion",
-        "cortarme las venas",
-        "acabar con mi vida"
-      ]
+    {
+      "id": "FAQ-025",
+      "categoria": "Prácticas Pre Profesionales",
+      "subcategoria": "Convalidación de Prácticas",
+      "respuesta": "¡Sí es posible! Si trabajas en un área relacionada a tu carrera, puedes convalidar tus prácticas pre profesionales.\n\n📌 *Requisitos principales:*\n✔️ Constancia o Certificado de trabajo.\n✔️ Informe Técnico de las tareas realizadas (firmado por tu jefe).\n✔️ Copia autenticada del contrato o resolución.\n✔️ Hoja de supervisión y monitoreo.\n\nLa evaluación la realiza una Comisión de Convalidación.",
+      "requisitos": ["Constancia de trabajo", "Informe Técnico", "Contrato", "Hoja de supervisión"],
+      "costo": "S/ 61.00 (Según TUPA)",
+      "oficina": "Secretaría Académica / Coordinación",
+      "observaciones": "Las funciones laborales deben coincidir con el Módulo Técnico."
     },
-    "validador": {
-      "carreras_fantasma": [
-        "computacion",
-        "informatica",
-        "computacion e informatica",
-        "enfermeria",
-        "enfermeria tecnica",
-        "nutricion",
-        "farmacia",
-        "odontologia",
-        "carrera de derecho",
-        "medicina",
-        "psicologia",
-        "arquitectura",
-        "ingenieria civil",
-        "ingenieria de sistemas",
-        "administracion de negocios",
-        "contabilidad publica",
-        "turismo",
-        "gastronomia",
-        "cosmetologia",
-        "veterinaria",
-        "mecatronica"
-      ]
+    {
+      "id": "FAQ-026",
+      "categoria": "Titulación",
+      "subcategoria": "Envío de Expediente y Correo",
+      "respuesta": "Para iniciar tu proceso de titulación (TAP o Suficiencia), debes enviar tu solicitud (FUT) y todos los requisitos escaneados en formato PDF al correo oficial: **titulaciones@iestpictello.edu.pe**\n\n📌 *Etapas del proceso:*\n1. Declaración de Expedito (envío de documentos).\n2. Sustentación del TAP o Examen de Suficiencia.\n3. Examen de Idioma Extranjero (S/ 60.00).\n4. Trámite de Derecho y Registro de Título (S/ 125.00 + S/ 147.00).",
+      "requisitos": ["Correo institucional de titulaciones", "Documentos escaneados en PDF"],
+      "costo": null,
+      "oficina": "Coordinación de Titulación",
+      "observaciones": "La sustentación del TAP dura entre 30 y 60 minutos."
     },
-    "ia": {
-      "titulo_institucion": "=== INSTITUCIÓN ===",
-      "linea_moneda": "Moneda: {moneda} | UIT: S/ {uit}",
-      "titulo_carreras": "=== CARRERAS OFICIALES ===",
-      "titulo_detalle": "=== DETALLE DE LAS CARRERAS ===",
-      "titulo_faqs": "=== FICHAS OFICIALES ===",
-      "titulo_pagos": "=== CONCEPTOS DE PAGO (TUPA) ===",
-      "formato_pago": "- {concepto}: S/ {monto}",
-      "palabras_detalle_carreras": [
-        "carrera",
-        "carreras",
-        "estudiar",
-        "estudio",
-        "profesion",
-        "profesional",
-        "campo laboral",
-        "especialidad",
-        "programa de estudios",
-        "que se ve",
-        "aprender",
-        "cursos de",
-        "recomiendas",
-        "sugieres",
-        "elegir",
-        "orientacion",
-        "no se que"
-      ]
+    {
+      "id": "FAQ-027",
+      "categoria": "Titulación",
+      "subcategoria": "Puntaje Examen de Suficiencia",
+      "respuesta": "El Examen de Suficiencia Profesional tiene un peso evaluativo específico:\n\n📌 *Fórmula de calificación:*\n`Calificación Final = (3 * Prueba Objetiva + 7 * Aplicación Práctica) / 10`\n\nEsto significa que el 30% de tu nota es teórico-práctico (prueba objetiva) y el 70% es la evaluación práctica o demostrativa de tus capacidades.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Coordinación del Programa de Estudios",
+      "observaciones": "Si desapruebas, tienes hasta 2 oportunidades adicionales."
+    },
+    {
+      "id": "FAQ-028",
+      "categoria": "Titulación",
+      "subcategoria": "Reglas del TAP",
+      "respuesta": "Si eliges la modalidad de Trabajo de Aplicación Profesional (TAP), ten en cuenta estas reglas:\n\n✔️ Puede ser desarrollado por un máximo de **2 participantes** del mismo programa de estudios.\n✔️ Puede ser multidisciplinario (con alumnos de otras carreras) hasta un máximo de **4 participantes**.\n✔️ Una vez aprobado el perfil, tienes **6 meses** para sustentar.\n✔️ La Constancia de Aprobación del TAP tiene una vigencia de **60 días calendario**.",
+      "requisitos": [],
+      "costo": null,
+      "oficina": "Coordinación del Programa de Estudios",
+      "observaciones": "El perfil se presenta con el visto bueno del Asesor."
     }
-  }
+  ],
+  "conceptos_pago": [
+    { "id": "PAGO-001", "tipo": "bien", "concepto": "Ficha de Evaluación de la Práctica Pre-Profesional por módulo", "monto": 10.00 },
+    { "id": "PAGO-002", "tipo": "bien", "concepto": "Ficha de Evaluación de la Práctica Pre-Profesional (Sistema Tradicional)", "monto": 15.00 },
+    { "id": "PAGO-003", "tipo": "bien", "concepto": "Formato de Título Profesional", "monto": 147.00 },
+    { "id": "PAGO-004", "tipo": "bien", "concepto": "Formato de Título Profesional Duplicado", "monto": 245.00 },
+    { "id": "PAGO-006", "tipo": "bien", "concepto": "Certificado Modular", "monto": 55.00 },
+    { "id": "PAGO-007", "tipo": "bien", "concepto": "Certificados de Estudios I al VI semestre", "monto": 129.00 },
+    { "id": "PAGO-008", "tipo": "bien", "concepto": "Certificados de Estudios por Semestre", "monto": 25.00 },
+    { "id": "PAGO-013", "tipo": "bien", "concepto": "Constancia de Egresado", "monto": 80.00 },
+    { "id": "PAGO-025", "tipo": "tasa", "concepto": "Cambio de Programa de Estudios (traslado interno)", "monto": 250.00 },
+    { "id": "PAGO-026", "tipo": "tasa", "concepto": "Cambio de Turno", "monto": 123.00 },
+    { "id": "PAGO-027", "tipo": "tasa", "concepto": "Convalidación de Unidad Didáctica", "monto": 61.00 },
+    { "id": "PAGO-030", "tipo": "tasa", "concepto": "Derecho de Titulación", "monto": 125.00 },
+    { "id": "PAGO-034", "tipo": "tasa", "concepto": "Examen de Suficiencia Profesional", "monto": 184.00 },
+    { "id": "PAGO-035", "tipo": "tasa", "concepto": "Inscripción de Admisión", "monto": 170.00 },
+    { "id": "PAGO-036", "tipo": "tasa", "concepto": "Matrícula de Ingresante", "monto": 180.00 },
+    { "id": "PAGO-037", "tipo": "tasa", "concepto": "Matrícula por subsanación de Unidad Didáctica", "monto": 40.00 },
+    { "id": "PAGO-038", "tipo": "tasa", "concepto": "Ratificación de Matrícula", "monto": 180.00 },
+    { "id": "PAGO-047", "tipo": "tasa", "concepto": "Sustentación por Trabajo de Aplicación Profesional", "monto": 184.00 },
+    { "id": "PAGO-048", "tipo": "tasa", "concepto": "Traslado Externo", "monto": 300.00 }
+  ],
+  "info_carreras": {
+    "1": {
+      "url": "https://i.ibb.co/fz7kxPqn/administraci-n.jpg",
+      "titulo": "Administración de Empresas 📈",
+      "texto": "👔 *¡CONVIÉRTETE EN EL PROFESIONAL QUE IMPULSA EL CRECIMIENTO DE LAS EMPRESAS! 🚀*\n\n¿Alguna vez imaginaste dirigir una empresa, liderar un equipo o convertir una gran idea en un negocio exitoso? 💡 Todo gran proyecto necesita personas capaces de tomar decisiones, organizar recursos y descubrir nuevas oportunidades. ¡Tú puedes prepararte para ser una de ellas!\n\nEn la carrera de *Administración de Empresas del Instituto J. C. Tello*, desarrollarás las competencias necesarias para comprender el mundo empresarial, gestionar organizaciones y transformar ideas en proyectos con futuro.\n\n✅ *¿QUÉ APRENDERÁS?*\n📈 *Marketing estratégico y ventas:* descubre cómo posicionar marcas, atraer clientes y desarrollar estrategias comerciales.\n💰 *Finanzas y presupuestos:* aprende a administrar recursos, analizar costos y tomar decisiones económicas responsables.\n🤝 *Gestión de recursos humanos:* desarrolla habilidades para liderar equipos, fortalecer el talento y mejorar el ambiente laboral.\n📊 *Creación y gestión de negocios:* convierte tus ideas en proyectos organizados, sostenibles y con potencial de crecimiento.\n\n💡 *¿POR QUÉ ESTUDIAR ADMINISTRACIÓN EN EL J. C. TELLO?*\nPorque administrar va mucho más allá de organizar documentos o supervisar tareas. Significa comprender cómo funciona una organización, identificar oportunidades y encontrar soluciones que generen resultados. Con una formación orientada al desarrollo de competencias prácticas, podrás fortalecer tu capacidad de liderazgo, análisis y toma de decisiones.\n\n🔥 *UN MUNDO DE OPORTUNIDADES TE ESPERA*\nPodrás proyectarte hacia áreas como administración, logística, recursos humanos, marketing, operaciones y gestión comercial. También tendrás la posibilidad de desarrollar tu propio emprendimiento o continuar especializándote para asumir nuevos desafíos.\n\n✨ *Cada empresa necesita personas que sepan hacia dónde avanzar y cómo lograrlo. Prepárate para aportar ideas, tomar decisiones y convertir los desafíos en oportunidades.*\n\n🎓 *Tu futuro profesional comienza con una decisión. ¡Descubre todo lo que puedes lograr estudiando Administración de Empresas en el J. C. Tello!*"
+    },
+    "2": {
+      "url": "https://i.ibb.co/Jwh71wk4/Contabilidad.jpg",
+      "titulo": "Contabilidad 💰",
+      "texto": "📊 *¡DETRÁS DE CADA GRAN DECISIÓN, HAY UN PROFESIONAL QUE SABE INTERPRETAR LOS NÚMEROS! 💰*\n\nLas empresas necesitan mucho más que ingresos y ventas: necesitan conocer su situación financiera, cumplir sus obligaciones y tomar decisiones basadas en información confiable. Ahí es donde el contador se convierte en una pieza fundamental. 🧾\n\nEn la carrera de *Contabilidad del Instituto J. C. Tello*, aprenderás a interpretar la información económica de una organización, controlar sus recursos y contribuir a que sus decisiones tengan una base sólida.\n\n✅ *¿QUÉ APRENDERÁS?*\n🧾 *Tributación y auditoría:* comprende las obligaciones tributarias y aprende a revisar la información contable con responsabilidad y criterio profesional.\n📉 *Análisis de costos y presupuestos:* identifica costos, organiza presupuestos y aporta información útil para mejorar la gestión de una empresa.\n💼 *Gestión financiera y contable:* conoce cómo se registran, analizan y presentan las operaciones económicas de una organización.\n💻 *Herramientas y software contable:* desarrolla habilidades para trabajar con herramientas digitales que facilitan los procesos contables y financieros.\n\n💡 *¿QUÉ HACE ESPECIAL A ESTA PROFESIÓN?*\nLa Contabilidad combina análisis, precisión, responsabilidad y ética. Cada registro cuenta una historia sobre el estado de un negocio, y cada informe puede ayudar a prevenir errores, aprovechar oportunidades y planificar el futuro.\n\n🔥 *CONSTRUYE UNA CARRERA CON MÚLTIPLES POSIBILIDADES*\nPodrás orientar tu desarrollo profesional hacia áreas como contabilidad general, tributación, costos, auditoría y gestión financiera. Además, podrás trabajar con empresas de distintos sectores o desarrollar servicios contables de manera independiente.\n\n✨ *La Contabilidad no consiste únicamente en trabajar con números: consiste en generar confianza, proteger los recursos y contribuir al crecimiento de las organizaciones.*\n\n🎓 *Si buscas una profesión donde la precisión, la ética y el conocimiento tengan un impacto real, descubre tu camino en Contabilidad en el Instituto J. C. Tello.*"
+    },
+    "3": {
+      "url": "https://i.ibb.co/N2WGV9Gy/Desarrollo-de-Sistemas.jpg",
+      "titulo": "Desarrollo de Sistemas 💻",
+      "texto": "💻 *¡NO TE LIMITES A UTILIZAR LA TECNOLOGÍA: APRENDE A CREARLA! 🚀*\n\nLas aplicaciones que utilizamos, las plataformas que conectan al mundo y los sistemas que hacen funcionar a las empresas tienen algo en común: alguien tuvo que diseñarlos y desarrollarlos. ¿Te imaginas ser esa persona? 🌐\n\nEn la carrera de *Desarrollo de Sistemas del Instituto J. C. Tello*, podrás convertir tu curiosidad por la tecnología en conocimientos y habilidades para crear soluciones digitales, resolver problemas y participar en un mundo cada vez más conectado.\n\n✅ *¿QUÉ APRENDERÁS?*\n🐍 *Programación y lógica computacional:* desarrolla el pensamiento lógico necesario para diseñar algoritmos y construir programas.\n🗄️ *Bases de datos y redes:* aprende a organizar información, gestionar datos y comprender cómo se conectan los sistemas informáticos.\n🛡️ *Fundamentos de ciberseguridad:* conoce principios y buenas prácticas para proteger la información y utilizar la tecnología de manera responsable.\n⚙️ *Desarrollo web y móvil:* descubre cómo se crean sitios web, aplicaciones y herramientas digitales que responden a necesidades reales.\n\n💡 *¿POR QUÉ ELEGIR DESARROLLO DE SISTEMAS?*\nPorque la tecnología no solo transforma la forma en que vivimos: también crea nuevas maneras de trabajar, emprender y resolver problemas. Durante tu formación podrás fortalecer tu capacidad de análisis, creatividad y resolución de problemas, construyendo progresivamente las bases para desarrollar tus propios proyectos.\n\n🔥 *TU TALENTO PUEDE LLEGAR MUCHO MÁS LEJOS*\nPodrás orientar tu carrera hacia el desarrollo de software, aplicaciones web, bases de datos, soporte de sistemas y otras áreas tecnológicas. Con experiencia, proyectos demostrables y aprendizaje continuo, también podrás explorar oportunidades de trabajo remoto, colaboración internacional o emprendimiento tecnológico.\n\n✨ *Hoy puedes ser quien utiliza una aplicación; mañana, quien diseña una solución que miles de personas necesitan.*\n\n🎓 *El mundo digital necesita personas capaces de pensar, crear y mejorar lo que existe. ¡Empieza a construir tu futuro con Desarrollo de Sistemas en el Instituto J. C. Tello!*"
+    },
+    "4": {
+      "url": "https://i.ibb.co/yn7ph2S0/electricidad.jpg",
+      "titulo": "Electricidad Industrial ⚡",
+      "texto": "⚡ *¡CONVIÉRTETE EN EL PROFESIONAL QUE MANTIENE LA INDUSTRIA EN MOVIMIENTO! 🔌🏭*\n\nDetrás de una fábrica en funcionamiento, una máquina que trabaja con precisión o un proceso industrial automatizado, existe un sistema eléctrico que necesita instalación, mantenimiento y supervisión especializada.\n\nEn la carrera de *Electricidad Industrial del Instituto J. C. Tello*, desarrollarás conocimientos técnicos para comprender, instalar, revisar y mantener sistemas eléctricos utilizados en entornos industriales, con especial atención a la seguridad.\n\n✅ *¿QUÉ APRENDERÁS?*\n⚙️ *Instalaciones eléctricas industriales:* comprende los componentes y circuitos que permiten distribuir y utilizar la energía eléctrica.\n🤖 *Automatización y control:* conoce los fundamentos de los sistemas de control y los controladores lógicos programables (PLC).\n🛠️ *Mantenimiento de máquinas eléctricas:* aprende principios de inspección, diagnóstico y mantenimiento para contribuir al funcionamiento confiable de los equipos.\n🦺 *Seguridad eléctrica:* desarrolla hábitos de trabajo seguro, identificación de riesgos y cumplimiento de procedimientos técnicos.\n\n💡 *¿POR QUÉ ELEGIR ESTA CARRERA?*\nPorque combina conocimiento técnico, trabajo práctico y resolución de problemas. Aprenderás a comprender sistemas que muchas veces pasan desapercibidos, pero que resultan esenciales para las actividades industriales.\n\n🔥 *ABRE CAMINO A NUEVOS RETOS PROFESIONALES*\nPodrás proyectarte hacia actividades de instalación, mantenimiento y asistencia técnica en empresas industriales, plantas de producción, servicios eléctricos y otros sectores que requieran estas competencias.\n\n✨ *Cada sistema que funciona con seguridad demuestra la importancia del conocimiento técnico. Tu trabajo puede contribuir a mantener equipos operativos, procesos eficientes y entornos más seguros.*\n\n🎓 *Si te interesa la tecnología, la energía y el funcionamiento de las máquinas, da el siguiente paso. ¡Estudia Electricidad Industrial en el Instituto J. C. Tello y convierte tu interés en una habilidad profesional!*"
+    },
+    "5": {
+      "url": "https://i.ibb.co/20z3NB0F/mec-nica-automotriz.jpg",
+      "titulo": "Mecánica Automotriz 🚗",
+      "texto": "🚗 *¡LLEVA TU PASIÓN POR LOS VEHÍCULOS AL SIGUIENTE NIVEL! 🏁🔧*\n\nLos automóviles están evolucionando constantemente. Hoy combinan motores, sensores, sistemas electrónicos y herramientas digitales de diagnóstico. Por eso, conocer un vehículo va mucho más allá de reconocer sus piezas: significa comprender cómo funciona y cómo identificar sus fallas.\n\nSi te interesa descubrir qué ocurre debajo del capó y quieres convertir ese interés en una profesión, la carrera de *Mecánica Automotriz del Instituto J. C. Tello* puede ser el camino para desarrollar tus habilidades técnicas.\n\n✅ *¿QUÉ APRENDERÁS?*\n🔧 *Diagnóstico de motores y transmisión:* comprende el funcionamiento de los principales sistemas mecánicos del vehículo.\n⚡ *Sistemas eléctricos y electrónicos:* conoce los componentes eléctricos y electrónicos que intervienen en el funcionamiento de los automóviles modernos.\n🛞 *Frenos, suspensión y dirección:* estudia los sistemas que contribuyen al control, la estabilidad y la seguridad del vehículo.\n🔍 *Diagnóstico con escáner automotriz:* familiarízate con herramientas electrónicas utilizadas para identificar códigos de falla.\n\n💡 *¿POR QUÉ ELEGIR MECÁNICA AUTOMOTRIZ?*\nPorque cada diagnóstico es un desafío que exige observación, razonamiento y conocimientos técnicos. La formación práctica y el aprendizaje continuo serán importantes para mantenerte actualizado frente a los cambios tecnológicos del sector automotor.\n\n🔥 *CONSTRUYE TU CAMINO EN EL MUNDO AUTOMOTRIZ*\nPodrás orientar tu desarrollo hacia talleres de mantenimiento y reparación, servicios de diagnóstico, empresas del sector automotor o áreas técnicas de concesionarios. También podrás proyectarte hacia el emprendimiento.\n\n✨ *Cada vehículo tiene una historia que contar a través de sus sistemas y componentes. El conocimiento te permite interpretar esas señales y convertir un problema en una solución técnica.*\n\n🎓 *Si disfrutas la mecánica, quieres aprender sobre nuevas tecnologías y buscas una profesión práctica, es momento de dar el siguiente paso. ¡Descubre tu potencial con Mecánica Automotriz en el Instituto J. C. Tello!*"
+    },
+    "6": {
+      "url": "https://i.ibb.co/39dPy4pq/producci-n.jpg",
+      "titulo": "Mecánica de Producción ⚙️",
+      "texto": "⚙️ *¡CON TUS CONOCIMIENTOS, LAS IDEAS PUEDEN CONVERTIRSE EN REALIDAD! 🏭*\n\n¿Alguna vez te has preguntado cómo se fabrican las piezas de una máquina, cómo se construyen los componentes metálicos o cómo una industria transforma materiales en productos útiles? Detrás de cada proceso de fabricación hay personas que conocen los materiales, dominan las herramientas y saben interpretar los planos.\n\nEn la carrera de *Mecánica de Producción del Instituto J. C. Tello*, desarrollarás habilidades técnicas relacionadas con la fabricación, el mecanizado y los procesos utilizados en diferentes actividades industriales.\n\n✅ *¿QUÉ APRENDERÁS?*\n🛠️ *Manufactura y soldadura:* conoce procesos de fabricación y unión de materiales utilizados en la elaboración y reparación de componentes.\n🖥️ *Tornos, fresadoras y mecanizado CNC:* comprende el funcionamiento de máquinas-herramienta convencionales y de control numérico computarizado.\n📐 *Dibujo técnico e interpretación de planos:* aprende a interpretar medidas, símbolos y especificaciones para fabricar piezas conforme a un diseño.\n🔄 *Mantenimiento industrial:* conoce fundamentos para revisar equipos, identificar posibles fallas y contribuir a la continuidad de los procesos productivos.\n\n💡 *¿QUÉ HACE ESPECIAL A ESTA CARRERA?*\nCombina precisión, razonamiento técnico y trabajo práctico. Cada pieza fabricada exige atención a las medidas, comprensión de los materiales y cumplimiento de procedimientos de calidad y seguridad.\n\n🔥 *TU CONOCIMIENTO PUEDE ABRIRTE NUEVAS OPORTUNIDADES*\nPodrás proyectarte hacia empresas manufactureras, talleres de mecanizado, fabricación de estructuras metálicas, mantenimiento industrial y otras actividades productivas.\n\n✨ *La industria necesita personas que sepan transformar un plano en una pieza, una idea en un diseño y un proceso en un resultado de calidad.*\n\n🎓 *Si te gusta construir, fabricar, trabajar con máquinas y comprender cómo se producen las cosas, descubre una carrera donde tus conocimientos pueden convertirse en resultados concretos. ¡Estudia Mecánica de Producción en el Instituto J. C. Tello!*"
+    },
+    "7": {
+      "url": "https://i.ibb.co/hRCrbRFp/Asistencia-Administrativa.jpg",
+      "titulo": "Asistencia Administrativa 📋",
+      "texto": "📋 *¡DETRÁS DE UNA ORGANIZACIÓN EFICIENTE, HAY PERSONAS QUE HACEN QUE TODO FUNCIONE! ✨*\n\nEn una empresa, cada reunión, documento, trámite y comunicación necesita organización. Cuando la información está bien gestionada y los procesos se desarrollan de manera ordenada, todo el equipo puede trabajar mejor.\n\nEn la carrera de *Asistencia Administrativa del Instituto J. C. Tello*, desarrollarás las habilidades necesarias para convertirte en un profesional organizado, resolutivo y preparado para afrontar las exigencias del entorno laboral.\n\n✅ *¿QUÉ APRENDERÁS?*\n💻 *Ofimática y herramientas digitales:* utiliza aplicaciones informáticas para elaborar documentos, organizar datos y facilitar las tareas administrativas.\n🗂️ *Archivo y gestión documental:* aprende a clasificar, organizar, conservar y localizar información de manera eficiente.\n🗣️ *Atención al cliente y comunicación:* desarrolla habilidades interpersonales para atender consultas y comunicarte de manera profesional.\n📝 *Redacción comercial y empresarial:* aprende a elaborar comunicaciones, informes, cartas y documentos utilizados en las organizaciones.\n\n💡 *¿POR QUÉ ELEGIR ASISTENCIA ADMINISTRATIVA?*\nPorque una buena organización puede marcar la diferencia entre un proceso complicado y uno eficiente. Esta carrera te permitirá fortalecer la responsabilidad, la comunicación, la planificación y el manejo de herramientas digitales.\n\n🔥 *PREPÁRATE PARA FORMAR PARTE DE DISTINTOS SECTORES LABORALES*\nPodrás orientar tu desarrollo profesional hacia funciones de asistencia administrativa, recepción, gestión documental, apoyo de oficina y coordinación administrativa en empresas privadas, instituciones públicas y otras organizaciones.\n\n✨ *Ser un buen profesional administrativo significa anticiparse a las necesidades, cuidar los detalles y facilitar el trabajo de todo un equipo. Tu aporte puede ser decisivo para que una organización alcance sus objetivos.*\n\n🎓 *Si eres una persona organizada, te gusta coordinar actividades y quieres desarrollar habilidades útiles para el mundo laboral, encuentra tu oportunidad en Asistencia Administrativa del Instituto J. C. Tello.*"
+    }
+  },
+    "fallbacks": [
+    {
+      "url": "https://i.ibb.co/7tJZHVc2/1.png", 
+      "texto": "🤔 ¿Tienes alguna duda académica? ¡No busques más! Estoy aquí para responderte al instante. Escribe *menú* para empezar. 🚀"
+    },
+    {
+      "url": "https://i.ibb.co/zhbXXXsX/2.png", 
+      "texto": "🥤 ¡La bebida oficial de la información! Refréscate con respuestas inmediatas sobre el instituto, las 24 horas del día. Escribe *menú* para tomarte una. 😉"
+    },
+    {
+      "url": "https://i.ibb.co/LXJDyTQd/3.png", 
+      "texto": "🛡️ ¡No salgas a la superficie a hacer filas! Aquí estoy seguro, 24/7. Escribe *menú* para que te ayude con cualquier trámite. 🤖✨"
+    }
+  ]
 }
