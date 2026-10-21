@@ -437,11 +437,12 @@ async def recibir_mensaje(request: Request):
                 # 6. Cortamos la ejecución para que no siga al flujo normal
                 return Response(content="OK", status_code=200)
 
-            # 🚨 PREGUNTAS DURANTE EL REGISTRO
-            if len(texto) > 12 and estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"] and not texto.isdigit():
-                respuesta_libre = redactar_texto_libre(texto)
-                enviar_mensaje_meta(numero, respuesta_libre)
-                time.sleep(1.5)
+            # 🚨 PREGUNTAS DURANTE EL REGISTRO (Hotfix para nombres largos)
+            # Solo lo tratamos como pregunta si tiene "?" o empieza con palabra interrogativa
+            palabras_pregunta = ["que", "como", "cuanto", "cuanta", "cuando", "donde", "cual", "quien", "por que", "para que", "ayuda"]
+            es_pregunta = ("?" in texto or "¿" in texto or any(texto_lower.startswith(p) for p in palabras_pregunta))
+
+            if len(texto) > 12 and es_pregunta and estado in ["esperando_nombre", "esperando_perfil", "esperando_carrera"] and not texto.isdigit():
                 
                 if estado == "esperando_nombre":
                     enviar_mensaje_meta(numero, "Ahora sí, dime tus *Nombres y Apellidos* 📝")
