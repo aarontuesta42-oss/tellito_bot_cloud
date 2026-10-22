@@ -461,11 +461,15 @@ for _n in (1, 2, 3):
         SUMAS_PERMITIDAS.add(round(sum(_c), 2))
 
 
-def validar_respuesta(resp: str):
+def validar_respuesta(resp: str, texto_usuario: str = ""):
     """(es_valida, motivo). Solo vigila carreras inexistentes y cifras sin respaldo."""
     rn = " " + normalizar(resp) + " "
+    tn = " " + normalizar(texto_usuario) + " "
     for f in CARRERAS_FANTASMA:
         if f" {f} " in rn and f" {f} " not in _CORPUS:
+            # Si el usuario preguntó por ella, permitimos que la IA diga "No la tenemos"
+            if f" {f} " in tn:
+                continue
             return False, f"carrera inexistente: '{f}'"
     for tok in _RE_NUM.findall(resp):
         v = _valor(tok)
@@ -576,7 +580,7 @@ def responder_consulta(numero, texto):
     if r is None:
         enviar_texto(numero, MSG["error_ia"])
         return
-    ok, motivo = validar_respuesta(r)
+    ok, motivo = validar_respuesta(r, texto)
     if not ok:
         log(f"⚠️ IA rechazada ({motivo}) | texto='{texto}' | respuesta='{r}'")
         r = MSG["respuesta_rechazada"]
