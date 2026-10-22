@@ -293,6 +293,38 @@ def enviar_imagen(numero, url_imagen, caption=""):
         enviar_texto(numero, caption)
     return ok
 
+def enviar_botones(numero, texto, opciones):
+    """Envía hasta 3 botones. opciones = [("1", "Opción 1"), ("2", "Opción 2")]"""
+    botones = [{"type": "reply", "reply": {"id": op_id, "title": op_titulo[:20]}} for op_id, op_titulo in opciones]
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {"text": texto},
+            "action": {"buttons": botones}
+        }
+    }
+    _post_meta(payload)
+
+def enviar_lista(numero, texto, titulo_boton, secciones):
+    """Envía una lista (hasta 10 items). secciones = [{"title": "Sección 1", "rows": [{"id": "1", "title": "Opción 1"}]}]"""
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "interactive",
+        "interactive": {
+            "type": "list",
+            "header": {"type": "text", "text": "Tellito Bot 🤖"},
+            "body": {"text": texto},
+            "action": {
+                "button": titulo_boton[:20],
+                "sections": secciones
+            }
+        }
+    }
+    _post_meta(payload)
 
 def pausa():
     time.sleep(PAUSA)
@@ -644,14 +676,72 @@ def abrir_opcion_principal(numero, ses, opcion):
     """Opciones del menú principal (también las usan los atajos como 'carreras')."""
     if opcion == "0":
         reiniciar_registro(numero, ses, "reinicio_desde_menu")
-    elif f"submenu_{opcion}" in SUBMENUS:
-        ses["estado"] = f"submenu_{opcion}"
-        enviar_texto(numero, SUBMENUS[ses["estado"]])
-    elif opcion == "11":
-        ses["estado"] = "menu_carreras"
-        enviar_texto(numero, SUBMENUS["menu_carreras"])
+    
+    # --- SUBMENÚ 1 (Admisión) -> Usamos Botones ---
+    elif opcion == "1":
+        ses["estado"] = "submenu_1"
+        texto = "🎓 *MODALIDADES DE ADMISIÓN*\n¿Qué modalidad te interesa?"
+        enviar_botones(numero, texto, [("1", "Ordinario"), ("2", "Exoneración"), ("3", "Extraordinario")])
+        
+    # --- SUBMENÚ 2 (Costos) -> Usamos Botones ---
+    elif opcion == "2":
+        ses["estado"] = "submenu_2"
+        texto = "💰 *COSTOS DE POSTULAR*\nElige una opción:"
+        enviar_botones(numero, texto, [("1", "Inscripción/Prospecto"), ("2", "Matrícula"), ("3", "Cómo pagar")])
+
+    # --- SUBMENÚ 3 (Requisitos) -> FAQ Directa ---
+    elif opcion == "3":
+        mostrar_faq(numero, ses, DIRECTOS["3"], "menu_principal", "info_directa")
+        
+    # --- SUBMENÚ 4 (Traslado) -> FAQ Directa ---
+    elif opcion == "4":
+        mostrar_faq(numero, ses, DIRECTOS["4"], "menu_principal", "info_directa")
+
+    # --- SUBMENÚ 5 (Trámites) -> Usamos Botones ---
+    elif opcion == "5":
+        ses["estado"] = "submenu_5"
+        texto = "📄 *TRÁMITES ACADÉMICOS*\n¿Qué trámite necesitas?"
+        enviar_botones(numero, texto, [("1", "Cambio de Turno"), ("2", "Subsanación"), ("3", "Convalidación")])
+
+    # --- SUBMENÚ 6 (Certificados) -> Usamos Botones ---
+    elif opcion == "6":
+        ses["estado"] = "submenu_6"
+        texto = "📑 *CERTIFICADOS Y CONSTANCIAS*\nElige una opción:"
+        enviar_botones(numero, texto, [("1", "Cert. de Estudios"), ("2", "Const. Egresado"), ("3", "Duplicado Título")])
+
+    # --- SUBMENÚ 7 (Matrícula) -> Usamos Botones ---
+    elif opcion == "7":
+        ses["estado"] = "submenu_7"
+        texto = "🎓 *MATRÍCULA*\n¿Qué necesitas hacer?"
+        enviar_botones(numero, texto, [("1", "Ratificación"), ("2", "Reserva"), ("3", "Licencia")])
+
+    # --- SUBMENÚ 8 (Titulación) -> Usamos Botones ---
+    elif opcion == "8":
+        ses["estado"] = "submenu_8"
+        texto = "🎉 *TITULACIÓN*\n¿Qué modalidad te interesa?"
+        enviar_botones(numero, texto, [("1", "TAP"), ("2", "Examen Suficiencia"), ("3", "Requisitos")])
+
+    # --- Opciones Directas (9, 10, 12) ---
     elif opcion in DIRECTOS:
         mostrar_faq(numero, ses, DIRECTOS[opcion], "menu_principal", "info_directa")
+        
+    # --- OPCIÓN 11: CARRERAS -> Usamos Lista (porque son 7) ---
+    elif opcion == "11":
+        ses["estado"] = "menu_carreras"
+        secciones = [{
+            "title": "Nuestras 7 Carreras",
+            "rows": [
+                {"id": "1", "title": "💼 Administración"},
+                {"id": "2", "title": "📊 Contabilidad"},
+                {"id": "3", "title": "💻 Desarrollo de Sistemas"},
+                {"id": "4", "title": "⚡ Electricidad Industrial"},
+                {"id": "5", "title": "🚗 Mecánica Automotriz"},
+                {"id": "6", "title": "⚙️ Mecánica de Producción"},
+                {"id": "7", "title": "📋 Asistencia Administrativa"}
+            ]
+        }]
+        enviar_lista(numero, "🏫 *NUESTRAS CARRERAS*\nToca el botón de abajo para ver la lista completa.", "Ver Carreras", secciones)
+
     else:
         enviar_texto(numero, MSG["opcion_invalida_menu"])
 
@@ -870,8 +960,17 @@ def atender_mensaje(mensaje):
         return
     with _lock_de(numero):
         try:
+            texto = ""
             if tipo == "text":
                 texto = mensaje["text"]["body"]
+            elif tipo == "interactive":
+                inter = mensaje.get("interactive", {})
+                if inter.get("type") == "button_reply":
+                    texto = inter["button_reply"]["id"] # Obtenemos el ID del botón
+                elif inter.get("type") == "list_reply":
+                    texto = inter["list_reply"]["id"] # Obtenemos el ID de la lista
+            
+            if texto:
                 log(f"📩 ***{numero[-4:]}: {texto}")
                 procesar_mensaje(numero, texto)
             else:
@@ -882,7 +981,6 @@ def atender_mensaje(mensaje):
                 enviar_texto(numero, MSG["error_general"])
             except Exception:
                 pass
-
 
 def procesar_webhook(body):
     try:
