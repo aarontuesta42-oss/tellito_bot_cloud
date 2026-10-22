@@ -1,0 +1,376 @@
+{
+  "bot": {
+    "ajustes": {
+      "pausa_segundos": 1.5,
+      "longitud_texto_libre": 12,
+      "nombre_min_letras": 3,
+      "nombre_max_palabras": 5,
+      "nombre_max_caracteres": 60,
+      "max_chars_consulta": 500,
+      "ia_max_por_minuto": 6,
+      "ventana_duplicados_segundos": 900,
+      "max_chars_mensaje": 3800,
+      "max_chars_caption": 1000
+    },
+    "lenguaje": {
+      "comandos_menu": [
+        "menu",
+        "inicio",
+        "indice"
+      ],
+      "comandos_reinicio_registro": [
+        "0",
+        "menu",
+        "cancelar",
+        "reiniciar"
+      ],
+      "saludos": [
+        "hola",
+        "holi",
+        "holis",
+        "ola",
+        "buenas",
+        "buenos",
+        "buenos dias",
+        "buenas tardes",
+        "buenas noches",
+        "buen dia",
+        "hey",
+        "hi",
+        "hello",
+        "wenas",
+        "que tal",
+        "saludos"
+      ],
+      "agradecimientos": [
+        "gracias",
+        "muchas gracias",
+        "mil gracias",
+        "ok",
+        "okey",
+        "okay",
+        "listo",
+        "vale",
+        "ya",
+        "perfecto",
+        "genial",
+        "de nada",
+        "thanks",
+        "entendido",
+        "dale"
+      ],
+      "prefijos_opcion": [
+        "opcion",
+        "opciones",
+        "carrera",
+        "carreras",
+        "numero",
+        "nro",
+        "no",
+        "n",
+        "menu"
+      ],
+      "prefijos_nombre": [
+        "mi nombre completo es",
+        "mi nombre es",
+        "me llamo",
+        "soy"
+      ],
+      "interrogativos": [
+        "que",
+        "como",
+        "cuanto",
+        "cuanta",
+        "cuantos",
+        "cuantas",
+        "cuando",
+        "donde",
+        "cual",
+        "cuales",
+        "quien",
+        "quienes",
+        "por que",
+        "porque",
+        "quiero",
+        "necesito",
+        "busco",
+        "tengo",
+        "hay",
+        "puedo",
+        "podria",
+        "podrian",
+        "me pueden",
+        "se puede",
+        "ayuda",
+        "informacion",
+        "info"
+      ],
+      "nombres_no_validos": [
+        "menu",
+        "salir",
+        "cancelar",
+        "reiniciar",
+        "xd",
+        "jaja",
+        "jajaja",
+        "hola",
+        "info",
+        "informacion",
+        "amigo",
+        "amiga",
+        "prueba",
+        "test",
+        "nombre",
+        "yo",
+        "bot",
+        "si",
+        "no",
+        "ok",
+        "gracias",
+        "buenas"
+      ],
+      "reemplazos": {
+        "🔟": "10"
+      }
+    },
+    "atajos": {
+      "admision": "1",
+      "examen": "1",
+      "postular": "1",
+      "postulacion": "1",
+      "ingreso": "1",
+      "costos": "2",
+      "costo": "2",
+      "precios": "2",
+      "precio": "2",
+      "pagos": "2",
+      "pago": "2",
+      "matricula": "3",
+      "requisitos": "3",
+      "traslado": "4",
+      "tramites": "5",
+      "tramite": "5",
+      "certificado": "6",
+      "certificados": "6",
+      "constancia": "6",
+      "constancias": "6",
+      "ratificacion": "7",
+      "reserva": "7",
+      "licencia": "7",
+      "titulacion": "8",
+      "titularme": "8",
+      "tap": "8",
+      "egresado": "9",
+      "modular": "10",
+      "certificacion": "10",
+      "carreras": "11",
+      "carrera": "11",
+      "especialidades": "11",
+      "contacto": "12",
+      "ubicacion": "12",
+      "direccion": "12",
+      "telefono": "12",
+      "telefonos": "12",
+      "horario": "12",
+      "horarios": "12",
+      "donde estan": "12"
+    },
+    "registro": {
+      "perfiles": {
+        "1": "Prospecto",
+        "2": "Estudiante",
+        "3": "Egresado"
+      },
+      "carreras": {
+        "1": "Administración",
+        "2": "Contabilidad",
+        "3": "Sistemas",
+        "4": "Electricidad",
+        "5": "Mec. Automotriz",
+        "6": "Mec. Producción",
+        "7": "Asistencia Adm."
+      }
+    },
+    "saludos_menu": {
+      "nuevo": "¡Todo listo! 🚀 Ya estás registrado.",
+      "regreso": "¡Hola de nuevo, *{nombre}*! 👋"
+    },
+    "mensajes": {
+      "nombre_defecto": "amigo",
+      "bienvenida": "¡Hola! 👋 Bienvenido al *IESTP Julio César Tello*. 🏫✨\n\nSoy *Tellito Bot*. Para iniciar, ¿me podrías decir tus *Nombres y Apellidos*? 📝😊",
+      "reinicio_registro": "Entendido, reiniciemos. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊",
+      "reinicio_desde_menu": "Entendido. He reiniciado el registro. 👋 ¿Me podrías decir tus *Nombres y Apellidos*? 📝😊",
+      "nombre_invalido": "⚠️ Por favor, ingresa un nombre válido (mínimo 3 letras, sin números) o escribe *cancelar* para reiniciar.",
+      "pregunta_perfil": "¡Un gusto, *{nombre}*! 🤝\n\n¿Cuál es tu situación actual?\n\n1️⃣ 🎓 Soy *Prospecto* (me gustaría postular al instituto)\n2️⃣ 📚 Soy *Estudiante* (estoy actualmente estudiando en el instituto)\n3️⃣ 🎉 Soy *Egresado* (ya terminé mi carrera del instituto)\n\n_Responde únicamente con el número de tu opción._",
+      "perfil_invalido": "⚠️ Por favor, elige una opción válida enviando solo el número: 1, 2 o 3.",
+      "pregunta_carrera": "¡Excelente! 🚀 ¿Cuál es la *carrera* de tu interés? (Responde con el número):\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n_Responde únicamente con el número de la carrera._",
+      "carrera_invalida": "⚠️ Por favor, elige una opción válida enviando solo el número del 1 al 7.",
+      "recordar_nombre": "Ahora sí, dime tus *Nombres y Apellidos* 📝",
+      "recordar_perfil": "Volviendo al registro: ¿cuál es tu situación? Responde 1️⃣, 2️⃣ o 3️⃣",
+      "recordar_carrera": "Volviendo al registro: elige el número de tu carrera (del 1 al 7).",
+      "saludo_en_menu": "¡Hola, *{nombre}*! 👋 ¿En qué te puedo ayudar hoy?\n\nEscribe *menú* para ver todas las opciones.",
+      "agradecimiento": "¡Con gusto! 😊 Si necesitas algo más, escribe *menú* para ver todas las opciones.",
+      "opcion_invalida_menu": "⚠️ Esa opción no existe. Elige un número del menú o escribe *menú* para ver todas las opciones.",
+      "opcion_invalida_info": "⚠️ Esa opción no existe. Escribe *0* para volver atrás o *menú* para ir al inicio.",
+      "info_no_encontrada": "⚠️ Información no encontrada. Escribe *menú* para volver al inicio.",
+      "otra_carrera": "📌 ¿Ver otra carrera? Escribe el número o *menú* para volver al índice.",
+      "no_texto": "📝 Por ahora solo puedo leer mensajes de texto. Escríbeme tu consulta o escribe *menú* para ver las opciones. 😊",
+      "error_ia": "¡Ups! Tuve un problema pensando la respuesta. Escribe *menú* para ver opciones.",
+      "sin_dato": "No tengo ese dato en mi base oficial 😅. Escribe *menú* para ver las opciones o consulta en Secretaría Académica.",
+      "respuesta_rechazada": "Mmm, no tengo ese dato exacto en mi base oficial 😅. Pero puedo ayudarte con trámites, carreras o costos. Escribe *menú* para ver las opciones.",
+      "demasiadas_consultas": "⏳ ¡Vas muy rápido! Dame un minuto para ponerme al día y vuelve a escribirme. También puedes escribir *menú* para ver las opciones.",
+      "error_general": "¡Ups! 😅 Algo salió mal de mi lado. Escribe *menú* para continuar.",
+      "sensible": "💛 Gracias por contármelo. Lo que sientes importa y no tienes que pasarlo solo/a. Habla ahora con alguien de confianza (familia, amigos, tutor o docente) o llama a la *Línea 113, opción 5* (salud mental). Si estás en peligro inmediato, llama al *105*.\n\nCuando quieras volver a tus consultas del instituto, escribe *menú*. 🤗"
+    },
+    "pies": {
+      "info_directa": "🔹 _Escribe *menú* para ir al inicio._",
+      "info_submenu": "🔹 _Escribe *0* para volver atrás._\n🔹 _Escribe *menú* para ir al inicio._"
+    },
+    "etiquetas": {
+      "vineta": "✔️",
+      "requisitos": "📋 *Requisitos:*",
+      "costo": "💰 *Costo:*",
+      "oficina": "🏢 *Oficina:*",
+      "observaciones": "⚠️ *Importante:*"
+    },
+    "pagos": {
+      "regla_ia": "REGLA DE PAGO: como este trámite tiene costo, incluye siempre estos dos pasos:\n1. Pagar en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n2. Llevar el voucher ORIGINAL y una COPIA a Caja.",
+      "aviso_manual": "⚠️ *Importante:*\n1. Paga en el Banco de la Nación (Cta. Cte. N° 00000-289078).\n2. Lleva el voucher ORIGINAL y una COPIA a Caja."
+    },
+    "menus": {
+      "principal": "{saludo}\nAquí tienes nuestro índice de consultas:\n\n🎓 *INFORMACIÓN DE PROSPECTO*\n1️⃣ Modalidades de Admisión\n2️⃣ Costos de Postular\n3️⃣ Requisitos de Matrícula\n4️⃣ Traslado Externo\n\n📚 *INFORMACIÓN DE ESTUDIANTE*\n5️⃣ Trámites Académicos\n6️⃣ Certificados y Constancias\n7️⃣ Ratificación, Reserva o Licencia\n\n🎉 *INFORMACIÓN DE EGRESADO*\n8️⃣ Titulación (TAP o Examen)\n9️⃣ Constancia de Egresado\n🔟 Certificación Modular\n\n🏫 *GENERAL*\n1️⃣1️⃣ Nuestras Carreras\n1️⃣2️⃣ Contacto y Ubicación\n\n0️⃣ Reiniciar registro\n\n🔹 _Escribe el número de tu opción._"
+    },
+    "submenus": {
+      "submenu_1": "🎓 *MODALIDADES DE ADMISIÓN*\n\n1️⃣ Ingreso Ordinario\n2️⃣ Ingreso por Exoneración\n3️⃣ Ingreso Extraordinario\n\n0️⃣ Volver al menú principal",
+      "submenu_2": "💰 *COSTOS DE POSTULAR*\n\n1️⃣ Costo de Inscripción y Prospecto\n2️⃣ Costo de Matrícula\n3️⃣ ¿Cómo pagar y canjear el voucher?\n\n0️⃣ Volver al menú principal",
+      "submenu_5": "📄 *TRÁMITES ACADÉMICOS*\n\n1️⃣ Cambio de Turno\n2️⃣ Subsanación de Cursos\n3️⃣ Convalidación de Cursos\n\n0️⃣ Volver al menú principal",
+      "submenu_6": "📑 *CERTIFICADOS Y CONSTANCIAS*\n\n1️⃣ Certificado de Estudios\n2️⃣ Constancia de Egresado\n3️⃣ Duplicado de Título\n\n0️⃣ Volver al menú principal",
+      "submenu_7": "🎓 *MATRÍCULA*\n\n1️⃣ Ratificación de Matrícula\n2️⃣ Reserva de Matrícula\n3️⃣ Licencia de Estudios\n\n0️⃣ Volver al menú principal",
+      "submenu_8": "🎉 *TITULACIÓN*\n\n1️⃣ Trabajo de Aplicación Profesional (TAP)\n2️⃣ Examen de Suficiencia Profesional\n3️⃣ Requisitos para Titularse\n\n0️⃣ Volver al menú principal",
+      "menu_carreras": "🏫 *NUESTRAS CARRERAS*\n\n1️⃣ 💼 Administración de Empresas\n2️⃣ 📊 Contabilidad\n3️⃣ 💻 Desarrollo de Sistemas\n4️⃣ ⚡ Electricidad Industrial\n5️⃣ 🚗 Mecánica Automotriz\n6️⃣ ⚙️ Mecánica de Producción\n7️⃣ 📋 Asistencia Administrativa\n\n0️⃣ Volver al menú principal"
+    },
+    "mapeo_faqs": {
+      "submenu_1": {
+        "1": "FAQ-001",
+        "2": "FAQ-002",
+        "3": "FAQ-003"
+      },
+      "submenu_2": {
+        "1": "FAQ-004",
+        "2": "FAQ-005",
+        "3": "FAQ-023"
+      },
+      "submenu_5": {
+        "1": "FAQ-008",
+        "2": "FAQ-009",
+        "3": "FAQ-010"
+      },
+      "submenu_6": {
+        "1": "FAQ-011",
+        "2": "FAQ-012",
+        "3": "FAQ-013"
+      },
+      "submenu_7": {
+        "1": "FAQ-014",
+        "2": "FAQ-015",
+        "3": "FAQ-016"
+      },
+      "submenu_8": {
+        "1": "FAQ-017",
+        "2": "FAQ-018",
+        "3": "FAQ-019"
+      }
+    },
+    "directos": {
+      "3": "FAQ-006",
+      "4": "FAQ-007",
+      "9": "FAQ-020",
+      "10": "FAQ-021",
+      "12": "FAQ-022"
+    },
+    "easter_egg": {
+      "mensaje_secreto": "🕵️‍♂️✨ *¡ALERTA! ¡HAS DESCUBIERTO UN SECRETO DE TELLITO BOT!*\n\n🎉 ¡Felicidades, explorador! No todos llegan hasta aquí... Parece que tienes buen ojo para descubrir lo que otros pasan por alto. 👀\n\n🤖 *Tellito Bot tiene más de una sorpresa escondida...* ¿Será este el único secreto o habrá otros esperando a ser descubiertos? 🤫\n\n😎 Ahora formas parte del pequeño grupo que conoce este Easter Egg. Pero recuerda: *un buen secreto merece compartirse*... aunque ya no sea tan secreto. JAJAJA xd.\n\n📲 *¿Quieres que tus amigos también lo descubran?* Comparte a Tellito Bot y deja que comience la búsqueda:\n\n👉 https://wa.me/51916281454\n\n🍀 ¡Sigue explorando! Nunca sabes qué otra sorpresa podrías encontrar por aquí.\n\n— *Tellito Bot* 🤖💚",
+      "imagenes": [
+        {
+          "url": "https://i.ibb.co/7tJZHVc2/1.png",
+          "texto": "🛡️ *¿SALIR AL YERMO? ¡NI HABLAR!*\n\nEn el Refugio Tellito, las respuestas están a un mensaje de distancia. 🤖📡\n\n☢️ Menos vueltas, más información y cero necesidad de explorar el yermo para resolver tus dudas académicas. ¡Tu Pip-Boy no tiene nada que envidiarle a Tellito Bot! 😂\n\n📢 *Comparte esta imagen con tu escuadrón y ayúdalo a sobrevivir al apocalipsis académico.*\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: conocimiento para los habitantes del yermo.* 💛"
+        },
+        {
+          "url": "https://i.ibb.co/zhbXXXsX/2.png",
+          "texto": "🥤 *MI BEBIDA FAVORITA NO ES LA NUKA-COLA... ¡ES LA INFORMACIÓN INSTANTÁNEA!*\n\n¿Por qué conformarte con una bebida refrescante cuando puedes saciar tu sed de conocimiento? ☢️🤖\n\n📚 Carreras, consultas y respuestas sin tener que recorrer todo el yermo. ¡Tellito Bot es el combustible de todo estudiante que quiere llegar más lejos!\n\n📢 *Comparte esta imagen con tus compañeros de refugio. ¡El conocimiento sabe mejor cuando se comparte!* 😂\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot: mantén tu mente hidratada... metafóricamente.* 🥤✨"
+        },
+        {
+          "url": "https://i.ibb.co/LXJDyTQd/3.png",
+          "texto": "🚪 *EN CASO DE APOCALIPSIS, REFÚGIATE EN TELLITO BOT.*\n\n¿Filas interminables? ¿Recorrer medio yermo para encontrar información? ¿Gastar tus chapas en preguntar lo mismo de siempre? ¡Qué va! 😂☢️\n\n🤖 Desde tu propio refugio digital, puedes realizar consultas sobre el instituto y descubrir información útil sin organizar una expedición al exterior.\n\n📢 *Comparte esta imagen con tu comunidad de supervivientes. Porque en el yermo, la información también puede salvarte el día.* 💛\n\n👉 _Hola, deseo más información:_ https://wa.me/51916281454?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n\n\n— *Tellito Bot. ¡La guerra nunca cambia, pero la forma de hacer consultas sí!* ⚡"
+        }
+      ]
+    },
+    "sensibles": {
+      "palabras": [
+        "suicid",
+        "quitarme la vida",
+        "quiero morir",
+        "quiero morirme",
+        "matarme",
+        "no quiero vivir",
+        "hacerme dano",
+        "autolesion",
+        "cortarme las venas",
+        "acabar con mi vida"
+      ]
+    },
+    "validador": {
+      "carreras_fantasma": [
+        "computacion",
+        "informatica",
+        "computacion e informatica",
+        "enfermeria",
+        "enfermeria tecnica",
+        "nutricion",
+        "farmacia",
+        "odontologia",
+        "carrera de derecho",
+        "medicina",
+        "psicologia",
+        "arquitectura",
+        "ingenieria civil",
+        "ingenieria de sistemas",
+        "administracion de negocios",
+        "contabilidad publica",
+        "turismo",
+        "gastronomia",
+        "cosmetologia",
+        "veterinaria",
+        "mecatronica"
+      ]
+    },
+    "ia": {
+      "titulo_institucion": "=== INSTITUCIÓN ===",
+      "linea_moneda": "Moneda: {moneda} | UIT: S/ {uit}",
+      "titulo_carreras": "=== CARRERAS OFICIALES ===",
+      "titulo_detalle": "=== DETALLE DE LAS CARRERAS ===",
+      "titulo_faqs": "=== FICHAS OFICIALES ===",
+      "titulo_pagos": "=== CONCEPTOS DE PAGO (TUPA) ===",
+      "formato_pago": "- {concepto}: S/ {monto}",
+      "palabras_detalle_carreras": [
+        "carrera",
+        "carreras",
+        "estudiar",
+        "estudio",
+        "profesion",
+        "profesional",
+        "campo laboral",
+        "especialidad",
+        "programa de estudios",
+        "que se ve",
+        "aprender",
+        "cursos de",
+        "recomiendas",
+        "sugieres",
+        "elegir",
+        "orientacion",
+        "no se que"
+      ]
+    }
+  }
+}
