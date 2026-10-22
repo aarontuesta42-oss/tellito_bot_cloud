@@ -1,8 +1,8 @@
 # ==========================================================
 # 🤖 TELLITO BOT — IESTP Julio César Tello
 # ----------------------------------------------------------
-# Este archivo contiene SOLO lógica. Ningún texto, menú, dato ni
-# Easter egg vive aquí: todo está en base_conocimiento.json
+# Este archivo contiene SOLO lógica. Los textos largos, datos y
+# Easter eggs viven en base_conocimiento.json
 # (y en config_bot.json, bajo la clave "bot", si no la has fusionado).
 # ==========================================================
 import os
@@ -44,6 +44,14 @@ DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 DEEPSEEK_MODEL = "deepseek-chat"
 META_URL = f"https://graph.facebook.com/{META_GRAPH_VERSION}/{META_PHONE_NUMBER_ID}/messages"
 TABLA_SESIONES = "sesiones_bot"
+
+# Límites oficiales de WhatsApp para mensajes interactivos
+LIM_BODY_INTERACTIVO = 1024
+LIM_TITULO_BOTON = 20
+LIM_TITULO_FILA = 24
+LIM_DESC_FILA = 72
+LIM_TITULO_SECCION = 24
+MAX_FILAS_LISTA = 10
 
 http = requests.Session()
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -103,6 +111,29 @@ def render(plantilla, **kw):
     return plantilla
 
 
+# ----------------------------------------------------------
+# 2b. SUBMENÚS CON BOTONES (máx. 3 botones por mensaje)
+# ----------------------------------------------------------
+# Los ids "1", "2", "3" deben coincidir con las claves de
+# bot.mapeo_faqs["submenu_N"] en el JSON.
+NOTA_VOLVER = "\n\n_Escribe *menu* para volver al inicio._"
+
+SUBMENU_BOTONES = {
+    "submenu_1": ("🎓 *MODALIDADES DE ADMISIÓN*\n¿Qué modalidad te interesa?",
+                  [("1", "Ordinario"), ("2", "Exoneración"), ("3", "Extraordinario")]),
+    "submenu_2": ("💰 *COSTOS DE POSTULAR*\nElige una opción:",
+                  [("1", "Inscripción"), ("2", "Matrícula"), ("3", "Cómo pagar")]),
+    "submenu_5": ("📄 *TRÁMITES ACADÉMICOS*\n¿Qué trámite necesitas?",
+                  [("1", "Cambio de Turno"), ("2", "Subsanación"), ("3", "Convalidación")]),
+    "submenu_6": ("📑 *CERTIFICADOS Y CONSTANCIAS*\nElige una opción:",
+                  [("1", "Cert. de Estudios"), ("2", "Const. Egresado"), ("3", "Duplicado Título")]),
+    "submenu_7": ("🎓 *MATRÍCULA*\n¿Qué necesitas hacer?",
+                  [("1", "Ratificación"), ("2", "Reserva"), ("3", "Licencia")]),
+    "submenu_8": ("🎉 *TITULACIÓN*\n¿Qué modalidad te interesa?",
+                  [("1", "TAP"), ("2", "Examen Suficiencia"), ("3", "Requisitos")]),
+}
+
+
 def _verificar_config():
     """Falla al arrancar (con un mensaje claro) si falta algo del JSON."""
     faltan = []
@@ -118,8 +149,12 @@ def _verificar_config():
     for faq_id in sorted(ids_usados - ids):
         log(f"⚠️ El menú apunta a {faq_id}, que no existe en faqs.")
     for clave in MAPEO_FAQS:
-        if clave not in SUBMENUS:
-            log(f"⚠️ mapeo_faqs.{clave} no tiene submenú en submenus.")
+        if clave not in SUBMENUS and clave not in SUBMENU_BOTONES:
+            log(f"⚠️ mapeo_faqs.{clave} no tiene submenú definido.")
+    for estado, (_, opciones) in SUBMENU_BOTONES.items():
+        for op_id, _t in opciones:
+            if op_id not in MAPEO_FAQS.get(estado, {}):
+                log(f"⚠️ El botón '{op_id}' de {estado} no existe en mapeo_faqs.")
 
 
 _verificar_config()
@@ -139,7 +174,7 @@ SALUDOS = {normalizar(s) for s in LENG["saludos"]}
 AGRADECIMIENTOS = {normalizar(s) for s in LENG["agradecimientos"]}
 INTERROGATIVOS = [normalizar(s) for s in LENG["interrogativos"]]
 NOMBRES_NO_VALIDOS = {normalizar(s) for s in LENG["nombres_no_validos"]}
-COMANDOS_MENU = {normalizar(s) for s in LENG["comandos_menu"]}
+COMANDOS_MENU = {normalizar(s) for s in LENG["comandos_menu"]} | {"menu"}
 COMANDOS_REINICIO = {normalizar(s) for s in LENG["comandos_reinicio_registro"]}
 ATAJOS = {normalizar(k): v for k, v in BOT["atajos"].items()}
 SENSIBLES = [normalizar(s) for s in BOT["sensibles"]["palabras"]]
@@ -187,7 +222,8 @@ def parece_pregunta(texto: str) -> bool:
 
 def es_consulta(texto: str, cmd: str) -> bool:
     """Texto libre que merece respuesta de la IA (no es opción, saludo ni atajo)."""
-    if not cmd or cmd.isdigit() or cmd in ATAJOS or es_saludo(cmd) or es_agradecimiento(cmd):
+    if not cmd or cmd.isdigit() or cmd in ATAJOS or cmd in COMANDOS_MENU \
+            or es_saludo(cmd) or es_agradecimiento(cmd):
         return False
     return len(texto) > LONG_LIBRE or parece_pregunta(texto)
 
@@ -293,38 +329,61 @@ def enviar_imagen(numero, url_imagen, caption=""):
         enviar_texto(numero, caption)
     return ok
 
-def enviar_botones(numero, texto, opciones):
-    """Envía hasta 3 botones. opciones = [("1", "Opción 1"), ("2", "Opción 2")]"""
-    botones = [{"type": "reply", "reply": {"id": op_id, "title": op_titulo[:20]}} for op_id, op_titulo in opciones]
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": numero,
-        "type": "interactive",
-        "interactive": {
-            "type": "button",
-            "body": {"text": texto},
-            "action": {"buttons": botones}
-        }
-    }
-    _post_meta(payload)
 
-def enviar_lista(numero, texto, titulo_boton, secciones):
-    """Envía una lista (hasta 10 items). secciones = [{"title": "Sección 1", "rows": [{"id": "1", "title": "Opción 1"}]}]"""
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": numero,
-        "type": "interactive",
+def _recortar(texto: str, limite: int) -> str:
+    texto = texto.strip()
+    return texto if len(texto) <= limite else texto[: limite - 1].rstrip() + "…"
+
+
+def enviar_botones(numero, texto, opciones):
+    """Hasta 3 botones. opciones = [("1", "Opción 1"), ("menu", "Menú")].
+    Si el texto supera el límite de WhatsApp, se envía aparte y los botones
+    van con un cuerpo corto. Si Meta rechaza los botones, se envía texto plano."""
+    opciones = opciones[:3]
+    cuerpo = texto
+    if len(texto) > LIM_BODY_INTERACTIVO:
+        enviar_texto(numero, texto)
+        pausa()
+        cuerpo = "¿Qué deseas hacer ahora?"
+    botones = [{"type": "reply",
+                "reply": {"id": str(op_id), "title": _recortar(op_titulo, LIM_TITULO_BOTON)}}
+               for op_id, op_titulo in opciones]
+    ok = _post_meta({
+        "messaging_product": "whatsapp", "to": numero, "type": "interactive",
+        "interactive": {"type": "button", "body": {"text": cuerpo},
+                        "action": {"buttons": botones}},
+    })
+    if not ok:
+        lineas = "\n".join(f"• Escribe *{op_id}* para: {op_titulo}" for op_id, op_titulo in opciones)
+        enviar_texto(numero, f"{cuerpo}\n\n{lineas}")
+    return ok
+
+
+def enviar_lista(numero, texto, titulo_boton, titulo_seccion, filas):
+    """Lista desplegable (máx. 10 filas en total).
+    filas = [{"id": "1", "title": "Opción", "description": "opcional"}]"""
+    filas = filas[:MAX_FILAS_LISTA]
+    rows = []
+    for f in filas:
+        fila = {"id": str(f["id"]), "title": _recortar(f["title"], LIM_TITULO_FILA)}
+        if f.get("description"):
+            fila["description"] = _recortar(f["description"], LIM_DESC_FILA)
+        rows.append(fila)
+    ok = _post_meta({
+        "messaging_product": "whatsapp", "to": numero, "type": "interactive",
         "interactive": {
             "type": "list",
-            "header": {"type": "text", "text": "Tellito Bot 🤖"},
-            "body": {"text": texto},
-            "action": {
-                "button": titulo_boton[:20],
-                "sections": secciones
-            }
-        }
-    }
-    _post_meta(payload)
+            "body": {"text": _recortar(texto, LIM_BODY_INTERACTIVO)},
+            "action": {"button": _recortar(titulo_boton, LIM_TITULO_BOTON),
+                       "sections": [{"title": _recortar(titulo_seccion, LIM_TITULO_SECCION),
+                                     "rows": rows}]},
+        },
+    })
+    if not ok:
+        lineas = "\n".join(f"*{f['id']}.* {f['title']}" for f in filas)
+        enviar_texto(numero, f"{texto}\n\n{lineas}")
+    return ok
+
 
 def pausa():
     time.sleep(PAUSA)
@@ -622,19 +681,19 @@ def responder_consulta(numero, texto):
 # ----------------------------------------------------------
 # 8. MENÚS Y ACCIONES
 # ----------------------------------------------------------
+# Nota: el menú principal tiene 12 opciones y las listas de WhatsApp
+# admiten máximo 10 filas, por eso el principal sigue siendo texto
+# (viene del JSON) y los submenús usan botones/lista.
 
 
 def menu_principal(ses, nuevo=False):
     saludo = SALUDOS_MENU["nuevo"] if nuevo else render(SALUDOS_MENU["regreso"], nombre=primer_nombre(ses))
     return render(MENUS["principal"], saludo=saludo)
 
-def ir_menu_principal(numero, ses, nuevo=False):
-    ses["estado"] = "menu_principal"
-    enviar_texto(numero, menu_principal(ses, nuevo))
 
 def ir_menu_principal(numero, ses, nuevo=False):
     ses["estado"] = "menu_principal"
-    enviar_menu_principal(numero, ses, nuevo) # <-- CAMBIO AQUÍ
+    enviar_texto(numero, menu_principal(ses, nuevo))
 
 
 def reiniciar_registro(numero, ses, mensaje):
@@ -643,7 +702,19 @@ def reiniciar_registro(numero, ses, mensaje):
     enviar_texto(numero, MSG[mensaje])
 
 
-def mostrar_faq(numero, ses, faq_id, volver, pie):
+def mostrar_submenu(numero, ses, estado):
+    """Muestra un submenú con botones (o con el texto del JSON si no tiene botones)."""
+    ses["estado"] = estado
+    cfg = SUBMENU_BOTONES.get(estado)
+    if cfg:
+        enviar_botones(numero, cfg[0] + NOTA_VOLVER, cfg[1])
+    elif estado in SUBMENUS:
+        enviar_texto(numero, SUBMENUS[estado])
+    else:
+        ir_menu_principal(numero, ses)
+
+
+def mostrar_faq(numero, ses, faq_id, volver, pie=None):
     faq = get_faq_by_id(faq_id)
     if not faq:
         enviar_texto(numero, MSG["info_no_encontrada"])
@@ -651,23 +722,27 @@ def mostrar_faq(numero, ses, faq_id, volver, pie):
     ses["estado"] = "viendo_info"
     ses["datos"]["estado_anterior"] = volver
     texto_ia = redactar_faq(faq)
-    
-    # Si el texto es mayor a 1000 caracteres (límite de WhatsApp para botones), lo enviamos separado
-    if len(texto_ia) > 1000:
-        enviar_texto(numero, texto_ia)
-        pausa()
-        enviar_botones(numero, "¿Qué deseas hacer ahora?", [("0", "⬅️ Retroceder"), ("menu", "🏠 Menú Principal")])
-    else:
-        # Si es corto, enviamos el texto con los botones integrados abajo
-        enviar_botones(numero, texto_ia, [("0", "⬅️ Retroceder"), ("menu", "🏠 Menú Principal")])
-        
+    enviar_botones(numero, texto_ia, [("0", "⬅️ Retroceder"), ("menu", "🏠 Menú Principal")])
+
+
+def mostrar_lista_carreras(numero, ses):
+    ses["estado"] = "menu_carreras"
+    filas = []
+    for clave, v in carreras_info.items():
+        nombre = _nombre_carrera(v["titulo"])
+        filas.append({"id": clave, "title": nombre, "description": nombre})
+    enviar_lista(numero, "🏫 *NUESTRAS CARRERAS*\nToca el botón para ver la lista completa."
+                 + NOTA_VOLVER, "Ver carreras", "Nuestras carreras", filas)
+
 
 def mostrar_carrera(numero, clave):
     info = carreras_info[clave]
     enviar_imagen(numero, info["url"], info["titulo"])
     pausa()
     enviar_texto(numero, info["texto"])
-    enviar_texto(numero, MSG["otra_carrera"])
+    pausa()
+    enviar_botones(numero, MSG.get("otra_carrera_botones", "¿Quieres ver otra carrera?"),
+                   [("11", "📋 Otra carrera"), ("menu", "🏠 Menú Principal")])
 
 
 def enviar_easter_egg(numero, ses):
@@ -688,72 +763,14 @@ def abrir_opcion_principal(numero, ses, opcion):
     """Opciones del menú principal (también las usan los atajos como 'carreras')."""
     if opcion == "0":
         reiniciar_registro(numero, ses, "reinicio_desde_menu")
-    
-    # --- SUBMENÚ 1 (Admisión) -> Usamos Botones ---
-    elif opcion == "1":
-        ses["estado"] = "submenu_1"
-        texto = "🎓 *MODALIDADES DE ADMISIÓN*\n¿Qué modalidad te interesa?"
-        enviar_botones(numero, texto, [("1", "Ordinario"), ("2", "Exoneración"), ("3", "Extraordinario")])
-        
-    # --- SUBMENÚ 2 (Costos) -> Usamos Botones ---
-    elif opcion == "2":
-        ses["estado"] = "submenu_2"
-        texto = "💰 *COSTOS DE POSTULAR*\nElige una opción:"
-        enviar_botones(numero, texto, [("1", "Inscripción/Prospecto"), ("2", "Matrícula"), ("3", "Cómo pagar")])
-
-    # --- SUBMENÚ 3 (Requisitos) -> FAQ Directa ---
-    elif opcion == "3":
-        mostrar_faq(numero, ses, DIRECTOS["3"], "menu_principal", "info_directa")
-        
-    # --- SUBMENÚ 4 (Traslado) -> FAQ Directa ---
-    elif opcion == "4":
-        mostrar_faq(numero, ses, DIRECTOS["4"], "menu_principal", "info_directa")
-
-    # --- SUBMENÚ 5 (Trámites) -> Usamos Botones ---
-    elif opcion == "5":
-        ses["estado"] = "submenu_5"
-        texto = "📄 *TRÁMITES ACADÉMICOS*\n¿Qué trámite necesitas?"
-        enviar_botones(numero, texto, [("1", "Cambio de Turno"), ("2", "Subsanación"), ("3", "Convalidación")])
-
-    # --- SUBMENÚ 6 (Certificados) -> Usamos Botones ---
-    elif opcion == "6":
-        ses["estado"] = "submenu_6"
-        texto = "📑 *CERTIFICADOS Y CONSTANCIAS*\nElige una opción:"
-        enviar_botones(numero, texto, [("1", "Cert. de Estudios"), ("2", "Const. Egresado"), ("3", "Duplicado Título")])
-
-    # --- SUBMENÚ 7 (Matrícula) -> Usamos Botones ---
-    elif opcion == "7":
-        ses["estado"] = "submenu_7"
-        texto = "🎓 *MATRÍCULA*\n¿Qué necesitas hacer?"
-        enviar_botones(numero, texto, [("1", "Ratificación"), ("2", "Reserva"), ("3", "Licencia")])
-
-    # --- SUBMENÚ 8 (Titulación) -> Usamos Botones ---
-    elif opcion == "8":
-        ses["estado"] = "submenu_8"
-        texto = "🎉 *TITULACIÓN*\n¿Qué modalidad te interesa?"
-        enviar_botones(numero, texto, [("1", "TAP"), ("2", "Examen Suficiencia"), ("3", "Requisitos")])
-
-    # --- Opciones Directas (9, 10, 12) ---
+    elif f"submenu_{opcion}" in SUBMENU_BOTONES:
+        mostrar_submenu(numero, ses, f"submenu_{opcion}")
     elif opcion in DIRECTOS:
-        mostrar_faq(numero, ses, DIRECTOS[opcion], "menu_principal", "info_directa")
-        
-    # --- OPCIÓN 11: CARRERAS -> Usamos Lista (porque son 7) ---
+        mostrar_faq(numero, ses, DIRECTOS[opcion], "menu_principal")
     elif opcion == "11":
-        ses["estado"] = "menu_carreras"
-        secciones = [{
-            "title": "Nuestras 7 Carreras",
-            "rows": [
-                {"id": "1", "title": "💼 Administración"},
-                {"id": "2", "title": "📊 Contabilidad"},
-                {"id": "3", "title": "💻 Desarrollo de Sistemas"},
-                {"id": "4", "title": "⚡ Electricidad Industrial"},
-                {"id": "5", "title": "🚗 Mecánica Automotriz"},
-                {"id": "6", "title": "⚙️ Mecánica de Producción"},
-                {"id": "7", "title": "📋 Asistencia Administrativa"}
-            ]
-        }]
-        enviar_lista(numero, "🏫 *NUESTRAS CARRERAS*\nToca el botón de abajo para ver la lista completa.", "Ver Carreras", secciones)
-
+        mostrar_lista_carreras(numero, ses)
+    elif f"submenu_{opcion}" in SUBMENUS:
+        mostrar_submenu(numero, ses, f"submenu_{opcion}")
     else:
         enviar_texto(numero, MSG["opcion_invalida_menu"])
 
@@ -838,28 +855,23 @@ def flujo_menus(numero, texto, cmd, ses):
     if not cmd:  # solo emojis, stickers de texto, etc.
         enviar_texto(numero, MSG["no_texto"])
         return
-        
-    if cmd in COMANDOS_MENU:
+
+    if cmd in COMANDOS_MENU or es_saludo(cmd):
         ir_menu_principal(numero, ses)
         return
 
-    # Si dice "hola", le mandamos el menú principal directo
-    if es_saludo(cmd):
-        ir_menu_principal(numero, ses)
-        return
-        
     if es_agradecimiento(cmd):
         enviar_texto(numero, MSG["agradecimiento"])
         return
-        
+
     if cmd in ATAJOS:
         abrir_opcion_principal(numero, ses, ATAJOS[cmd])
         return
-        
+
     if es_consulta(texto, cmd):
         responder_consulta(numero, texto)
         return
-        
+
     # ---- menú principal ----
     if estado == "menu_principal":
         if cmd.isdigit():
@@ -868,17 +880,30 @@ def flujo_menus(numero, texto, cmd, ses):
             enviar_easter_egg(numero, ses)
         return
 
-    # ---- submenús y carreras ----
-    if estado in SUBMENUS:
+    # ---- lista de carreras ----
+    if estado == "menu_carreras":
         if cmd == "0":
             ir_menu_principal(numero, ses)
-        elif estado == "menu_carreras" and cmd in carreras_info:
+        elif cmd == "11":
+            mostrar_lista_carreras(numero, ses)
+        elif cmd in carreras_info:
             mostrar_carrera(numero, cmd)
-        elif cmd in MAPEO_FAQS.get(estado, {}):
-            mostrar_faq(numero, ses, MAPEO_FAQS[estado][cmd], estado, "info_submenu")
         elif cmd.isdigit():
             enviar_texto(numero, MSG["opcion_invalida_menu"])
-            enviar_texto(numero, SUBMENUS[estado])
+            mostrar_lista_carreras(numero, ses)
+        else:
+            enviar_easter_egg(numero, ses)
+        return
+
+    # ---- submenús ----
+    if estado in SUBMENUS or estado in SUBMENU_BOTONES:
+        if cmd == "0":
+            ir_menu_principal(numero, ses)
+        elif cmd in MAPEO_FAQS.get(estado, {}):
+            mostrar_faq(numero, ses, MAPEO_FAQS[estado][cmd], estado)
+        elif cmd.isdigit():
+            enviar_texto(numero, MSG["opcion_invalida_menu"])
+            mostrar_submenu(numero, ses, estado)
         else:
             enviar_easter_egg(numero, ses)
         return
@@ -887,13 +912,12 @@ def flujo_menus(numero, texto, cmd, ses):
     if estado == "viendo_info":
         anterior = datos.get("estado_anterior", "menu_principal")
         if cmd == "0":
-            if anterior in SUBMENUS:
-                ses["estado"] = anterior
-                enviar_texto(numero, SUBMENUS[anterior])
+            if anterior in SUBMENUS or anterior in SUBMENU_BOTONES:
+                mostrar_submenu(numero, ses, anterior)
             else:
                 ir_menu_principal(numero, ses)
         elif cmd in MAPEO_FAQS.get(anterior, {}):
-            mostrar_faq(numero, ses, MAPEO_FAQS[anterior][cmd], anterior, "info_submenu")
+            mostrar_faq(numero, ses, MAPEO_FAQS[anterior][cmd], anterior)
         elif cmd.isdigit():
             enviar_texto(numero, MSG["opcion_invalida_info"])
         else:
@@ -969,6 +993,20 @@ def firma_valida(raw: bytes, cabecera) -> bool:
     return hmac.compare_digest(esperado, cabecera.split("=", 1)[1])
 
 
+def _extraer_texto(mensaje, tipo) -> str:
+    if tipo == "text":
+        return mensaje["text"]["body"]
+    if tipo == "interactive":
+        inter = mensaje.get("interactive", {})
+        if inter.get("type") == "button_reply":
+            return inter["button_reply"]["id"]
+        if inter.get("type") == "list_reply":
+            return inter["list_reply"]["id"]
+    if tipo == "button":
+        return mensaje.get("button", {}).get("payload") or mensaje.get("button", {}).get("text", "")
+    return ""
+
+
 def atender_mensaje(mensaje):
     numero = mensaje.get("from")
     if not numero or _es_duplicado(mensaje.get("id")):
@@ -978,16 +1016,7 @@ def atender_mensaje(mensaje):
         return
     with _lock_de(numero):
         try:
-            texto = ""
-            if tipo == "text":
-                texto = mensaje["text"]["body"]
-            elif tipo == "interactive":
-                inter = mensaje.get("interactive", {})
-                if inter.get("type") == "button_reply":
-                    texto = inter["button_reply"]["id"] # Obtenemos el ID del botón
-                elif inter.get("type") == "list_reply":
-                    texto = inter["list_reply"]["id"] # Obtenemos el ID de la lista
-            
+            texto = _extraer_texto(mensaje, tipo)
             if texto:
                 log(f"📩 ***{numero[-4:]}: {texto}")
                 procesar_mensaje(numero, texto)
@@ -999,6 +1028,7 @@ def atender_mensaje(mensaje):
                 enviar_texto(numero, MSG["error_general"])
             except Exception:
                 pass
+
 
 def procesar_webhook(body):
     try:
