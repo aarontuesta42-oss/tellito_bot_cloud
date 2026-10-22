@@ -624,14 +624,20 @@ def responder_consulta(numero, texto):
 # ----------------------------------------------------------
 
 
-def menu_principal(ses, nuevo=False):
+def enviar_menu_principal(numero, ses, nuevo=False):
     saludo = SALUDOS_MENU["nuevo"] if nuevo else render(SALUDOS_MENU["regreso"], nombre=primer_nombre(ses))
-    return render(MENUS["principal"], saludo=saludo)
+    texto = f"{saludo}\n\nPor favor, elige una categoría para ver las opciones:"
+    
+    enviar_botones(numero, texto, [
+        ("cat_prospecto", "🎓 Prospecto"),
+        ("cat_estudiante", "📚 Estudiante"),
+        ("cat_general", "🏫 General")
+    ])
 
 
 def ir_menu_principal(numero, ses, nuevo=False):
     ses["estado"] = "menu_principal"
-    enviar_texto(numero, menu_principal(ses, nuevo))
+    enviar_menu_principal(numero, ses, nuevo) # <-- CAMBIO AQUÍ
 
 
 def reiniciar_registro(numero, ses, mensaje):
@@ -647,8 +653,17 @@ def mostrar_faq(numero, ses, faq_id, volver, pie):
         return
     ses["estado"] = "viendo_info"
     ses["datos"]["estado_anterior"] = volver
-    enviar_texto(numero, redactar_faq(faq) + "\n\n" + PIES[pie])
-
+    texto_ia = redactar_faq(faq)
+    
+    # Si la IA generó un texto muy largo, lo enviamos normal y luego los botones
+    if len(texto_ia) > 1000:
+        enviar_texto(numero, texto_ia)
+        pausa()
+        enviar_botones(numero, "¿Qué deseas hacer ahora?", [("0", "⬅️ Volver"), ("menu", "🏠 Menú")])
+    else:
+        # Si es corto, enviamos el texto directo con los botones integrados
+        enviar_botones(numero, texto_ia, [("0", "⬅️ Volver"), ("menu", "🏠 Menú")])
+        
 
 def mostrar_carrera(numero, clave):
     info = carreras_info[clave]
@@ -667,7 +682,7 @@ def enviar_easter_egg(numero, ses):
     enviar_imagen(numero, imagenes[i]["url"], imagenes[i]["texto"])
     pausa()
     if ses["datos"].get("nombres"):
-        enviar_texto(numero, menu_principal(ses))
+        enviar_menu_principal(numero, ses) # <-- CAMBIO AQUÍ
     else:
         enviar_texto(numero, MSG["recordar_nombre"])
 
@@ -792,7 +807,7 @@ def flujo_registro(numero, texto, cmd, ses):
             datos["carrera"] = REGISTRO["carreras"][cmd]
             ses["estado"] = "menu_principal"
             guardar_cliente(numero, datos["nombres"], datos.get("perfil"), datos["carrera"])
-            enviar_texto(numero, menu_principal(ses, nuevo=True))
+            enviar_menu_principal(numero, ses, nuevo=True) # <-- CAMBIO AQUÍ
         elif len(texto) > LONG_LIBRE or parece_pregunta(texto):
             responder_consulta(numero, texto)
             pausa()
@@ -810,7 +825,7 @@ def flujo_inicio(numero, texto, cmd, ses) -> bool:
         ses["estado"] = "menu_principal"
         if cmd.isdigit() or cmd in ATAJOS or es_consulta(texto, cmd):
             return True
-        enviar_texto(numero, menu_principal(ses))
+        enviar_menu_principal(numero, ses) # <-- CAMBIO AQUÍ
         return False
     ses["estado"] = "esperando_nombre"
     if es_consulta(texto, cmd):
@@ -828,6 +843,46 @@ def flujo_menus(numero, texto, cmd, ses):
         return
     if cmd in COMANDOS_MENU:
         ir_menu_principal(numero, ses)
+        return
+        # --- NUEVOS BOTONES DEL MENÚ PRINCIPAL ---
+    if cmd == "cat_prospecto":
+        secciones = [{
+            "title": "🎓 Información de Prospecto",
+            "rows": [
+                {"id": "1", "title": "1️⃣ Modalidades de Admisión"},
+                {"id": "2", "title": "2️⃣ Costos de Postular"},
+                {"id": "3", "title": "3️⃣ Requisitos de Matrícula"},
+                {"id": "4", "title": "4️⃣ Traslado Externo"}
+            ]
+        }]
+        enviar_lista(numero, "Elige la opción que buscas:", "Ver Opciones", secciones)
+        return
+
+    if cmd == "cat_estudiante":
+        secciones = [{
+            "title": "📚 Información de Estudiante",
+            "rows": [
+                {"id": "5", "title": "5️⃣ Trámites Académicos"},
+                {"id": "6", "title": "6️⃣ Certificados y Constancias"},
+                {"id": "7", "title": "7️⃣ Ratificación, Reserva o Licencia"}
+            ]
+        }]
+        enviar_lista(numero, "Elige la opción que buscas:", "Ver Opciones", secciones)
+        return
+
+    if cmd == "cat_general":
+        secciones = [{
+            "title": "🏫 Información General",
+            "rows": [
+                {"id": "8", "title": "8️⃣ Titulación (TAP o Examen)"},
+                {"id": "9", "title": "9️⃣ Constancia de Egresado"},
+                {"id": "10", "title": "🔟 Certificación Modular"},
+                {"id": "11", "title": "1️⃣1️⃣ Nuestras Carreras"},
+                {"id": "12", "title": "1️⃣2️⃣ Contacto y Ubicación"},
+                {"id": "0", "title": "0️⃣ Reiniciar Registro"}
+            ]
+        }]
+        enviar_lista(numero, "Elige la opción que buscas:", "Ver Opciones", secciones)
         return
     if es_saludo(cmd):
         enviar_texto(numero, render(MSG["saludo_en_menu"], nombre=primer_nombre(ses)))
